@@ -63,6 +63,20 @@ public class PersonApiController {
     }
 
     /*
+    NEW METHOD: DELETE self using body
+     */
+    @DeleteMapping("/delete/self")
+    public ResponseEntity<Person> deleteSelf(@RequestBody Person self) {
+        Person deletedPerson = repository.findByEmailAndPassword(self.getEmail(), self.getPassword());
+        if (deletedPerson != null) {  // Good ID
+            repository.deleteById(deletedPerson.getId());  // value from findByID
+            return new ResponseEntity<>(deletedPerson, HttpStatus.OK);  // OK HTTP response: status code, headers, and body
+        }
+        // Bad ID
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST); 
+    }
+
+    /*
     POST Aa record by Requesting Parameters from URI
      */
     @PostMapping( "/post")
