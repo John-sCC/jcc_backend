@@ -72,6 +72,9 @@ public class Person {
      * 
      * @ManyToMany(fetch = LAZY)
      * private Collection<GraphData> statsData = new ArrayList<>();
+     * 
+     * @ManyToMany(fetch = LAZY)
+     * private Collection<QRCode> qrCodes = new ArrayList<>();
      */
 
     // Constructor used when building object from an API
