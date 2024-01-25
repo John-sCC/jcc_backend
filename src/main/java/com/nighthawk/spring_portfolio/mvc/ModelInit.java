@@ -11,16 +11,21 @@ import com.nighthawk.spring_portfolio.mvc.jokes.JokesJpaRepository;
 import com.nighthawk.spring_portfolio.mvc.note.Note;
 import com.nighthawk.spring_portfolio.mvc.note.NoteJpaRepository;
 import com.nighthawk.spring_portfolio.mvc.person.Person;
+import com.nighthawk.spring_portfolio.mvc.person.PersonRole;
 import com.nighthawk.spring_portfolio.mvc.person.PersonDetailsService;
+import com.nighthawk.spring_portfolio.mvc.person.PersonRoleJpaRepository;
 
 import java.util.List;
 
+
 @Component
 @Configuration // Scans Application for ModelInit Bean, this detects CommandLineRunner
-public class ModelInit {  
+public class ModelInit { 
+    //declarations 
     @Autowired JokesJpaRepository jokesRepo;
     @Autowired NoteJpaRepository noteRepo;
     @Autowired PersonDetailsService personService;
+    @Autowired PersonRoleJpaRepository rolesJPA;
 
     @Bean
     CommandLineRunner run() {  // The run() method will be executed after the application starts
@@ -46,6 +51,16 @@ public class ModelInit {
                     String text = "Test " + person.getEmail();
                     Note n = new Note(text, person);  // constructor uses new person as Many-to-One association
                     noteRepo.save(n);  // JPA Save                  
+                }
+            }
+
+            PersonRole[] roles = PersonRole.init();
+            for (PersonRole role : roles) {
+                PersonRole existingRole = rolesJPA.findByName(role.getName());
+                if (existingRole != null) {
+                    continue;
+                } else {
+                    rolesJPA.save(role);
                 }
             }
 

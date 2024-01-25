@@ -77,6 +77,19 @@ public class Person {
      * private Collection<QRCode> qrCodes = new ArrayList<>();
      */
 
+
+    
+    // new method to add, subtract roles to the person object - EKAM
+
+    //  public void addRole(PersonRole role) {
+    //     roles.add(role);
+    // }
+
+    // public void removeRole(PersonRole role) {
+    //     roles.remove(role);
+    // }
+
+
     // Constructor used when building object from an API
     public Person(String email, String password, String name, String usn) {
         this.email = email;
