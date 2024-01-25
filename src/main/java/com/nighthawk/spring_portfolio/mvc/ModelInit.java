@@ -13,7 +13,9 @@ import com.nighthawk.spring_portfolio.mvc.note.NoteJpaRepository;
 import com.nighthawk.spring_portfolio.mvc.person.Person;
 import com.nighthawk.spring_portfolio.mvc.person.PersonRole;
 import com.nighthawk.spring_portfolio.mvc.person.PersonDetailsService;
-import com.nighthawk.spring_portfolio.mvc.person.PersonRoleJpaRepository;
+import com.nighthawk.spring_portfolio.mvc.classPeriod.ClassPeriodDetailsService;
+import com.nighthawk.spring_portfolio.mvc.classPeriod.ClassPeriodJpaRepository;
+import com.nighthawk.spring_portfolio.mvc.classPeriod.ClassPeriod;
 
 import java.util.List;
 
@@ -25,7 +27,8 @@ public class ModelInit {
     @Autowired JokesJpaRepository jokesRepo;
     @Autowired NoteJpaRepository noteRepo;
     @Autowired PersonDetailsService personService;
-    @Autowired PersonRoleJpaRepository rolesJPA;
+    @Autowired ClassPeriodDetailsService classService;
+    @Autowired ClassPeriodJpaRepository classRepo;
 
     @Bean
     CommandLineRunner run() {  // The run() method will be executed after the application starts
@@ -54,13 +57,21 @@ public class ModelInit {
                 }
             }
 
-            PersonRole[] roles = PersonRole.init();
-            for (PersonRole role : roles) {
-                PersonRole existingRole = rolesJPA.findByName(role.getName());
-                if (existingRole != null) {
+            // initializing classPeriod objects
+            String[] emailsForInit = {"toby@gmail.com", "jm1021@gmail.com"};
+            int i = 0;
+            ClassPeriod[] classPeriods = ClassPeriod.init();
+            for (ClassPeriod classPeriod : classPeriods) {
+                ClassPeriod existingClass = classRepo.findByName(classPeriod.getName());
+                if (existingClass != null) {
+                    // class already exists
+                    i++;
                     continue;
                 } else {
-                    rolesJPA.save(role);
+                    // class doesn't exist
+                    classService.save(classPeriod);
+                    classService.addLeaderToClass(emailsForInit[i], classPeriod.getName());
+                    i++;
                 }
             }
 
