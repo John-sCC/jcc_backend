@@ -12,6 +12,9 @@ import com.nighthawk.spring_portfolio.mvc.note.Note;
 import com.nighthawk.spring_portfolio.mvc.note.NoteJpaRepository;
 import com.nighthawk.spring_portfolio.mvc.person.Person;
 import com.nighthawk.spring_portfolio.mvc.person.PersonDetailsService;
+import com.nighthawk.spring_portfolio.mvc.classPeriod.ClassPeriodDetailsService;
+import com.nighthawk.spring_portfolio.mvc.classPeriod.ClassPeriodJpaRepository;
+import com.nighthawk.spring_portfolio.mvc.classPeriod.ClassPeriod;
 
 import java.util.List;
 
@@ -21,6 +24,8 @@ public class ModelInit {
     @Autowired JokesJpaRepository jokesRepo;
     @Autowired NoteJpaRepository noteRepo;
     @Autowired PersonDetailsService personService;
+    @Autowired ClassPeriodDetailsService classService;
+    @Autowired ClassPeriodJpaRepository classRepo;
 
     @Bean
     CommandLineRunner run() {  // The run() method will be executed after the application starts
@@ -46,6 +51,24 @@ public class ModelInit {
                     String text = "Test " + person.getEmail();
                     Note n = new Note(text, person);  // constructor uses new person as Many-to-One association
                     noteRepo.save(n);  // JPA Save                  
+                }
+            }
+
+            // initializing classPeriod objects
+            String[] emailsForInit = {"toby@gmail.com", "jm1021@gmail.com"};
+            int i = 0;
+            ClassPeriod[] classPeriods = ClassPeriod.init();
+            for (ClassPeriod classPeriod : classPeriods) {
+                ClassPeriod existingClass = classRepo.findByName(classPeriod.getName());
+                if (existingClass != null) {
+                    // class already exists
+                    i++;
+                    continue;
+                } else {
+                    // class doesn't exist
+                    classService.save(classPeriod);
+                    classService.addLeaderToClass(emailsForInit[i], classPeriod.getName());
+                    i++;
                 }
             }
 
