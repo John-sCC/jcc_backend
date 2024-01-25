@@ -49,7 +49,7 @@ public class ClassPeriod {
     // @NonNull, etc placed in params of constructor: "@NonNull @Size(min = 2, max = 30, message = "Name (2 to 30 chars)") String name"
     @NonNull
     @Column(unique=true)
-    @Size(min = 2, max = 30, message = "Name (2 to 50 chars)")
+    @Size(min = 2, max = 50, message = "Name (2 to 50 chars)")
     private String name;
 
     // leaders in the class can control it; not "teachers" because it could be clubs
