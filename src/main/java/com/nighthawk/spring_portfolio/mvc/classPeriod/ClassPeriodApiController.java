@@ -5,6 +5,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.nighthawk.spring_portfolio.mvc.person.Person;
+import com.nighthawk.spring_portfolio.mvc.person.PersonJpaRepository;
+
 import java.util.*;
 
 @RestController
@@ -23,6 +26,10 @@ public class ClassPeriodApiController {
 
     @Autowired
     private ClassPeriodDetailsService classPeriodDetailsService;
+
+    // for looking at people
+    @Autowired
+    private PersonJpaRepository personRepository;
 
     /*
     GET List of classes
@@ -66,10 +73,15 @@ public class ClassPeriodApiController {
     public ResponseEntity<Object> postClassPeriod(@RequestParam("email") String email,
                                              @RequestParam("name") String name) {
         // A person object WITHOUT ID will create a new record with default roles as student
-        ClassPeriod classPeriod = new ClassPeriod(name);
-        classPeriodDetailsService.save(classPeriod);
-        classPeriodDetailsService.addLeaderToClass(email, name);
-        return new ResponseEntity<>("The class \"" + name + "\" was created successfully!", HttpStatus.CREATED);
+        Person newLeader = personRepository.findByEmail(email);
+        if (newLeader != null) {
+            ClassPeriod classPeriod = new ClassPeriod(name);
+            classPeriodDetailsService.save(classPeriod);
+            classPeriodDetailsService.addLeaderToClass(email, name);
+            return new ResponseEntity<>("The class \"" + name + "\" was created successfully!", HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<>("The user set to become the class owner couldn't be found.", HttpStatus.NOT_FOUND);
+        }
     }
 
     // /*
