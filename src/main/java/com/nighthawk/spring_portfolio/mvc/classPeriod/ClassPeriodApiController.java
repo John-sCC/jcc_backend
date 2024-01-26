@@ -2,7 +2,6 @@ package com.nighthawk.spring_portfolio.mvc.classPeriod;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
@@ -108,20 +107,31 @@ public class ClassPeriodApiController {
     /*
     The this method will be used to add the seating chart to the class
     */
-    // @PostMapping(value = "/set_seating_chart", produces = MediaType.APPLICATION_JSON_VALUE)
-    // public ResponseEntity<ClassPeriod> personStats(@RequestParam("chart") Map<Integer,Map<Integer, String>> seat_map,
-    //                                                @RequestParam("class_id") long class_id,
-    //                                                @RequestParam("") String class_password) {
-    //     // find ID 
-    //     ClassPeriod classPeriod = repository.findById((class_id));
-    //     if (classPeriod != null) {  // Good ID
-    //         classPeriod.setSeatingChart(seat_map);  // BUG, needs to be customized to replace if existing or append if new
-    //         repository.save(classPeriod);  // conclude by writing the stats updates
+    @PostMapping("/set_seating_chart")
+    public ResponseEntity<Object> setSeatingChart(@RequestBody SeatingChart seatingChart) {
+        // retrieving the current authentication details
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = ((UserDetails) authentication.getPrincipal()).getUsername();
+        // find ID 
+        ClassPeriod classPeriod = repository.findById((seatingChart.getClassId()));
+        if (classPeriod != null) {  // Good ID
+            boolean userIsLeader = false;
+            for (Person leader : classPeriod.getLeaders()) {
+                if (leader.getEmail().equals(email)) {
+                    userIsLeader = true;
+                }
+            }
+            if (userIsLeader) {
+                classPeriod.setSeatingChart(seatingChart.getChart());  // BUG, needs to be customized to replace if existing or append if new
+                repository.save(classPeriod);  // conclude by writing the stats updates
 
-    //         // return Person with update Stats
-    //         return new ResponseEntity<>(classPeriod, HttpStatus.OK);
-    //     }
-    //     // return Bad ID
-    //     return new ResponseEntity<>(HttpStatus.BAD_REQUEST); 
-    // }
+                // return success
+                return new ResponseEntity<>("Seating chart successfully modified.", HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("The login token does not provide proper authentication to change the seating chart.", HttpStatus.FORBIDDEN);
+            }
+        }
+        // return Bad ID
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST); 
+    }
 }
