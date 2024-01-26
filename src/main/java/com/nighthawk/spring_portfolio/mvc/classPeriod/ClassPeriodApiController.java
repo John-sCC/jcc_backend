@@ -122,7 +122,7 @@ public class ClassPeriodApiController {
                 }
             }
             if (userIsLeader) {
-                classPeriod.setSeatingChart(seatingChart.getChart());  // BUG, needs to be customized to replace if existing or append if new
+                classPeriod.setSeatingChart(seatingChart.getChart());  // htis owrks now
                 repository.save(classPeriod);  // conclude by writing the stats updates
 
                 // return success
