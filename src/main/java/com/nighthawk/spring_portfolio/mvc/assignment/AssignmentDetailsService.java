@@ -14,16 +14,14 @@ import com.nighthawk.spring_portfolio.mvc.person.PersonJpaRepository;
 import com.nighthawk.spring_portfolio.mvc.person.Person;
 import com.nighthawk.spring_portfolio.mvc.person.PersonRoleJpaRepository;
 
+import java.util.Date;
+
+
+
 public class AssignmentDetailsService {
     // Encapsulate many object into a single Bean (Person, Roles, and Scrum)
     @Autowired  // Inject PersonJpaRepository
-    private PersonJpaRepository personJpaRepository;
-    @Autowired  // Inject RoleJpaRepository
-    private PersonRoleJpaRepository personRoleJpaRepository;
-    // @Autowired  // Inject PasswordEncoder
-    PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
-    }
+    private AssignmentJpaRepository assignmentJpaRepository;
 
     /* UserDetailsService Overrides and maps Person & Roles POJO into Spring Security */
     // @Override
@@ -42,92 +40,45 @@ public class AssignmentDetailsService {
 
     /* Person Section */
 
-    public  List<Person>listAll() {
-        return personJpaRepository.findAllByOrderByNameAsc();
+    public  List<Assignment>listAll() {
+        return assignmentJpaRepository.findAllByOrderByNameAsc();
     }
 
     // custom query to find match to name or email
-    public  List<Person>list(String name, String email) {
-        return personJpaRepository.findByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(name, email);
+    /*
+    public  List<Person>list(String name, arraylist classes) {
+        return assignmentJpaRepository.findByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(name, classes);
     }
+    */
 
     // custom query to find anything containing term in name or email ignoring case
-    public  List<Person>listLike(String term) {
-        return personJpaRepository.findByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(term, term);
+    /*
+    public  List<Person>list(Date dateCreated, Date dateDue) {
+        return assignmentJpaRepository.findByDateCreatedAndDateDue(dateCreated, dateDue);
     }
+    */
 
     // custom query to find anything containing term in name or email ignoring case
-    public  List<Person>listLikeNative(String term) {
+    public  List<Assignment>listLikeNative(String term) {
         String like_term = String.format("%%%s%%",term);  // Like required % rappers
-        return personJpaRepository.findByLikeTermNative(like_term);
+        return assignmentJpaRepository.findByLikeTermNative(like_term);
     }
 
-    // encode password prior to sava
-    public void save(Person person) {
-        person.setPassword(passwordEncoder().encode(person.getPassword()));
-        personJpaRepository.save(person);
-    }
-
-    public Person get(long id) {
-        return (personJpaRepository.findById(id).isPresent())
-                ? personJpaRepository.findById(id).get()
+    public Assignment get(long id) {
+        return (assignmentJpaRepository.findById(id).isPresent())
+                ? assignmentJpaRepository.findById(id).get()
                 : null;
     }
 
-    public Person getByEmail(String email) {
-        return (personJpaRepository.findByEmail(email));
+    public List<Assignment> findByName(String name) {
+        return (assignmentJpaRepository.findByName(name));
+    }
+
+    public List<Assignment> findByCreatedBy(Person createdBy) {
+        return (assignmentJpaRepository.findByCreatedBy(createdBy));
     }
 
     public void delete(long id) {
-        personJpaRepository.deleteById(id);
-    }
-
-    public void defaults(String password, String roleName) {
-        for (Person person: listAll()) {
-            if (person.getPassword() == null || person.getPassword().isEmpty() || person.getPassword().isBlank()) {
-                person.setPassword(passwordEncoder().encode(password));
-            }
-            if (person.getRoles().isEmpty()) {
-                PersonRole role = personRoleJpaRepository.findByName(roleName);
-                if (role != null) { // verify role
-                    person.getRoles().add(role);
-                }
-            }
-        }
-    }
-
-
-    /* Roles Section */
-
-    public void saveRole(PersonRole role) {
-        PersonRole roleObj = personRoleJpaRepository.findByName(role.getName());
-        if (roleObj == null) {  // only add if it is not found
-            personRoleJpaRepository.save(role);
-        }
-    }
-
-    public  List<PersonRole>listAllRoles() {
-        return personRoleJpaRepository.findAll();
-    }
-
-    public PersonRole findRole(String roleName) {
-        return personRoleJpaRepository.findByName(roleName);
-    }
-
-    public void addRoleToPerson(String email, String roleName) { // by passing in the two strings you are giving the user that certain role
-        Person person = personJpaRepository.findByEmail(email);
-        if (person != null) {   // verify person
-            PersonRole role = personRoleJpaRepository.findByName(roleName);
-            if (role != null) { // verify role
-                boolean addRole = true;
-                for (PersonRole roleObj : person.getRoles()) {    // only add if user is missing role
-                    if (roleObj.getName().equals(roleName)) {
-                        addRole = false;
-                        break;
-                    }
-                }
-                if (addRole) person.getRoles().add(role);   // everything is valid for adding role
-            }
-        }
+        assignmentJpaRepository.deleteById(id);
     }
 }
