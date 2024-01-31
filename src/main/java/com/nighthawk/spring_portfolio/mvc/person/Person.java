@@ -79,15 +79,7 @@ public class Person {
 
 
     
-    // new method to add, subtract roles to the person object - EKAM
-
-    //  public void addRole(PersonRole role) {
-    //     roles.add(role);
-    // }
-
-    // public void removeRole(PersonRole role) {
-    //     roles.remove(role);
-    // }
+    // NO NEED FOR ROLES METHODS IN PERSON, all roles add/deletion are handled in other files due to object relationships
 
 
     // Constructor used when building object from an API
