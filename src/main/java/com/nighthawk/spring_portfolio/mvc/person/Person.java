@@ -8,6 +8,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+// import jakarta.persistence.JoinColumn;
+// import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Convert;
 import static jakarta.persistence.FetchType.EAGER;
@@ -21,6 +23,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+
+// import com.nighthawk.spring_portfolio.mvc.classPeriod.ClassPeriod;
 
 /*
 Person is a POJO, Plain Old Java Object.
@@ -67,8 +71,6 @@ public class Person {
     
     // to be implemented later
     /*
-     * @ManyToMany(fetch = EAGER)
-     * private Collection<ClassPeriod> classes = new ArrayList<>();
      * 
      * @ManyToMany(fetch = LAZY)
      * private Collection<GraphData> statsData = new ArrayList<>();
