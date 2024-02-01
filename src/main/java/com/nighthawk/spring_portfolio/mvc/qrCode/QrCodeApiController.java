@@ -27,13 +27,18 @@ public class QrCodeApiController {
     }
 
     @PostMapping("/newCode")
-    public ResponseEntity<QrCode> newCode(@RequestBody ArrayList<String> links, @RequestBody ArrayList<Double> frequencys) {
+    public ResponseEntity<QrCode> newCode(@RequestBody QrCodeRequest qrCodeRequest) {
         QrCode qrCode = new QrCode();
 
+        List<String> links = qrCodeRequest.getLinks();
+        List<Double> frequencys = qrCodeRequest.getFrequencies(); 
+        System.out.println(frequencys.get(1));
+        
         for (int i = 0; i < links.size(); i ++){
             qrCode.addLink(new LinkFreq(links.get(i), frequencys.get(i)));
         }
         
+        repository.save(qrCode);
 
         return new ResponseEntity<>(qrCode, HttpStatus.OK);
     }
