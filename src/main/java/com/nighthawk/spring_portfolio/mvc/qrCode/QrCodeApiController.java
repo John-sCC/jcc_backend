@@ -32,7 +32,6 @@ public class QrCodeApiController {
 
         List<String> links = qrCodeRequest.getLinks();
         List<Double> frequencys = qrCodeRequest.getFrequencies(); 
-        System.out.println(frequencys.get(1));
         
         for (int i = 0; i < links.size(); i ++){
             qrCode.addLink(new LinkFreq(links.get(i), frequencys.get(i)));
