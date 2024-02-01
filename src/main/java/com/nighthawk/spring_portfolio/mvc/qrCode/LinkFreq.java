@@ -11,8 +11,9 @@ import jakarta.persistence.*;
 @Embeddable
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 public class LinkFreq {
-    
+
     private String link;
     private double frequency;
 

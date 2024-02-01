@@ -19,10 +19,10 @@ public class QrCode {
     private Long id;
 
     @ElementCollection
-    private List<LinkFreq> links = new ArrayList<>();
+    private List<LinkFreq> linkFreqs = new ArrayList<>();
 
     public void addLink(LinkFreq linkFreq ){
-        links.add(linkFreq);
+        linkFreqs.add(linkFreq);
         return;
     }
 }
