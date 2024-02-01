@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import jakarta.persistence.*;
 
@@ -17,7 +18,8 @@ public class QrCode {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private ArrayList<LinkFreq> links;
+    @ElementCollection
+    private List<LinkFreq> links = new ArrayList<>();
 
     public void addLink(LinkFreq linkFreq ){
         links.add(linkFreq);
