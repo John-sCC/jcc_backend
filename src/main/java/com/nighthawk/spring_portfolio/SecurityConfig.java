@@ -70,8 +70,11 @@ public class SecurityConfig {
 				// list the requests/endpoints need to be authenticated
 				.authorizeHttpRequests(auth -> auth
 					.requestMatchers("/authenticate").permitAll()
-					.requestMatchers("/mvc/person/update/**", "/mvc/person/delete/**").authenticated()
-					.requestMatchers("/api/person/post/**", "/api/person/delete/**").authenticated()
+					.requestMatchers("/mvc/person/update/**", "/mvc/person/delete/**").hasAnyAuthority("ROLE_ADMIN")
+					.requestMatchers("/api/person/delete/**", "/api/class_period/delete/**").hasAnyAuthority("ROLE_ADMIN")
+					.requestMatchers("/api/person/delete/self").hasAnyAuthority("ROLE_USER")
+					.requestMatchers("/api/class_period/post/**", "/api/class_period/set_seating_chart").authenticated()
+					.requestMatchers("/api/person/post/**").permitAll()
 					.requestMatchers("/**").permitAll()
 				)
 				// support cors

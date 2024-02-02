@@ -1,20 +1,15 @@
 package com.nighthawk.spring_portfolio.mvc.person;
 
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.Period;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+// import jakarta.persistence.JoinColumn;
+// import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Convert;
 import static jakarta.persistence.FetchType.EAGER;
@@ -22,16 +17,14 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
-import org.springframework.format.annotation.DateTimeFormat;
-
 import com.vladmihalcea.hibernate.type.json.JsonType;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+
+// import com.nighthawk.spring_portfolio.mvc.classPeriod.ClassPeriod;
 
 /*
 Person is a POJO, Plain Old Java Object.
@@ -64,43 +57,40 @@ public class Person {
 
     // @NonNull, etc placed in params of constructor: "@NonNull @Size(min = 2, max = 30, message = "Name (2 to 30 chars)") String name"
     @NonNull
-    @Size(min = 2, max = 30, message = "Name (2 to 30 chars)")
+    @Size(min = 2, max = 30, message = "First and Last Name (2 to 30 chars)")
     private String name;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date dob;
+    @NonNull
+    @Size(min = 2, max = 20)
+    @Column(unique=true)
+    private String usn;
 
-    // To be implemented
+    // roles for permissions, different branch
     @ManyToMany(fetch = EAGER)
     private Collection<PersonRole> roles = new ArrayList<>();
-
-    /* HashMap is used to store JSON for daily "stats"
-    "stats": {
-        "2022-11-13": {
-            "calories": 2200,
-            "steps": 8000
-        }
-    }
-    */
-    @JdbcTypeCode(SqlTypes.JSON)
-    @Column(columnDefinition = "jsonb")
-    private Map<String,Map<String, Object>> stats = new HashMap<>(); 
     
+    // to be implemented later
+    /*
+     * 
+     * @ManyToMany(fetch = LAZY)
+     * private Collection<GraphData> statsData = new ArrayList<>();
+     * 
+     * @ManyToMany(fetch = LAZY)
+     * private Collection<QRCode> qrCodes = new ArrayList<>();
+     */
+
+
+    
+    // NO NEED FOR ROLES METHODS IN PERSON, all roles add/deletion are handled in other files due to object relationships
+
 
     // Constructor used when building object from an API
-    public Person(String email, String password, String name, Date dob) {
+    public Person(String email, String password, String name, String usn) {
         this.email = email;
         this.password = password;
         this.name = name;
-        this.dob = dob;
-    }
-
-    // A custom getter to return age from dob attribute
-    public int getAge() {
-        if (this.dob != null) {
-            LocalDate birthDay = this.dob.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            return Period.between(birthDay, LocalDate.now()).getYears(); }
-        return -1;
+        this.usn = usn;
+        // other attributes implemented later
     }
 
     // Initialize static test data 
@@ -111,53 +101,31 @@ public class Person {
         p1.setName("Thomas Edison");
         p1.setEmail("toby@gmail.com");
         p1.setPassword("123Toby!");
-        // adding Note to notes collection
-        try {  // All data that converts formats could fail
-            Date d = new SimpleDateFormat("MM-dd-yyyy").parse("01-01-1840");
-            p1.setDob(d);
-        } catch (Exception e) {
-            // no actions as dob default is good enough
-        }
+        p1.setUsn("bigT");
 
         Person p2 = new Person();
         p2.setName("Alexander Graham Bell");
         p2.setEmail("lexb@gmail.com");
         p2.setPassword("123LexB!");
-        try {
-            Date d = new SimpleDateFormat("MM-dd-yyyy").parse("01-01-1845");
-            p2.setDob(d);
-        } catch (Exception e) {
-        }
+        p2.setUsn("phoneNumber1");
 
         Person p3 = new Person();
         p3.setName("Nikola Tesla");
         p3.setEmail("niko@gmail.com");
         p3.setPassword("123Niko!");
-        try {
-            Date d = new SimpleDateFormat("MM-dd-yyyy").parse("01-01-1850");
-            p3.setDob(d);
-        } catch (Exception e) {
-        }
+        p3.setUsn("iOwnX");
 
         Person p4 = new Person();
         p4.setName("Madam Currie");
         p4.setEmail("madam@gmail.com");
         p4.setPassword("123Madam!");
-        try {
-            Date d = new SimpleDateFormat("MM-dd-yyyy").parse("01-01-1860");
-            p4.setDob(d);
-        } catch (Exception e) {
-        }
+        p4.setUsn("madRadium");
 
         Person p5 = new Person();
         p5.setName("John Mortensen");
         p5.setEmail("jm1021@gmail.com");
         p5.setPassword("123Qwerty!");
-        try {
-            Date d = new SimpleDateFormat("MM-dd-yyyy").parse("10-21-1959");
-            p5.setDob(d);
-        } catch (Exception e) {
-        }
+        p5.setUsn("jMort");
 
         // Array definition and data initialization
         Person persons[] = {p1, p2, p3, p4, p5};
