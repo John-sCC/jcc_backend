@@ -1,30 +1,15 @@
 package com.nighthawk.spring_portfolio.mvc.assignment;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.Period;
-import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Convert;
-import static jakarta.persistence.FetchType.EAGER;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.vladmihalcea.hibernate.type.json.JsonType;
@@ -33,8 +18,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-
-import com.nighthawk.spring_portfolio.mvc.person.Person;
 
 /*
 Person is a POJO, Plain Old Java Object.
@@ -60,9 +43,6 @@ public class Assignment {
     @Size(min = 2, max = 30, message = "Name (2 to 50 chars)")
     private String name;
 
-    // Person who created it
-    private Person createdBy;
-
     //date the assignment is created
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date dateCreated;
@@ -83,9 +63,8 @@ public class Assignment {
     */
 
     // Constructor used when building object from an API
-    public Assignment(String name, Person createdBy, Date dateCreated, Date dateDue, String content) {
+    public Assignment(String name, Date dateCreated, Date dateDue, String content) {
         this.name = name;
-        this.createdBy = createdBy;
         this.dateCreated = dateCreated;
         this.dateDue = dateDue;
         this.content = content;
@@ -127,8 +106,24 @@ public class Assignment {
             p1.setDateDue(c);
         } catch (Exception e) {}
 
+        Assignment p3 = new Assignment();
+        p1.setName("Write 5 papers for economics");
+        // p1.setCreatedBy(Person[].class);
+        p1.setContent("stupid economics");
+        // adding Note to notes collection
+        try {  // All data that converts formats could fail
+            Date d = new SimpleDateFormat("MM-dd-yyyy").parse("00-00-0000");
+            p1.setDateCreated(d);
+        } catch (Exception e) {
+            // no actions as dob default is good enough
+        }
+        try {
+            Date c = new SimpleDateFormat("MM-dd-yyyy").parse("10-10-2025");
+            p1.setDateDue(c);
+        } catch (Exception e) {}
+
         // Array definition and data initialization
-        Assignment assignments[] = {p1, p2};
+        Assignment assignments[] = {p1, p2, p3};
         return(assignments);
     }
 

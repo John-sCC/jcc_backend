@@ -1,7 +1,5 @@
 package com.nighthawk.spring_portfolio.mvc.assignment;
 
-import java.text.SimpleDateFormat;
-import java.util.HashMap;
 import java.util.List;
 
 
@@ -14,17 +12,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.nighthawk.spring_portfolio.mvc.person.PersonDetailsService;
-import com.nighthawk.spring_portfolio.mvc.person.PersonJpaRepository;
-import com.nighthawk.spring_portfolio.mvc.person.Person;
-
-
-
-import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
 @RestController
@@ -70,7 +60,7 @@ public class AssignmentApiController {
     DELETE individual Person using ID
      */
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Assignment> deletePerson(@PathVariable long id) {
+    public ResponseEntity<Assignment> deleteAssignment(@PathVariable long id) {
         Optional<Assignment> optional = repository.findById(id);
         if (optional.isPresent()) {  // Good ID
             Assignment assignment = optional.get();  // value from findByID
@@ -85,26 +75,11 @@ public class AssignmentApiController {
     POST Aa record by Requesting Parameters from URI
      */
     @PostMapping( "/post")
-    public ResponseEntity<Object> postAssignment(@RequestParam("name") String name,
-                                                 @RequestParam("dateCreated") String dateCreatedString,
-                                                 @RequestParam("dateDue") String dateDueString,
-                                                 @RequestParam("content") String content) {
-        Date dateCreated;
-        Date dateDue;
-        try {
-            dateCreated = new SimpleDateFormat("MM-dd-yyyy").parse(dateCreatedString);
-        } catch (Exception e) {
-            return new ResponseEntity<>(dateCreatedString +" error; try MM-dd-yyyy", HttpStatus.BAD_REQUEST);
-        }
-        try {
-            dateDue = new SimpleDateFormat("MM-dd-yyyy").parse(dateDueString);
-        } catch (Exception e) {
-            return new ResponseEntity<>(dateDueString +" error; try MM-dd-yyyy", HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<Object> postAssignment(@RequestBody AssignmentRequest request) {
         // A assignment object WITHOUT ID will create a new record with default roles as student
-        Assignment assignment = new Assignment(name, dateCreated, dateDue, content);
+        Assignment assignment = new Assignment(request.getName(), request.getDateCreated(), request.getDateDue(), request.getContent());
         assignmentDetailsService.save(assignment);
-        return new ResponseEntity<>(name +" is created successfully", HttpStatus.CREATED);
+        return new ResponseEntity<>(assignment.getName() +" is created successfully", HttpStatus.CREATED);
     }
 
     /*
@@ -116,41 +91,9 @@ public class AssignmentApiController {
         String term = (String) map.get("term");
 
         // JPA query to filter on term
-        List<Person> list = repository.findByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(term, term);
+        List<Assignment> list = repository.findByName(term);
 
         // return resulting list and status, error checking should be added
         return new ResponseEntity<>(list, HttpStatus.OK);
-    }
-
-    /*
-    The assignmentStats API adds stats by Date to Person table 
-    */
-    @PostMapping(value = "/setStats", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Person> assignmentStats(@RequestBody final Map<String,Object> stat_map) {
-        // find ID
-        long id=Long.parseLong((String)stat_map.get("id"));  
-        Optional<Assignment> optional = repository.findById((id));
-        if (optional.isPresent()) {  // Good ID
-            Assignment assignment = optional.get();  // value from findByID
-
-            // Extract Attributes from JSON
-            Map<String, Object> attributeMap = new HashMap<>();
-            for (Map.Entry<String,Object> entry : stat_map.entrySet())  {
-                // Add all attribute other thaN "date" to the "attribute_map"
-                if (!entry.getKey().equals("date") && !entry.getKey().equals("id"))
-                    attributeMap.put(entry.getKey(), entry.getValue());
-            }
-
-            // Set Date and Attributes to SQL HashMap
-            Map<String, Map<String, Object>> date_map = new HashMap<>();
-            date_map.put( (String) stat_map.get("date"), attributeMap );
-            assignment.setStats(date_map);  // BUG, needs to be customized to replace if existing or append if new
-            repository.save(assignment);  // conclude by writing the stats updates
-
-            // return Person with update Stats
-            return new ResponseEntity<>(assignment, HttpStatus.OK);
-        }
-        // return Bad ID
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST); 
     }
 }

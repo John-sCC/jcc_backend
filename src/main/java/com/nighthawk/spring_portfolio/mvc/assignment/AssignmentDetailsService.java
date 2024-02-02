@@ -1,22 +1,10 @@
 package com.nighthawk.spring_portfolio.mvc.assignment;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.nighthawk.spring_portfolio.mvc.person.PersonJpaRepository;
 import com.nighthawk.spring_portfolio.mvc.person.Person;
-import com.nighthawk.spring_portfolio.mvc.person.PersonRoleJpaRepository;
-
-import java.util.Date;
-
-
 
 public class AssignmentDetailsService {
     // Encapsulate many object into a single Bean (Person, Roles, and Scrum)
@@ -80,5 +68,9 @@ public class AssignmentDetailsService {
 
     public void delete(long id) {
         assignmentJpaRepository.deleteById(id);
+    }
+
+    public void save(Assignment assignment) {
+        assignmentJpaRepository.save(assignment);
     }
 }
