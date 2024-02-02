@@ -4,8 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
-
-import com.nighthawk.spring_portfolio.mvc.person.Person;
 import java.util.Date;
 
 
@@ -16,7 +14,6 @@ Extends the JpaRepository interface from Spring Data JPA.
 -- Via JPA the developer can retrieve database from relational databases to Java objects and vice versa.
  */
 public interface AssignmentJpaRepository extends JpaRepository<Assignment, Long> {
-    List<Assignment> findByCreatedBy(Person createdBy);
 
     List<Assignment> findAllByOrderByNameAsc();
 
