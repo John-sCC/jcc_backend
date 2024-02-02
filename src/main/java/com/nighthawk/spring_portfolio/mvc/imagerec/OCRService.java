@@ -13,7 +13,7 @@ public class OCRService {
         tesseract.setLanguage("eng");
         tesseract.setDatapath("./tessdata");
 
-        tesseract.setTessVariable("tessedit_char_whitelist", "0123456789,");
+        tesseract.setTessVariable("tessedit_char_whitelist", "0123456789, ");
 
         try {
             File imageFile = new File(imagePath);
