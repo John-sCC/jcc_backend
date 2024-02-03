@@ -36,3 +36,5 @@ build/
 *.class
 
 *.db
+
+sqlite.db
