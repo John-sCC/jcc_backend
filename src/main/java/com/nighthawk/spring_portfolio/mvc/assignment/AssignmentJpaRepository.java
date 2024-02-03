@@ -1,9 +1,11 @@
-package com.nighthawk.spring_portfolio.mvc.person;
+package com.nighthawk.spring_portfolio.mvc.assignment;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Date;
+
 
 /*
 Extends the JpaRepository interface from Spring Data JPA.
@@ -11,27 +13,26 @@ Extends the JpaRepository interface from Spring Data JPA.
 -- JpaRepository defines standard CRUD methods
 -- Via JPA the developer can retrieve database from relational databases to Java objects and vice versa.
  */
-public interface PersonJpaRepository extends JpaRepository<Person, Long> {
-    Person findByEmail(String email);
+public interface AssignmentJpaRepository extends JpaRepository<Assignment, Long> {
 
-    Person findByUsn(String usn);
+    List<Assignment> findAllByOrderByNameAsc();
 
-    List<Person> findAllByOrderByNameAsc();
+    List<Assignment> findByName(String name);
 
     // JPA query, findBy does JPA magic with "Name", "Containing", "Or", "Email", "IgnoreCase"
-    List<Person> findByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(String name, String email);
+    //List<Assignment> findByNameContainingIgnoreCaseOrClassesContainingIgnoreCase(String name, arraylist classes);
 
     /* Custom JPA query articles, there are articles that show custom SQL as well
        https://springframework.guru/spring-data-jpa-query/
        https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#jpa.query-methods
     */
-    Person findByEmailAndPassword(String email, String password);
+    List<Assignment> findByDateCreatedAndDateDue(Date dateCreated, Date dateDue);
 
     // Custom JPA query
     @Query(
             value = "SELECT * FROM Person p WHERE p.name LIKE ?1 or p.email LIKE ?1",
             nativeQuery = true)
-    List<Person> findByLikeTermNative(String term);
+    List<Assignment> findByLikeTermNative(String term);
     /*
       https://www.baeldung.com/spring-data-jpa-query
     */
