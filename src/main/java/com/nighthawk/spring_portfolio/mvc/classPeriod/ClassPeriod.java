@@ -21,6 +21,7 @@ import org.hibernate.type.SqlTypes;
 import com.vladmihalcea.hibernate.type.json.JsonType;
 
 import com.nighthawk.spring_portfolio.mvc.person.Person;
+import com.nighthawk.spring_portfolio.mvc.assignment.Assignment;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -59,6 +60,9 @@ public class ClassPeriod {
     // students in the class have fewer permissions
     @ManyToMany(fetch = EAGER)
     private Collection<Person> students = new ArrayList<>();
+
+    @ManyToMany(fetch = EAGER)
+    private Collection<Assignment> assignments = new ArrayList<>();
 
     /* HashMap is used to store JSON for the classPeriod seating chart
     {
