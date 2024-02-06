@@ -25,7 +25,7 @@ public interface AssignmentJpaRepository extends JpaRepository<Assignment, Long>
        https://springframework.guru/spring-data-jpa-query/
        https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#jpa.query-methods
     */
-    List<Assignment> findByDateDue(Date dateCreated, Date dateDue);
+    List<Assignment> findByDateDue(Date dateDue);
 
     /*
       https://www.baeldung.com/spring-data-jpa-query
