@@ -73,57 +73,11 @@ public class Assignment {
     // Initialize static test data 
     public static Assignment[] init() {
 
-        // basics of class construction
-        Assignment p1 = new Assignment();
-        p1.setName("Get a job");
-        // p1.setCreatedBy(Person[].class);
-        p1.setContent("Get a job you lazy bum");
-        // adding Note to notes collection
-        try {  // All data that converts formats could fail
-            Date d = new SimpleDateFormat("MM-dd-yyyy").parse("00-00-0000");
-            p1.setDateCreated(d);
-        } catch (Exception e) {
-            // no actions as dob default is good enough
-        }
-        try {
-            Date c = new SimpleDateFormat("MM-dd-yyyy").parse("10-10-2025");
-            p1.setDateDue(c);
-        } catch (Exception e) {}
-
-        Assignment p2 = new Assignment();
-        p1.setName("Write a paragraph about Hamlet");
-        // p1.setCreatedBy(Person[].class);
-        p1.setContent("Tell me about him");
-        // adding Note to notes collection
-        try {  // All data that converts formats could fail
-            Date d = new SimpleDateFormat("MM-dd-yyyy").parse("00-00-0000");
-            p1.setDateCreated(d);
-        } catch (Exception e) {
-            // no actions as dob default is good enough
-        }
-        try {
-            Date c = new SimpleDateFormat("MM-dd-yyyy").parse("10-10-2025");
-            p1.setDateDue(c);
-        } catch (Exception e) {}
-
-        Assignment p3 = new Assignment();
-        p1.setName("Write 5 papers for economics");
-        // p1.setCreatedBy(Person[].class);
-        p1.setContent("stupid economics");
-        // adding Note to notes collection
-        try {  // All data that converts formats could fail
-            Date d = new SimpleDateFormat("MM-dd-yyyy").parse("00-00-0000");
-            p1.setDateCreated(d);
-        } catch (Exception e) {
-            // no actions as dob default is good enough
-        }
-        try {
-            Date c = new SimpleDateFormat("MM-dd-yyyy").parse("10-10-2025");
-            p1.setDateDue(c);
-        } catch (Exception e) {}
+        Assignment assignment1 = new Assignment("Teddy's Big Bready", new Date(), new Date(System.currentTimeMillis() + 86400000), "Make me feel good all the time in every way baby wow woohoo!!");
+        Assignment assignment2 = new Assignment("Stop YAPPING!!!!", new Date(), new Date(System.currentTimeMillis() + 172800000), "You make me want to... GRRRRR...! MAKE ME CODE NOW!!!!");
 
         // Array definition and data initialization
-        Assignment assignments[] = {p1, p2, p3};
+        Assignment assignments[] = {assignment1, assignment2};
         return(assignments);
     }
 

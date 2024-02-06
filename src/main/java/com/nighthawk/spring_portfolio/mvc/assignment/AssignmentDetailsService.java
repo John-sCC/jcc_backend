@@ -38,12 +38,8 @@ public class AssignmentDetailsService implements UserDetailsService {
         return null;
     }
 
-    /* Person Section */
-
-    public  List<Assignment>listAll() {
-        return assignmentJpaRepository.findAllByOrderByNameAsc();
-    }
-
+    /* Assignment Section */
+    
     // custom query to find match to name or email
     /*
     public  List<Person>list(String name, arraylist classes) {
@@ -59,8 +55,8 @@ public class AssignmentDetailsService implements UserDetailsService {
     */
 
     public Assignment get(long id) {
-        return (assignmentJpaRepository.findById(id).isPresent())
-                ? assignmentJpaRepository.findById(id).get()
+        return (assignmentJpaRepository.findById(id) != null)
+                ? assignmentJpaRepository.findById(id)
                 : null;
     }
 
