@@ -121,6 +121,8 @@ public class SecurityConfig {
 		configuration.setExposedHeaders(Arrays.asList("authorization"));
 		configuration.setAllowCredentials(true);
 		configuration.setAllowedOrigins(Arrays.asList("https://john-scc.github.io"));
+		// configuration.setAllowedOrigins(Arrays.asList("http://127.0.0.1:4100"));
+
 
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", configuration);
