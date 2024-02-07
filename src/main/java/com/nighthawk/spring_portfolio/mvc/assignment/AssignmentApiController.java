@@ -35,21 +35,12 @@ public class AssignmentApiController {
     private AssignmentDetailsService assignmentDetailsService;
 
     /*
-    GET List of People
-     */
-    @GetMapping("/")
-    public ResponseEntity<List<Assignment>> getAssignments() {
-        return new ResponseEntity<>( repository.findAllByOrderByNameAsc(), HttpStatus.OK);
-    }
-
-    /*
     GET individual Person using ID
      */
     @GetMapping("/{id}")
     public ResponseEntity<Assignment> getAssignment(@PathVariable long id) {
-        Optional<Assignment> optional = repository.findById(id);
-        if (optional.isPresent()) {  // Good ID
-            Assignment assignment = optional.get();  // value from findByID
+        Assignment assignment = repository.findById(id);
+        if (assignment != null) {  // Good ID
             return new ResponseEntity<>(assignment, HttpStatus.OK);  // OK HTTP response: status code, headers, and body
         }
         // Bad ID
@@ -61,9 +52,8 @@ public class AssignmentApiController {
      */
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Assignment> deleteAssignment(@PathVariable long id) {
-        Optional<Assignment> optional = repository.findById(id);
-        if (optional.isPresent()) {  // Good ID
-            Assignment assignment = optional.get();  // value from findByID
+        Assignment assignment = repository.findById(id);
+        if (assignment != null) {  // Good ID
             repository.deleteById(id);  // value from findByID
             return new ResponseEntity<>(assignment, HttpStatus.OK);  // OK HTTP response: status code, headers, and body
         }
@@ -74,7 +64,7 @@ public class AssignmentApiController {
     /*
     POST Aa record by Requesting Parameters from URI
      */
-    @PostMapping( "/post")
+    @PostMapping("/post")
     public ResponseEntity<Object> postAssignment(@RequestBody AssignmentRequest request) {
         // A assignment object WITHOUT ID will create a new record with default roles as student
         Assignment assignment = new Assignment(request.getName(), request.getDateCreated(), request.getDateDue(), request.getContent());
@@ -85,15 +75,15 @@ public class AssignmentApiController {
     /*
     The assignmentSearch API looks across database for partial match to term (k,v) passed by RequestEntity body
      */
-    @PostMapping(value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> assignmentSearch(@RequestBody final Map<String,String> map) {
-        // extract term from RequestEntity
-        String term = (String) map.get("term");
+    // @PostMapping(value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
+    // public ResponseEntity<Object> assignmentSearch(@RequestBody final Map<String,String> map) {
+    //     // extract term from RequestEntity
+    //     String term = (String) map.get("term");
 
-        // JPA query to filter on term
-        List<Assignment> list = repository.findByName(term);
+    //     // JPA query to filter on term
+    //     List<Assignment> list = repository.findByName(term);
 
-        // return resulting list and status, error checking should be added
-        return new ResponseEntity<>(list, HttpStatus.OK);
-    }
+    //     // return resulting list and status, error checking should be added
+    //     return new ResponseEntity<>(list, HttpStatus.OK);
+    // }
 }
