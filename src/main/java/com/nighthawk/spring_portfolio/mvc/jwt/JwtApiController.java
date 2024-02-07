@@ -39,11 +39,12 @@ public class JwtApiController {
 		final ResponseCookie tokenCookie = ResponseCookie.from("jwt", token)
 			.httpOnly(true)
 			.secure(true)
-			.path("/")
+			.path("/jcc_frontend/")
 			.maxAge(3600)
 			.sameSite("None; Secure")
 			// .domain("example.com") // Set to backend domain
 			.build();
+		System.out.println(tokenCookie.toString());
 		return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, tokenCookie.toString()).build();
 	}
 
