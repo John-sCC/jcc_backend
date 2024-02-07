@@ -13,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Convert;
 import static jakarta.persistence.FetchType.EAGER;
+import static jakarta.persistence.FetchType.LAZY;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
@@ -70,7 +71,7 @@ public class Person {
     private Collection<PersonRole> roles = new ArrayList<>();
 
     // trying out listing person's classes
-    @ManyToMany(fetch = EAGER)
+    @ManyToMany(fetch = LAZY)
     private Collection<ClassPeriod> classPeriods = new ArrayList<>();
     
     // to be implemented later
