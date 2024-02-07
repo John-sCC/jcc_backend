@@ -30,7 +30,6 @@
                         <th>ID</th>
                         <th>User ID</th>
                         <th>Person</th>
-                        <th>Age</th>
                         <th>Action</th>
                     </tr>
                     </thead>
@@ -39,8 +38,6 @@
                         <td th:text="${person.id}">Person ID</td>
                         <td th:text="${person.email}">Birth Date</td>
                         <td th:text="${person.name}">Name</td>
-                        <td th:if="${person.getAge() != -1}" th:text="${person.getAge()}">Age</td>
-                        <td th:unless="${person.getAge() != -1}" th:text="Unknown">Unknown Age</td>
                         <td>
                             <!--- <a th:href="@{/mvc/notes/{id}(id = ${person.id})}">Notes</a> -->
                             <a th:href="@{/mvc/person/update/{id}(id = ${person.id})}">Update</a>
