@@ -13,7 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Convert;
 import static jakarta.persistence.FetchType.EAGER;
-import static jakarta.persistence.FetchType.LAZY;
+// import static jakarta.persistence.FetchType.LAZY;
 import jakarta.validation.constraints.Size;
 
 import org.hibernate.annotations.JdbcTypeCode;
@@ -59,7 +59,7 @@ public class ClassPeriod {
     private Collection<Person> leaders = new ArrayList<>();
 
     // students in the class have fewer permissions
-    @ManyToMany(fetch = LAZY)
+    @ManyToMany(fetch = EAGER)
     private Collection<Person> students = new ArrayList<>();
 
     @ManyToMany(fetch = EAGER)
