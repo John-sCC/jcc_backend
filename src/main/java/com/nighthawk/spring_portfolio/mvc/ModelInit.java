@@ -64,6 +64,7 @@ public class ModelInit {
 
             // initializing classPeriod objects
             String[] emailsForInit = {"toby@gmail.com", "jm1021@gmail.com"};
+            String[] emailsForStudent = {"toby@gmail.com", "lexb@gmail.com", "niko@gmail.com", "madam@gmail.com", "jm1021@gmail.com"};
             int i = 0;
             ClassPeriod[] classPeriods = ClassPeriod.init();
             for (ClassPeriod classPeriod : classPeriods) {
@@ -76,6 +77,9 @@ public class ModelInit {
                     // class doesn't exist
                     classService.save(classPeriod);
                     classService.addLeaderToClass(emailsForInit[i], classPeriod.getName());
+                    for (int j = 4 - i; j >= 1 - i; j--) {
+                        classService.addStudentToClass(emailsForStudent[j], classPeriod.getName());
+                    }
                     i++;
                 }
             }

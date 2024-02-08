@@ -61,6 +61,16 @@ public class ClassPeriodDetailsService implements UserDetailsService {  // "impl
         return classPeriodJpaRepository.findByNameContainingIgnoreCase(name);
     }
 
+    // Method to get class periods by a leader
+    public List<ClassPeriod> getClassPeriodsByLeader(Person leader) {
+        return classPeriodJpaRepository.findByLeadersContaining(leader);
+    }
+
+    // Method to get class periods by a student
+    public List<ClassPeriod> getClassPeriodsByStudent(Person student) {
+        return classPeriodJpaRepository.findByStudentsContaining(student);
+    }
+
     // encode password prior to sava
     public void save(ClassPeriod classPeriod) {
         // before the save, a leader MUST be added!

@@ -4,6 +4,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
+import com.nighthawk.spring_portfolio.mvc.person.Person;
+
 /*
 Extends the JpaRepository interface from Spring Data JPA.
 -- Java Persistent API (JPA) - Hibernate: map, store, update and retrieve database
@@ -19,4 +21,7 @@ public interface ClassPeriodJpaRepository extends JpaRepository<ClassPeriod, Lon
 
     // JPA query, findBy does JPA magic with "Name", "Containing", "Or", "Email", "IgnoreCase"
     List<ClassPeriod> findByNameContainingIgnoreCase(String name);
+
+    List<ClassPeriod> findByLeadersContaining(Person leader);
+    List<ClassPeriod> findByStudentsContaining(Person student);
 }

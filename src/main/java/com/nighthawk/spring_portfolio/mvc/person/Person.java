@@ -13,7 +13,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Convert;
 import static jakarta.persistence.FetchType.EAGER;
-import static jakarta.persistence.FetchType.LAZY;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
@@ -24,8 +23,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-
-import com.nighthawk.spring_portfolio.mvc.classPeriod.ClassPeriod;
 
 /*
 Person is a POJO, Plain Old Java Object.
