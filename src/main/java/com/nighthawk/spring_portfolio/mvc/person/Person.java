@@ -71,8 +71,8 @@ public class Person {
     private Collection<PersonRole> roles = new ArrayList<>();
 
     // trying out listing person's classes
-    @ManyToMany(fetch = LAZY)
-    private Collection<ClassPeriod> classPeriods = new ArrayList<>();
+    // @ManyToMany(fetch = LAZY)
+    // private Collection<ClassPeriod> classPeriods = new ArrayList<>();
     
     // to be implemented later
     /*

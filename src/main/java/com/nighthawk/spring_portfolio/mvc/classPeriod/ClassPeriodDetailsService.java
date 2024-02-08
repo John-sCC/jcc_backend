@@ -97,14 +97,14 @@ public class ClassPeriodDetailsService implements UserDetailsService {  // "impl
                     }
                 }
                 if (addLeader) classPeriod.getLeaders().add(person);   // everything is valid for adding leader
-                boolean addClass = true;
-                for (ClassPeriod cp : person.getClassPeriods()) {
-                    if (cp.getName().equals(className)) {
-                        addClass = false;
-                        break;
-                    }
-                }
-                if (addClass) person.getClassPeriods().add(classPeriod);
+                // boolean addClass = true;
+                // for (ClassPeriod cp : person.getClassPeriods()) {
+                //     if (cp.getName().equals(className)) {
+                //         addClass = false;
+                //         break;
+                //     }
+                // }
+                // if (addClass) person.getClassPeriods().add(classPeriod);
             }
         }
     }
@@ -122,14 +122,14 @@ public class ClassPeriodDetailsService implements UserDetailsService {  // "impl
                     }
                 }
                 if (addStudent) classPeriod.getStudents().add(person);   // everything is valid for adding student
-                boolean addClass = true;
-                for (ClassPeriod cp : person.getClassPeriods()) {
-                    if (cp.getName().equals(className)) {
-                        addClass = false;
-                        break;
-                    }
-                }
-                if (addClass) person.getClassPeriods().add(classPeriod);
+                // boolean addClass = true;
+                // for (ClassPeriod cp : person.getClassPeriods()) {
+                //     if (cp.getName().equals(className)) {
+                //         addClass = false;
+                //         break;
+                //     }
+                // }
+                // if (addClass) person.getClassPeriods().add(classPeriod);
             }
         }
     }
