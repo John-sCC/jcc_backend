@@ -15,8 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.*;
-
 @RestController
 @RequestMapping("/api/assignment")
 public class AssignmentApiController {
