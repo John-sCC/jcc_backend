@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.nighthawk.spring_portfolio.mvc.classPeriod.ClassPeriodDetailsService;
+
 @RestController
 @RequestMapping("/api/assignment")
 public class AssignmentApiController {
@@ -31,6 +33,9 @@ public class AssignmentApiController {
 
     @Autowired
     private AssignmentDetailsService assignmentDetailsService;
+
+    @Autowired
+    private ClassPeriodDetailsService classService;
 
     /*
     GET individual Person using ID
@@ -67,6 +72,9 @@ public class AssignmentApiController {
         // A assignment object WITHOUT ID will create a new record with default roles as student
         Assignment assignment = new Assignment(request.getName(), request.getDateCreated(), request.getDateDue(), request.getContent());
         assignmentDetailsService.save(assignment);
+        for (String className : request.getClassNames()) {
+            classService.addAssignmentToClass(assignment.getId(), className);
+        }
         return new ResponseEntity<>(assignment.getName() +" is created successfully", HttpStatus.CREATED);
     }
 
