@@ -1,7 +1,6 @@
 package com.nighthawk.spring_portfolio.mvc.assignment;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 import java.util.Date;
@@ -15,7 +14,7 @@ Extends the JpaRepository interface from Spring Data JPA.
  */
 public interface AssignmentJpaRepository extends JpaRepository<Assignment, Long> {
 
-    List<Assignment> findAllByOrderByNameAsc();
+    Assignment findById(long id);
 
     List<Assignment> findByName(String name);
 
@@ -26,13 +25,8 @@ public interface AssignmentJpaRepository extends JpaRepository<Assignment, Long>
        https://springframework.guru/spring-data-jpa-query/
        https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#jpa.query-methods
     */
-    List<Assignment> findByDateCreatedAndDateDue(Date dateCreated, Date dateDue);
+    List<Assignment> findByDateDue(Date dateDue);
 
-    // Custom JPA query
-    @Query(
-            value = "SELECT * FROM Person p WHERE p.name LIKE ?1 or p.email LIKE ?1",
-            nativeQuery = true)
-    List<Assignment> findByLikeTermNative(String term);
     /*
       https://www.baeldung.com/spring-data-jpa-query
     */

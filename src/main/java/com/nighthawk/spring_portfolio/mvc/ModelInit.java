@@ -13,6 +13,9 @@ import com.nighthawk.spring_portfolio.mvc.person.PersonRoleJpaRepository;
 import com.nighthawk.spring_portfolio.mvc.classPeriod.ClassPeriodDetailsService;
 import com.nighthawk.spring_portfolio.mvc.classPeriod.ClassPeriodJpaRepository;
 import com.nighthawk.spring_portfolio.mvc.classPeriod.ClassPeriod;
+import com.nighthawk.spring_portfolio.mvc.assignment.AssignmentDetailsService;
+import com.nighthawk.spring_portfolio.mvc.assignment.AssignmentJpaRepository;
+import com.nighthawk.spring_portfolio.mvc.assignment.Assignment;
 
 import java.util.List;
 
@@ -25,6 +28,8 @@ public class ModelInit {
     @Autowired PersonRoleJpaRepository roleRepo;
     @Autowired ClassPeriodDetailsService classService;
     @Autowired ClassPeriodJpaRepository classRepo;
+    @Autowired AssignmentDetailsService assService;
+    @Autowired AssignmentJpaRepository assRepo;
 
     @Bean
     CommandLineRunner run() {  // The run() method will be executed after the application starts
@@ -59,6 +64,7 @@ public class ModelInit {
 
             // initializing classPeriod objects
             String[] emailsForInit = {"toby@gmail.com", "jm1021@gmail.com"};
+            String[] emailsForStudent = {"toby@gmail.com", "lexb@gmail.com", "niko@gmail.com", "madam@gmail.com", "jm1021@gmail.com"};
             int i = 0;
             ClassPeriod[] classPeriods = ClassPeriod.init();
             for (ClassPeriod classPeriod : classPeriods) {
@@ -71,6 +77,26 @@ public class ModelInit {
                     // class doesn't exist
                     classService.save(classPeriod);
                     classService.addLeaderToClass(emailsForInit[i], classPeriod.getName());
+                    for (int j = 4 - i; j >= 1 - i; j--) {
+                        classService.addStudentToClass(emailsForStudent[j], classPeriod.getName());
+                    }
+                    i++;
+                }
+            }
+
+            // initializing Assignment objects
+            Assignment[] assignments = Assignment.init();
+            i = 0;
+            for (Assignment ass : assignments) {
+                List<Assignment> existingAss = assRepo.findByName(ass.getName());
+                if (!(existingAss.isEmpty())) {
+                    // ass already exists (it does)
+                    i++;
+                    continue;
+                } else {
+                    // ass doesn't exist (it does)
+                    assService.save(ass);
+                    classService.addAssignmentToClass(ass.getId(), classPeriods[i].getName());
                     i++;
                 }
             }

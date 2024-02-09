@@ -38,12 +38,8 @@ public class AssignmentDetailsService implements UserDetailsService {
         return null;
     }
 
-    /* Person Section */
-
-    public  List<Assignment>listAll() {
-        return assignmentJpaRepository.findAllByOrderByNameAsc();
-    }
-
+    /* Assignment Section */
+    
     // custom query to find match to name or email
     /*
     public  List<Person>list(String name, arraylist classes) {
@@ -58,15 +54,9 @@ public class AssignmentDetailsService implements UserDetailsService {
     }
     */
 
-    // custom query to find anything containing term in name or email ignoring case
-    public  List<Assignment>listLikeNative(String term) {
-        String like_term = String.format("%%%s%%",term);  // Like required % rappers
-        return assignmentJpaRepository.findByLikeTermNative(like_term);
-    }
-
     public Assignment get(long id) {
-        return (assignmentJpaRepository.findById(id).isPresent())
-                ? assignmentJpaRepository.findById(id).get()
+        return (assignmentJpaRepository.findById(id) != null)
+                ? assignmentJpaRepository.findById(id)
                 : null;
     }
 

@@ -24,8 +24,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
-// import com.nighthawk.spring_portfolio.mvc.classPeriod.ClassPeriod;
-
 /*
 Person is a POJO, Plain Old Java Object.
 First set of annotations add functionality to POJO
@@ -68,6 +66,10 @@ public class Person {
     // roles for permissions, different branch
     @ManyToMany(fetch = EAGER)
     private Collection<PersonRole> roles = new ArrayList<>();
+
+    // trying out listing person's classes
+    // @ManyToMany(fetch = LAZY)
+    // private Collection<ClassPeriod> classPeriods = new ArrayList<>();
     
     // to be implemented later
     /*

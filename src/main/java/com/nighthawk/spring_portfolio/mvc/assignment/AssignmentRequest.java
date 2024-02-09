@@ -9,12 +9,14 @@ public class AssignmentRequest {
     private Date dateCreated;
     private Date dateDue;
     private String content;
+    private String[] classNames;
 
-    public AssignmentRequest(String name, Date dateCreated, Date dateDue, String content) {
+    public AssignmentRequest(String name, Date dateCreated, Date dateDue, String content, String[] classNames) {
         this.name = name;
         this.dateCreated = dateCreated;
         this.dateDue = dateDue;
         this.content = content;
+        this.classNames = classNames;
     }
 
     public String getName()
@@ -29,6 +31,15 @@ public class AssignmentRequest {
     {
         return this.dateCreated;
     }
+
+    public String[] getClassNames() {
+        return this.classNames;
+    }
+
+    public void setClassNames(String[] classNames) {
+        this.classNames = classNames;
+    }
+
     public void setDateCreated(String dateCreatedString)
     {
         try {

@@ -89,6 +89,37 @@ public class ClassPeriodApiController {
         }
     }
 
+    /*
+     * retrieve leader persons
+     * NOTE: WILL BE UPDATED LATER TO BE IMPLEMENTED WITH COOKIE CONTENTS
+     */
+    @GetMapping("/leaders/{id}")
+    public ResponseEntity<List<ClassPeriod>> getClassPeriodsByLeader(@PathVariable long id) {
+        Optional<Person> optional = personRepository.findById(id);
+        if (optional.isPresent()) {  // Good ID
+            Person person = optional.get();
+            List<ClassPeriod> leaderships = classPeriodDetailsService.getClassPeriodsByLeader(person);
+            return new ResponseEntity<>(leaderships, HttpStatus.OK);  // OK HTTP response: status code, headers, and body
+        }
+        // Bad ID
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);       
+    }
+
+    /*
+     * retrieve student persons
+     */
+    @GetMapping("/students/{id}")
+    public ResponseEntity<List<ClassPeriod>> getClassPeriodsByStudent(@PathVariable long id) {
+        Optional<Person> optional = personRepository.findById(id);
+        if (optional.isPresent()) {  // Good ID
+            Person person = optional.get();
+            List<ClassPeriod> studenthoods = classPeriodDetailsService.getClassPeriodsByStudent(person);
+            return new ResponseEntity<>(studenthoods, HttpStatus.OK);  // OK HTTP response: status code, headers, and body
+        }
+        // Bad ID
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);       
+    }
+
     // /*
     // The personSearch API looks across database for partial match to term (k,v) passed by RequestEntity body
     //  */
