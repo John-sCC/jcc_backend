@@ -91,7 +91,8 @@ public class SecurityConfig {
 					.addHeaderWriter(new StaticHeadersWriter("Access-Control-Allow-Headers", "Content-Type", "Authorization", "x-csrf-token"))
 					.addHeaderWriter(new StaticHeadersWriter("Access-Control-Allow-MaxAge", "600"))
 					.addHeaderWriter(new StaticHeadersWriter("Access-Control-Allow-Methods", "POST", "GET", "OPTIONS", "HEAD"))
-					.addHeaderWriter(new StaticHeadersWriter("Access-Control-Allow-Origin", "https://john-scc.github.io"))//"http://localhost:4100"))
+					.addHeaderWriter(new StaticHeadersWriter("Access-Control-Allow-Origin", "https://john-scc.github.io"))
+					//.addHeaderWriter(new StaticHeadersWriter("Access-Control-Allow-Origin", "http://localhost:4100"))
 				)
 				.formLogin(form -> form 
 					.loginPage("/login")
@@ -121,7 +122,7 @@ public class SecurityConfig {
 		configuration.setExposedHeaders(Arrays.asList("authorization"));
 		configuration.setAllowCredentials(true);
 		configuration.setAllowedOrigins(Arrays.asList("https://john-scc.github.io"));
-		// configuration.setAllowedOrigins(Arrays.asList("http://127.0.0.1:4100"));
+		//configuration.setAllowedOrigins(Arrays.asList("http://localhost:4100"));
 
 
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
