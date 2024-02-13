@@ -21,7 +21,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.security.web.header.writers.StaticHeadersWriter;
+
+import java.util.Arrays;
 
 
 /*
@@ -68,21 +73,26 @@ public class SecurityConfig {
 					.disable()
 				)
 				// list the requests/endpoints need to be authenticated
+				.cors(cors -> cors.configurationSource(corsConfigurationSource()))
 				.authorizeHttpRequests(auth -> auth
 					.requestMatchers("/authenticate").permitAll()
-					.requestMatchers("/mvc/person/update/**", "/mvc/person/delete/**").authenticated()
-					.requestMatchers("/api/person/post/**", "/api/person/delete/**").authenticated()
+					.requestMatchers("/mvc/person/update/**", "/mvc/person/delete/**").hasAnyAuthority("ROLE_ADMIN")
+					.requestMatchers("/api/person/delete/**", "/api/class_period/delete/**").hasAnyAuthority("ROLE_ADMIN")
+					.requestMatchers("/api/person/delete/self").hasAnyAuthority("ROLE_USER")
+					.requestMatchers("/api/class_period/post/**", "/api/class_period/set_seating_chart").authenticated()
+					.requestMatchers("/api/person/post/**").permitAll()
 					.requestMatchers("/**").permitAll()
 				)
 				// support cors
-				.cors(Customizer.withDefaults())
+				//.cors(Customizer.withDefaults())
 				.headers(headers -> headers
 					.addHeaderWriter(new StaticHeadersWriter("Access-Control-Allow-Credentials", "true"))
 					.addHeaderWriter(new StaticHeadersWriter("Access-Control-Allow-ExposedHeaders", "*", "Authorization"))
 					.addHeaderWriter(new StaticHeadersWriter("Access-Control-Allow-Headers", "Content-Type", "Authorization", "x-csrf-token"))
 					.addHeaderWriter(new StaticHeadersWriter("Access-Control-Allow-MaxAge", "600"))
 					.addHeaderWriter(new StaticHeadersWriter("Access-Control-Allow-Methods", "POST", "GET", "OPTIONS", "HEAD"))
-					.addHeaderWriter(new StaticHeadersWriter("Access-Control-Allow-Origin", "https://nighthawkcoders.github.io", "http://localhost:4000"))
+					.addHeaderWriter(new StaticHeadersWriter("Access-Control-Allow-Origin", "https://john-scc.github.io"))
+					//.addHeaderWriter(new StaticHeadersWriter("Access-Control-Allow-Origin", "http://localhost:4100"))
 				)
 				.formLogin(form -> form 
 					.loginPage("/login")
@@ -102,5 +112,21 @@ public class SecurityConfig {
 				// Add a filter to validate the tokens with every request
 				.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 			return http.build();
+	}
+	// used for login on blog
+	private CorsConfigurationSource corsConfigurationSource() {
+		CorsConfiguration configuration = new CorsConfiguration();
+		configuration.setAllowedOrigins(Arrays.asList("*"));
+		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+		configuration.setAllowedHeaders(Arrays.asList("authorization", "content-type", "x-csrf-token"));
+		configuration.setExposedHeaders(Arrays.asList("authorization"));
+		configuration.setAllowCredentials(true);
+		configuration.setAllowedOrigins(Arrays.asList("https://john-scc.github.io"));
+		//configuration.setAllowedOrigins(Arrays.asList("http://localhost:4100"));
+
+
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", configuration);
+		return source;
 	}
 }
