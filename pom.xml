@@ -154,11 +154,6 @@
             <artifactId>commonmark</artifactId>
             <version>0.21.0</version>
         </dependency>
-        <dependency>
-            <groupId>net.sourceforge.tess4j</groupId>
-            <artifactId>tess4j</artifactId>
-            <version>4.1.1</version>
-        </dependency>
     </dependencies>
 
     <build>
