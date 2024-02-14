@@ -69,6 +69,11 @@ public class AssignmentApiController {
      */
     @PostMapping("/post")
     public ResponseEntity<Object> postAssignment(@RequestBody AssignmentRequest request) {
+        for (String className : request.getClassNames()) {
+            if (classService.getByName(className) == null) {
+                return new ResponseEntity<>("One or more classes was invalid", HttpStatus.BAD_REQUEST);
+            }
+        }
         // A assignment object WITHOUT ID will create a new record with default roles as student
         Assignment assignment = new Assignment(request.getName(), request.getDateCreated(), request.getDateDue(), request.getContent());
         assignmentDetailsService.save(assignment);
