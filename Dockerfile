@@ -5,5 +5,6 @@ RUN apk update && apk upgrade && \
     apk add --no-cache git 
 COPY . /app
 RUN ./mvnw package
+RUN apk add --no-cache tesseract-ocr
 CMD ["java", "-jar", "target/spring-0.0.1-SNAPSHOT.jar"]
 EXPOSE 8911

@@ -7,4 +7,5 @@ services:
       - "8911:8911"
     volumes:
        - ./volumes:/volumes
+       - ./tessdata:/app/tessdata
     restart: unless-stopped
