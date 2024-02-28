@@ -79,7 +79,7 @@ public class SecurityConfig {
 					.requestMatchers("/mvc/person/update/**", "/mvc/person/delete/**").hasAnyAuthority("ROLE_ADMIN")
 					.requestMatchers("/api/person/delete/**", "/api/class_period/delete/**").hasAnyAuthority("ROLE_ADMIN")
 					.requestMatchers("/api/person/delete/self").hasAnyAuthority("ROLE_USER")
-					.requestMatchers("/api/class_period/post/**", "/api/class_period/set_seating_chart").authenticated()
+					//.requestMatchers("/api/class_period/post/**", "/api/class_period/set_seating_chart").authenticated()
 					.requestMatchers("/api/person/post/**").permitAll()
 					.requestMatchers("/**").permitAll()
 				)

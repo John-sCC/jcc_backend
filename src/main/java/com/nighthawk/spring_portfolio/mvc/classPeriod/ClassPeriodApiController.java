@@ -73,10 +73,10 @@ public class ClassPeriodApiController {
     POST Aa record by Requesting Parameters from URI
      */
     @PostMapping("/post")
-    public ResponseEntity<Object> postClassPeriod(@RequestParam("name") String name) {
+    public ResponseEntity<Object> postClassPeriod(@RequestParam("name") String name, @RequestParam("email") String email) {
         // retrieving the current authentication details
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = ((UserDetails) authentication.getPrincipal()).getUsername();
+        // Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        // String email = ((UserDetails) authentication.getPrincipal()).getUsername();
         // checking validity of user email
         Person newLeader = personRepository.findByEmail(email);
         if (newLeader != null) {
