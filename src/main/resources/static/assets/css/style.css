@@ -3980,6 +3980,7 @@ textarea.form-control-lg {
   justify-content: space-between;
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
+  background-color: #ed4a45;
 }
 .dark-mode .navbar > .container,
 .dark-mode .navbar > .container-fluid, .navbar > .container,
@@ -7709,7 +7710,7 @@ textarea.form-control-lg {
 
 .bg-secondary {
   --bs-bg-opacity: 1;
-  background-color: rgba(var(--bs-secondary-rgb), var(--bs-bg-opacity)) !important;
+  background-color: rgb(0, 63, 163) !important;
 }
 
 .bg-success {
