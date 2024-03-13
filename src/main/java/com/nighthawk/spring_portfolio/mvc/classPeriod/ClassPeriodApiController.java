@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.nighthawk.spring_portfolio.mvc.person.Person;
 import com.nighthawk.spring_portfolio.mvc.person.PersonJpaRepository;
+import com.nighthawk.spring_portfolio.mvc.jwt.JwtTokenUtil;
 
 import java.util.*;
 
@@ -33,6 +34,9 @@ public class ClassPeriodApiController {
     // for looking at people
     @Autowired
     private PersonJpaRepository personRepository;
+
+    @Autowired
+    private JwtTokenUtil tokenUtil;
 
     /*
     GET List of classes
@@ -118,6 +122,34 @@ public class ClassPeriodApiController {
         }
         // Bad ID
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);       
+    }
+
+    @GetMapping("/dashboard")
+    public ResponseEntity<?> fetchBothClassData(@CookieValue("jwt") String jwtToken) {
+        System.out.println("This is the cookie data: " + jwtToken);
+        // checking if JWT token is missing
+        if (jwtToken.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        // getting user data
+        String userEmail = tokenUtil.getUsernameFromToken(jwtToken);
+        Person existingPerson = personRepository.findByEmail(userEmail);
+        if (existingPerson == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        List<ClassPeriod> student = classPeriodDetailsService.getClassPeriodsByStudent(existingPerson);
+        List<ClassPeriod> leader = classPeriodDetailsService.getClassPeriodsByLeader(existingPerson);
+
+        // initializing storage device vrrrmmmm ERRT ERRT ERRT beeeeeep
+        HashMap<String, List<ClassPeriod>> classData = new HashMap<>();
+
+        // adding class periods to storage device brrp brrp bleeeeeeebpt
+        classData.put("student", student);
+        classData.put("leader", leader);
+
+        // return class data
+        return new ResponseEntity<>(classData, HttpStatus.OK);
     }
 
     // /*
