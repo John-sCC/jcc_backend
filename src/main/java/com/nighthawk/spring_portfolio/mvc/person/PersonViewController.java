@@ -21,7 +21,9 @@ public class PersonViewController {
     @GetMapping("/read")
     public String person(Model model) {
         List<Person> list = repository.listAll();
+        List<Person> connectedUsers = repository.connectedUsers();
         model.addAttribute("list", list);
+        model.addAttribute("connectedUsers", connectedUsers);
         return "person/read";
     }
 

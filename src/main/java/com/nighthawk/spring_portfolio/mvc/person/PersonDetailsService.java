@@ -68,6 +68,11 @@ public class PersonDetailsService implements UserDetailsService {  // "implement
         return personJpaRepository.findByLikeTermNative(like_term);
     }
 
+    //private static final List<Person> connectedUsers = new ArrayList<>();
+    public List<Person>connectedUsers(String status) {
+        return personJpaRepository.findByStatus(status);
+    }
+
     // encode password prior to sava
     public void save(Person person) {
         person.setPassword(passwordEncoder().encode(person.getPassword()));
@@ -86,6 +91,14 @@ public class PersonDetailsService implements UserDetailsService {  // "implement
 
     public Person getByUsn(String usn) {
         return (personJpaRepository.findByUsn(usn));
+    }
+
+    public void register(Person person) {
+        person.setStatus("online");  
+    }
+
+    public Person getStatus(String status) {
+        return (personJpaRepository.findByStatus(status));
     }
 
     public void delete(long id) {
