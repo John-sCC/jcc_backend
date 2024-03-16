@@ -35,4 +35,8 @@ public class Quantitative extends StatsFunctions{
         correlation = calculateCorrelation(variableValues.get(0), variableValues.get(1));
     }
 
+    public double getCorrelation(){
+        return this.correlation;
+    }
+
 }
