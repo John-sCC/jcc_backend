@@ -10,8 +10,6 @@ import java.util.List;
 
 import jakarta.persistence.*;
 
-@Data
-@Entity // Annotation to simplify creating an entity, which is a lightweight persistence domain object. Typically, an entity represents a table in a relational database, and each entity instance corresponds to a row in that table.
 public class StatsFunctions {
     public double calculateMean(List<Double> dataset)
     {
