@@ -56,6 +56,10 @@ public class Person {
     @NotEmpty
     private String status;
 
+    @NotEmpty
+    private boolean online;
+
+
     // @NonNull, etc placed in params of constructor: "@NonNull @Size(min = 2, max = 30, message = "Name (2 to 30 chars)") String name"
     @NonNull
     @Size(min = 2, max = 30, message = "First and Last Name (2 to 30 chars)")

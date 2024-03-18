@@ -68,16 +68,31 @@ public class PersonDetailsService implements UserDetailsService {  // "implement
         return personJpaRepository.findByLikeTermNative(like_term);
     }
 
-    //private static final List<Person> connectedUsers = new ArrayList<>();
-    public List<Person>connectedUsers(String status) {
-        return personJpaRepository.findByStatus(status);
-    }
-
     // encode password prior to sava
     public void save(Person person) {
         person.setPassword(passwordEncoder().encode(person.getPassword()));
         personJpaRepository.save(person);
     }
+
+    // Method to set the online status of a user
+    public void setOnlineStatus(String email, boolean online) {
+        Person person = personJpaRepository.findByEmail(email);
+        if (person != null) {
+            person.setOnline(online);
+            personJpaRepository.save(person);
+        }
+    }
+
+    // Method to set the online status of a user when they log in
+    public void loginUser(String email) {
+        setOnlineStatus(email, true);
+    }
+
+    // Method to set the online status of a user when they log out
+    public void logoutUser(String email) {
+        setOnlineStatus(email, false);
+    }
+
 
     public Person get(long id) {
         return (personJpaRepository.findById(id).isPresent())
@@ -91,14 +106,6 @@ public class PersonDetailsService implements UserDetailsService {  // "implement
 
     public Person getByUsn(String usn) {
         return (personJpaRepository.findByUsn(usn));
-    }
-
-    public void register(Person person) {
-        person.setStatus("online");  
-    }
-
-    public Person getStatus(String status) {
-        return (personJpaRepository.findByStatus(status));
     }
 
     public void delete(long id) {
