@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/student")
-@CrossOrigin(origins = "https://rik-csa.github.io/")
+@CrossOrigin(origins = "https://john-scc.github.io/")
 public class StudentController {
 
     private List<Student> students = new ArrayList<>();
