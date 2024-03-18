@@ -15,10 +15,7 @@ import java.util.Optional;
 @RestController // annotation to simplify the creation of RESTful web services
 @RequestMapping("/api/stats")
 public class StatsApiController {
-<<<<<<< HEAD
-=======
     /*
->>>>>>> 342a2a33bdecc333f9b0f8281156f5289dda5d8a
     @GetMapping("/get")
     public ResponseEntity<List<double>> getCorrelation() {
         List<Quantitative> quan = repository.findAll();
@@ -28,9 +25,5 @@ public class StatsApiController {
         } 
         return correlations;
     }
-<<<<<<< HEAD
-    
-=======
     */
->>>>>>> 342a2a33bdecc333f9b0f8281156f5289dda5d8a
 }
