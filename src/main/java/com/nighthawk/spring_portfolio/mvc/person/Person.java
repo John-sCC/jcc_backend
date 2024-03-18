@@ -53,6 +53,13 @@ public class Person {
     @NotEmpty
     private String password;
 
+    @NotEmpty
+    private String status;
+
+    @NotEmpty
+    private boolean online;
+
+
     // @NonNull, etc placed in params of constructor: "@NonNull @Size(min = 2, max = 30, message = "Name (2 to 30 chars)") String name"
     @NonNull
     @Size(min = 2, max = 30, message = "First and Last Name (2 to 30 chars)")
@@ -87,11 +94,12 @@ public class Person {
 
 
     // Constructor used when building object from an API
-    public Person(String email, String password, String name, String usn) {
+    public Person(String email, String password, String name, String usn, String status) {
         this.email = email;
         this.password = password;
         this.name = name;
         this.usn = usn;
+        this.status = status;
         // other attributes implemented later
     }
 
@@ -104,30 +112,34 @@ public class Person {
         p1.setEmail("toby@gmail.com");
         p1.setPassword("123toby");
         p1.setUsn("bigT");
-         
+        p1.setStatus("online");
         Person p2 = new Person();
         p2.setName("Alexander Graham Bell");
         p2.setEmail("lexb@gmail.com");
         p2.setPassword("123LexB!");
         p2.setUsn("phoneNumber1");
+        p2.setStatus("online");
 
         Person p3 = new Person();
         p3.setName("Nikola Tesla");
         p3.setEmail("niko@gmail.com");
         p3.setPassword("123Niko!");
         p3.setUsn("iOwnX");
+        p3.setStatus("online");
 
         Person p4 = new Person();
         p4.setName("Madam Currie");
         p4.setEmail("madam@gmail.com");
         p4.setPassword("123Madam!");
         p4.setUsn("madRadium");
+        p4.setStatus("online");
 
         Person p5 = new Person();
         p5.setName("John Mortensen");
         p5.setEmail("jm1021@gmail.com");
         p5.setPassword("123Qwerty!");
         p5.setUsn("jMort");
+        p5.setStatus("online");
 
         Person p6 = new Person();
         p6.setName("Grace Hopper");

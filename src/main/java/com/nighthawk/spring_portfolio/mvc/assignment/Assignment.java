@@ -52,7 +52,7 @@ public class Assignment {
     private Date dateDue;
 
     @NonNull
-    @Size(min=2, max=5000, message = "Content (2 to 5000 chars)")
+    @Size(min=0, max=5000, message = "Content (2 to 5000 chars)")
     private String content;
 
     // classes assigned
