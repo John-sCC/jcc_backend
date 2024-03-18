@@ -93,6 +93,9 @@ public class PersonDetailsService implements UserDetailsService {  // "implement
         setOnlineStatus(email, false);
     }
 
+    public List<Person> getConnectedUsers() {
+        return personJpaRepository.findByOnline(true);
+    }    
 
     public Person get(long id) {
         return (personJpaRepository.findById(id).isPresent())
