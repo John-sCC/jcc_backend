@@ -1,9 +1,6 @@
 package com.nighthawk.spring_portfolio.mvc.statsData;
 
-<<<<<<< HEAD
-=======
 /*
->>>>>>> 342a2a33bdecc333f9b0f8281156f5289dda5d8a
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,27 +15,17 @@ import jakarta.persistence.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-<<<<<<< HEAD
-@Entity // Annotation to simplify creating an entity, which is a lightweight persistence domain object. Typically, an entity represents a table in a relational database, and each entity instance corresponds to a row in that table.
-public class Quantitative extends StatsFunctions{
-=======
 @Entity
 public class Quantitative extends StatsFunctions {
 
->>>>>>> 342a2a33bdecc333f9b0f8281156f5289dda5d8a
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     private List<String> variable;
-<<<<<<< HEAD
-    
-    private List<List<Double>> values;
-=======
 
     @Lob
     private byte[] values;
->>>>>>> 342a2a33bdecc333f9b0f8281156f5289dda5d8a
 
     private double correlation;
 
@@ -47,17 +34,6 @@ public class Quantitative extends StatsFunctions {
             throw new IllegalArgumentException("Lists must have the same size");
         }
         this.variable = variableNames;
-<<<<<<< HEAD
-        this.values = variableValues;
-        correlation = calculateCorrelation(variableValues.get(0), variableValues.get(1));
-    }
-
-    public double getCorrelation(){
-        return this.correlation;
-    }
-
-}
-=======
         //this.values = serializeValues(variableValues);
         correlation = calculateCorrelation(variableValues.get(0), variableValues.get(1));
     }
@@ -95,4 +71,3 @@ public class Quantitative extends StatsFunctions {
     }
 }
 */
->>>>>>> 342a2a33bdecc333f9b0f8281156f5289dda5d8a
