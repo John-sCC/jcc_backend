@@ -1,9 +1,12 @@
 package com.nighthawk.spring_portfolio.mvc.assignment;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +16,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.CookieValue;
 
 import com.nighthawk.spring_portfolio.mvc.classPeriod.ClassPeriodDetailsService;
@@ -22,6 +27,7 @@ import com.nighthawk.spring_portfolio.mvc.jwt.JwtTokenUtil;
 import com.nighthawk.spring_portfolio.mvc.person.Person;
 import com.nighthawk.spring_portfolio.mvc.person.PersonJpaRepository;
 import com.nighthawk.spring_portfolio.mvc.classPeriod.ClassPeriod;
+import java.util.HashMap;
 
 @RestController
 @RequestMapping("/api/assignment")
@@ -114,18 +120,69 @@ public class AssignmentApiController {
         return new ResponseEntity<>("The assignment couldn't be created. Leadership role could not be found.", HttpStatus.BAD_REQUEST);
     }
 
-    /*
-    The assignmentSearch API looks across database for partial match to term (k,v) passed by RequestEntity body
-     */
-    // @PostMapping(value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
-    // public ResponseEntity<Object> assignmentSearch(@RequestBody final Map<String,String> map) {
-    //     // extract term from RequestEntity
-    //     String term = (String) map.get("term");
 
-    //     // JPA query to filter on term
-    //     List<Assignment> list = repository.findByName(term);
+    @Value("${java.io.tmpdir}")
+    private String tempUploadDir;
 
-    //     // return resulting list and status, error checking should be added
-    //     return new ResponseEntity<>(list, HttpStatus.OK);
-    // }
+    private String uploadDir = "src/main/java/com/nighthawk/spring_portfolio/mvc/assignment/StoredAssignments";
+
+     @PostMapping("/upload")
+    public ResponseEntity<String> handleFileUpload(@RequestPart("file") MultipartFile file) {
+        try {
+            //check if file type is null: edge case
+            String contentType = file.getContentType();
+
+            if (contentType == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("File content type is not supported");
+            }
+
+            String fileExtension = getFileExtension(file.getOriginalFilename());
+
+            if (!isValidFileType(fileExtension, contentType)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("File type is not supported");
+            }
+    
+            // Create the temporary upload directory if it doesn't exist
+            File tempDirectory = new File(tempUploadDir);
+            if (!tempDirectory.exists()) {
+                tempDirectory.mkdirs();
+            }
+
+            // Save the file to the temporary upload directory
+            String tempFilePath = tempUploadDir + File.separator + file.getOriginalFilename();
+            file.transferTo(new File(tempFilePath));
+
+            // Move the file to the final destination
+            String finalFilePath = uploadDir + File.separator + file.getOriginalFilename();
+            new File(tempFilePath).renameTo(new File(finalFilePath));
+            
+            return ResponseEntity.ok("File uploaded successfully");
+
+        } catch (IOException e) {
+            return ResponseEntity.status(500).body("Failed to upload file");
+        }
+    }
+
+    private boolean isValidFileType(String fileExtension, String contentType) {
+        HashMap<String, String> fileTypes = new HashMap<>();
+        fileTypes.put("pdf", MediaType.APPLICATION_PDF_VALUE);
+        fileTypes.put("jpg", MediaType.IMAGE_JPEG_VALUE);
+        fileTypes.put("jpeg", MediaType.IMAGE_JPEG_VALUE);
+        fileTypes.put("png", MediaType.IMAGE_PNG_VALUE);
+        fileTypes.put("docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+        
+        if (fileTypes.containsKey(fileExtension) && fileTypes.get(fileExtension).equals(contentType))
+        {
+            return true;
+        }
+        return false;
+    }
+    
+    private String getFileExtension(String filename) {
+        if (filename == null) {
+            return null;
+        }
+        int dotIndex = filename.lastIndexOf('.');
+        return filename.substring(dotIndex + 1);
+    }
 }
