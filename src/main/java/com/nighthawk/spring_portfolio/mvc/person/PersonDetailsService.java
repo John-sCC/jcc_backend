@@ -75,27 +75,27 @@ public class PersonDetailsService implements UserDetailsService {  // "implement
     }
 
     // Method to set the online status of a user
-    public void setOnlineStatus(String email, boolean online) {
-        Person person = personJpaRepository.findByEmail(email);
-        if (person != null) {
-            person.setOnline(online);
-            personJpaRepository.save(person);
-        }
-    }
+    // public void setOnlineStatus(String email, boolean online) {
+    //     Person person = personJpaRepository.findByEmail(email);
+    //     if (person != null) {
+    //         person.setOnline(online);
+    //         personJpaRepository.save(person);
+    //     }
+    // }
 
     // Method to set the online status of a user when they log in
-    public void loginUser(String email) {
-        setOnlineStatus(email, true);
-    }
+    // public void loginUser(String email) {
+    //     setOnlineStatus(email, true);
+    // }
 
     // Method to set the online status of a user when they log out
-    public void logoutUser(String email) {
-        setOnlineStatus(email, false);
-    }
+    // public void logoutUser(String email) {
+    //     setOnlineStatus(email, false);
+    // }
 
-    public List<Person> getConnectedUsers() {
-        return personJpaRepository.findByOnline(true);
-    }    
+    // public List<Person> getConnectedUsers() {
+    //     return personJpaRepository.findByOnline(true);
+    // }    
 
     public Person get(long id) {
         return (personJpaRepository.findById(id).isPresent())
