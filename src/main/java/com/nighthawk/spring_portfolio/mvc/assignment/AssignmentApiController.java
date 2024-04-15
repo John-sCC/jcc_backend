@@ -126,7 +126,7 @@ public class AssignmentApiController {
 
     private String uploadDir = "src/main/java/com/nighthawk/spring_portfolio/mvc/assignment/StoredAssignments";
 
-     @PostMapping("/upload")
+    @PostMapping("/upload")
     public ResponseEntity<String> handleFileUpload(@RequestPart("file") MultipartFile file) {
         try {
             //check if file type is null: edge case
@@ -156,7 +156,7 @@ public class AssignmentApiController {
             String finalFilePath = uploadDir + File.separator + file.getOriginalFilename();
             new File(tempFilePath).renameTo(new File(finalFilePath));
             
-            return ResponseEntity.ok("File uploaded successfully");
+            return ResponseEntity.ok(finalFilePath);
 
         } catch (IOException e) {
             return ResponseEntity.status(500).body("Failed to upload file");
