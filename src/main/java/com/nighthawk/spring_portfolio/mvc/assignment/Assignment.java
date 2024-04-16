@@ -2,11 +2,14 @@ package com.nighthawk.spring_portfolio.mvc.assignment;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Collection;
+import java.util.ArrayList;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Convert;
 import jakarta.validation.constraints.Size;
 
@@ -55,7 +58,10 @@ public class Assignment {
     @Size(min=0, max=5000, message = "Content (2 to 5000 chars)")
     private String content;
 
-    // classes assigned
+    @Convert(converter = AssignmentSubmissionConverter.class)
+    private Collection<AssignmentSubmission> submissions = new ArrayList<>();
+
+    // classes assigned, obsolete bc assignments stored within classes
     /* 
      * @ManyToMany
      * @JoinColumn(name="assignment_to_classes")
@@ -86,7 +92,7 @@ public class Assignment {
         Assignment assignments[] = init();
 
         // iterate using "enhanced for loop"
-        for( Assignment assignment : assignments) {
+        for (Assignment assignment : assignments) {
             System.out.println(assignment);  // print object
         }
     }
