@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 
@@ -21,7 +20,15 @@ public class Categorical extends StatsFunctions {
     private Long id;
     
     private List<String> variableNames; //if size == 2, first val = explanatory, second = response
+        
+    private List<String> category;
+    
+    private List<Double> frequency;
 
-    private Map<String, Double> items = new HashMap<>(); // Name, Frequency
+    public Categorical (List<String> names, List<String> categories, List<Double> frequencies) { //Ok technically names can only have a max size of 2
+        this.variableNames = names;
+        this.category = category;
+        this.frequency = frequency;
+    }
     
 }
