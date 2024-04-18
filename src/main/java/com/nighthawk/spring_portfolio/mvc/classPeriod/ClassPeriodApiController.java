@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.nighthawk.spring_portfolio.mvc.person.Person;
 import com.nighthawk.spring_portfolio.mvc.person.PersonJpaRepository;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.nighthawk.spring_portfolio.mvc.jwt.JwtTokenUtil;
 
 import java.util.*;
@@ -203,4 +204,36 @@ public class ClassPeriodApiController {
         // return Bad ID
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST); 
     }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> updateClassPeriod(@PathVariable long id, @RequestBody JsonNode requestBody) {
+        ClassPeriod classPeriod = repository.findById(id);
+
+        // Extract name from the request body
+        String name = requestBody.get("name").asText();
+
+        // Extract students from the request body and convert them to an ArrayList<String>
+        JsonNode studentsNode = requestBody.get("class");
+        ArrayList<String> students = new ArrayList<>();
+        if (studentsNode.isArray()) {
+            for (JsonNode studentNode : studentsNode) {
+                students.add(studentNode.asText());
+            }
+        }
+
+        // Set the properties of the existing class period
+        classPeriod.setName(name);
+        classPeriod.setStudents(students);
+
+        // Print for verification
+        System.out.println("Name: " + name);
+        System.out.println("Students: " + students);
+
+        // Save the updated class period to the database
+        repository.save(classPeriod);
+
+        // Return an appropriate response
+        return new ResponseEntity<>("Class period updated successfully", HttpStatus.OK);
+    }
 }
+
