@@ -47,6 +47,12 @@ public class AssignmentApiController {
     private AssignmentDetailsService assignmentDetailsService;
 
     @Autowired
+    private AssignmentSubmissionJpaRepository subRepository;
+
+    @Autowired
+    private AssignmentSubmissionDetailsService subDetailsService;
+
+    @Autowired
     private ClassPeriodDetailsService classService;
 
     @Autowired
@@ -125,6 +131,82 @@ public class AssignmentApiController {
     private String tempUploadDir;
 
     private String uploadDir = "src/main/java/com/nighthawk/spring_portfolio/mvc/assignment/StoredAssignments";
+
+    @PostMapping("/submit")
+    public ResponseEntity<Object> handleFileUpload(@CookieValue("jwt") String jwtToken,
+                                                   @RequestPart("file") MultipartFile file,
+                                                   @RequestBody SubmissionRequest submissionRequest) {
+        // jwt processing for user info
+        if (jwtToken.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        // getting user data
+        String userEmail = tokenUtil.getUsernameFromToken(jwtToken);
+        Person existingPerson = personRepository.findByEmail(userEmail);
+        if (existingPerson == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        // determining the relevant assignment and its relation to user
+        boolean userInClasses = false;
+        Assignment submittedAssignment = assignmentDetailsService.get(submissionRequest.getId()); // getting requested assignment
+        List<ClassPeriod> classesWithAssignment = classService.getClassPeriodsByAssignment(submittedAssignment); // classes with assignment
+        for (ClassPeriod classPeriod : classesWithAssignment) {
+            if (classPeriod.getStudents().contains(existingPerson)) {
+                userInClasses = true; // user is in a class period with the given assignment
+            }
+        }
+        if (!userInClasses) { // if the user is not in the necessary class
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        // checking the submission number
+        int submissionNumber = 1;
+        for (AssignmentSubmission submission : submittedAssignment.getSubmissions()) {
+            if (submission.getSubmitter().getEmail().equals(existingPerson.getEmail())) {
+                if (submission.getSubmissionNumber() >= submissionNumber) {
+                    submissionNumber = submission.getSubmissionNumber() + 1;
+                }
+            }
+        }
+
+        // processing file upload if the user has been verified (RAYMOND CODE)
+        try {
+            //check if file type is null: edge case
+            String contentType = file.getContentType();
+
+            if (contentType == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("File content type is not supported");
+            }
+
+            String fileExtension = getFileExtension(file.getOriginalFilename());
+
+            if (!isValidFileType(fileExtension, contentType)) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("File type is not supported");
+            }
+    
+            // Create the temporary upload directory if it doesn't exist
+            File tempDirectory = new File(tempUploadDir);
+            if (!tempDirectory.exists()) {
+                tempDirectory.mkdirs();
+            }
+
+            // Save the file to the temporary upload directory
+            String tempFilePath = tempUploadDir + File.separator + file.getOriginalFilename();
+            file.transferTo(new File(tempFilePath));
+
+            // Move the file to the final destination
+            String finalFilePath = uploadDir + File.separator + file.getOriginalFilename();
+            new File(tempFilePath).renameTo(new File(finalFilePath));
+
+            // saving the new assignment submission following (DREW CODE)
+            AssignmentSubmission submission = new AssignmentSubmission(existingPerson, finalFilePath, submissionRequest.getSubmissionTime(), submissionNumber);
+            subDetailsService.save(submission); // saving the new submission
+            assignmentDetailsService.addSubmissionToAssignment(submittedAssignment, submission); // adding the submission to the assignment
+            return new ResponseEntity<>("Submission to the assignment \"" + submittedAssignment.getName() + "\" was successful!", HttpStatus.CREATED);
+            // finished processing!!! wow!!!
+        } catch (IOException e) {
+            return ResponseEntity.status(500).body("Failed to upload file");
+        }
+    }
 
     @PostMapping("/upload")
     public ResponseEntity<String> handleFileUpload(@RequestPart("file") MultipartFile file) {

@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 import com.nighthawk.spring_portfolio.mvc.person.Person;
+import com.nighthawk.spring_portfolio.mvc.assignment.Assignment;
 
 /*
 Extends the JpaRepository interface from Spring Data JPA.
@@ -24,4 +25,5 @@ public interface ClassPeriodJpaRepository extends JpaRepository<ClassPeriod, Lon
 
     List<ClassPeriod> findByLeadersContaining(Person leader);
     List<ClassPeriod> findByStudentsContaining(Person student);
+    List<ClassPeriod> findByAssignmentsContaining(Assignment assignment);
 }

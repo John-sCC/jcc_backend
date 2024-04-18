@@ -100,7 +100,6 @@ public class ModelInit {
             nikoSubmission.setFilePath("/test/filepath/this.jpg");
             nikoSubmission.setTimeSubmitted(submissionTime);
             nikoSubmission.setSubmissionNumber(1);
-            subService.save(nikoSubmission);
             for (Assignment ass : assignments) {
                 List<Assignment> existingAss = assRepo.findByName(ass.getName());
                 if (!(existingAss.isEmpty())) {
@@ -110,6 +109,7 @@ public class ModelInit {
                 } else {
                     // ass doesn't exist (it does)
                     if (i == 0) {
+                        subService.save(nikoSubmission);
                         assService.addSubmissionToAssignment(ass, nikoSubmission);
                     }
                     assService.save(ass);

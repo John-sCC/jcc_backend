@@ -42,4 +42,11 @@ public class AssignmentSubmission {
     private Date timeSubmitted;
 
     private int submissionNumber;
+
+    public AssignmentSubmission(Person submitter, String filePath, Date timeSubmitted, int submissionNumber) {
+        this.submitter = submitter;
+        this.filePath = filePath;
+        this.timeSubmitted = timeSubmitted;
+        this.submissionNumber = submissionNumber;
+    }
 }
