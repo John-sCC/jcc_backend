@@ -215,6 +215,7 @@ public class AssignmentApiController {
             AssignmentSubmission submission = new AssignmentSubmission(existingPerson, finalFilePath, submissionTime, submissionNumber);
             subDetailsService.save(submission); // saving the new submission
             assignmentDetailsService.addSubmissionToAssignment(submittedAssignment, submission); // adding the submission to the assignment
+            assignmentDetailsService.save(submittedAssignment);
             return new ResponseEntity<>("Submission to the assignment \"" + submittedAssignment.getName() + "\" was successful!", HttpStatus.CREATED);
             // finished processing!!! wow!!!
         } catch (IOException e) {
