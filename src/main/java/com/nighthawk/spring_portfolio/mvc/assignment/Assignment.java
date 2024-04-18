@@ -2,14 +2,16 @@ package com.nighthawk.spring_portfolio.mvc.assignment;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Collection;
+import java.util.List;
 import java.util.ArrayList;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+
 import jakarta.persistence.Convert;
 import jakarta.validation.constraints.Size;
 
@@ -36,7 +38,7 @@ The last annotation connect to database
 @Convert(attributeName ="assignment", converter = JsonType.class)
 public class Assignment {
 
-    // automatic unique identifier for Person record
+    // automatic unique identifier for Assignment record
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -58,8 +60,8 @@ public class Assignment {
     @Size(min=0, max=5000, message = "Content (2 to 5000 chars)")
     private String content;
 
-    @Convert(converter = AssignmentSubmissionConverter.class)
-    private Collection<AssignmentSubmission> submissions = new ArrayList<>();
+    @OneToMany(fetch = FetchType.LAZY)
+    private List<AssignmentSubmission> submissions = new ArrayList<>();
 
     // classes assigned, obsolete bc assignments stored within classes
     /* 

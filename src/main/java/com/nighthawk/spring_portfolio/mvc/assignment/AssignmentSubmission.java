@@ -1,32 +1,45 @@
 package com.nighthawk.spring_portfolio.mvc.assignment;
 
-import com.nighthawk.spring_portfolio.mvc.person.Person;
-
 import java.util.Date;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import jakarta.persistence.Convert;
+
+import com.vladmihalcea.hibernate.type.json.JsonType;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+
+import com.nighthawk.spring_portfolio.mvc.person.Person;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
+@Convert(attributeName ="assignmentSubmission", converter = JsonType.class)
 public class AssignmentSubmission {
+    // automatic unique identifier for Person record
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.EAGER)
     private Person submitter;
+
+    @NonNull
     private String filePath;
+
+    @Temporal(TemporalType.TIMESTAMP)
     private Date timeSubmitted;
+
     private int submissionNumber;
-
-    // basic argument constructor
-    public AssignmentSubmission(Person submitter, String filePath, Date timeSubmitted, int submissionNumber) {
-        this.submitter = submitter;
-        this.filePath = filePath;
-        this.timeSubmitted = timeSubmitted;
-        this.submissionNumber = submissionNumber;
-    }
-
-    // getters
-    public Person getSubmitter() {return this.submitter;}
-    public String getFilePath() {return this.filePath;}
-    public Date getTimeSubmitted() {return this.timeSubmitted;}
-    public int getSubmissionNumber() {return this.submissionNumber;}
-
-    // setters
-    public void setSubmitter(Person submitter) {this.submitter = submitter;}
-    public void setFilePath(String filePath) {this.filePath = filePath;}
-    public void setTimeSubmitted(Date timeSubmitted) {this.timeSubmitted = timeSubmitted;}
-    public void setSubmissionNumber(int submissionNumber) {this.submissionNumber = submissionNumber;}
 }

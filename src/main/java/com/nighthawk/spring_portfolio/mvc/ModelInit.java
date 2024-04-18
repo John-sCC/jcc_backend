@@ -16,8 +16,12 @@ import com.nighthawk.spring_portfolio.mvc.classPeriod.ClassPeriod;
 import com.nighthawk.spring_portfolio.mvc.assignment.AssignmentDetailsService;
 import com.nighthawk.spring_portfolio.mvc.assignment.AssignmentJpaRepository;
 import com.nighthawk.spring_portfolio.mvc.assignment.Assignment;
+import com.nighthawk.spring_portfolio.mvc.assignment.AssignmentSubmission;
+import com.nighthawk.spring_portfolio.mvc.assignment.AssignmentSubmissionDetailsService;
+import com.nighthawk.spring_portfolio.mvc.assignment.AssignmentSubmissionJpaRepository;
 
 import java.util.List;
+import java.util.Date;
 
 
 @Component
@@ -30,6 +34,8 @@ public class ModelInit {
     @Autowired ClassPeriodJpaRepository classRepo;
     @Autowired AssignmentDetailsService assService;
     @Autowired AssignmentJpaRepository assRepo;
+    @Autowired AssignmentSubmissionDetailsService subService;
+    @Autowired AssignmentSubmissionJpaRepository subRepo;
 
     @Bean
     CommandLineRunner run() {  // The run() method will be executed after the application starts
@@ -87,6 +93,14 @@ public class ModelInit {
             // initializing Assignment objects
             Assignment[] assignments = Assignment.init();
             i = 0;
+            Person niko = personArray[2]; // nikola tesla is in both classes so we're adding submissions with him
+            Date submissionTime = new Date();
+            AssignmentSubmission nikoSubmission = new AssignmentSubmission();
+            nikoSubmission.setSubmitter(niko);
+            nikoSubmission.setFilePath("/test/filepath/this.jpg");
+            nikoSubmission.setTimeSubmitted(submissionTime);
+            nikoSubmission.setSubmissionNumber(1);
+            subService.save(nikoSubmission);
             for (Assignment ass : assignments) {
                 List<Assignment> existingAss = assRepo.findByName(ass.getName());
                 if (!(existingAss.isEmpty())) {
@@ -95,6 +109,9 @@ public class ModelInit {
                     continue;
                 } else {
                     // ass doesn't exist (it does)
+                    if (i == 0) {
+                        assService.addSubmissionToAssignment(ass, nikoSubmission);
+                    }
                     assService.save(ass);
                     classService.addAssignmentToClass(ass.getId(), classPeriods[i].getName());
                     i++;

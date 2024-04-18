@@ -71,4 +71,10 @@ public class AssignmentDetailsService implements UserDetailsService {
     public void save(Assignment assignment) {
         assignmentJpaRepository.save(assignment);
     }
+
+    // submission methods
+    public void addSubmissionToAssignment(Assignment assignment, AssignmentSubmission assignmentSubmission) {
+        // prior processing is expected to be done with the endpoint method
+        assignment.getSubmissions().add(assignmentSubmission);
+    }
 }
