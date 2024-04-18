@@ -19,4 +19,13 @@ public class Message {
     public Long getId() {
         return id;
     }
+    public String getFrom() {
+        return from;
+    }
+    public String getSubject() {
+        return subject;
+    }
+    public String getContent() {
+        return content;
+    }
 }
