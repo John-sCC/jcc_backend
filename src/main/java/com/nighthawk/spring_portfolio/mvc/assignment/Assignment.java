@@ -60,7 +60,7 @@ public class Assignment {
     @Size(min=0, max=5000, message = "Content (2 to 5000 chars)")
     private String content;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.EAGER)
     private List<AssignmentSubmission> submissions = new ArrayList<>();
 
     // classes assigned, obsolete bc assignments stored within classes

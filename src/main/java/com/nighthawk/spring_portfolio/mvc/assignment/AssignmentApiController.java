@@ -2,8 +2,10 @@ package com.nighthawk.spring_portfolio.mvc.assignment;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.List;
-
+import java.util.Date;
+import java.text.ParseException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -132,10 +134,11 @@ public class AssignmentApiController {
 
     private String uploadDir = "src/main/java/com/nighthawk/spring_portfolio/mvc/assignment/StoredAssignments";
 
-    @PostMapping("/submit")
+    @PostMapping("/submit/{id}/{submissionTimeString}")
     public ResponseEntity<Object> handleFileUpload(@CookieValue("jwt") String jwtToken,
                                                    @RequestPart("file") MultipartFile file,
-                                                   @RequestBody SubmissionRequest submissionRequest) {
+                                                   @PathVariable long id,
+                                                   @PathVariable String submissionTimeString) {
         // jwt processing for user info
         if (jwtToken.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -148,11 +151,13 @@ public class AssignmentApiController {
         }
         // determining the relevant assignment and its relation to user
         boolean userInClasses = false;
-        Assignment submittedAssignment = assignmentDetailsService.get(submissionRequest.getId()); // getting requested assignment
+        Assignment submittedAssignment = assignmentDetailsService.get(id); // getting requested assignment
         List<ClassPeriod> classesWithAssignment = classService.getClassPeriodsByAssignment(submittedAssignment); // classes with assignment
         for (ClassPeriod classPeriod : classesWithAssignment) {
-            if (classPeriod.getStudents().contains(existingPerson)) {
-                userInClasses = true; // user is in a class period with the given assignment
+            for (Person student : classPeriod.getStudents()) {
+                if (student.getEmail().equals(existingPerson.getEmail())) {
+                    userInClasses = true; // user is in a class period with the given assignment
+                }
             }
         }
         if (!userInClasses) { // if the user is not in the necessary class
@@ -166,6 +171,15 @@ public class AssignmentApiController {
                     submissionNumber = submission.getSubmissionNumber() + 1;
                 }
             }
+        }
+        // converting submissionTime String to Date
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX");
+        Date submissionTime;
+        try {
+            submissionTime = dateFormat.parse(submissionTimeString);
+        } catch (ParseException e) {
+            // handling parse exception
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
         // processing file upload if the user has been verified (RAYMOND CODE)
@@ -198,7 +212,7 @@ public class AssignmentApiController {
             new File(tempFilePath).renameTo(new File(finalFilePath));
 
             // saving the new assignment submission following (DREW CODE)
-            AssignmentSubmission submission = new AssignmentSubmission(existingPerson, finalFilePath, submissionRequest.getSubmissionTime(), submissionNumber);
+            AssignmentSubmission submission = new AssignmentSubmission(existingPerson, finalFilePath, submissionTime, submissionNumber);
             subDetailsService.save(submission); // saving the new submission
             assignmentDetailsService.addSubmissionToAssignment(submittedAssignment, submission); // adding the submission to the assignment
             return new ResponseEntity<>("Submission to the assignment \"" + submittedAssignment.getName() + "\" was successful!", HttpStatus.CREATED);
