@@ -44,10 +44,6 @@ public class Quantitative extends StatsFunctions {
         correlation = calculateCorrelation(input.get(0), input.get(1));
     }
 
-    public double getCorrelation() {
-        return this.correlation;
-    }
-
     public static Quantitative[] init() {
         Map<String, List<Double>> inputData = new HashMap<>();
         List<Double> dataList1 = Arrays.asList(1.0, 2.0, 3.0);
