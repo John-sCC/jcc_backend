@@ -31,17 +31,27 @@ public class Quantitative extends StatsFunctions {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @NonNull
-    @JdbcTypeCode(SqlTypes.JSON)
-    @Column(columnDefinition = "jsonb")
-    private Map<String, List<Double>> input = new HashMap<>(); //variable name, manually input data in a list
+    private String name;
+    private List<Double> data;
+    private double mean;
+    private int size;
+    private double stDev;
+    private double min;
+    private double max;
+    private double median;
+    private double qOne;
+    private double qThree;  
 
-    private double correlation;
-
-    public Quantitative(Map<String, List<Double>> input) {
-        this.input = input;
-        
-        correlation = calculateCorrelation(input.get(0), input.get(1));
+    public Quantitative(List<Double> data, String name) {
+        this.data = data;
+        this.size = data.size();
+        this.name = name;
+        this.mean = calculateMean(data);
+        this.stDev = calculateSD(data);
+        this.min = getMinimum(data);
+        this.max = getMaximum(data);
+        this.median = getMedian(data);
+        this.qOne = getQOne();
     }
 
     public static Quantitative[] init() {
@@ -61,5 +71,6 @@ public class Quantitative extends StatsFunctions {
 
     public static void main(String[] args) {
         Quantitative quan[] = init();
+
     }
 }
