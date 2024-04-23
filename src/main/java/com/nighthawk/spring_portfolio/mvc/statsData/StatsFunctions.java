@@ -64,6 +64,10 @@ public class StatsFunctions {
         }
     }
 
+    public double getQuartileOne(List<Double> dataset){
+        
+    }
+
     public double calculateCorrelation(List<Double> x, List<Double> y) {
         if (x.size() != y.size()) {
             throw new IllegalArgumentException("Lists must be of equal length");
