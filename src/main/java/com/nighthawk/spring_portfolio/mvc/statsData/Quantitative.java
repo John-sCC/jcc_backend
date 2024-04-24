@@ -51,26 +51,26 @@ public class Quantitative extends StatsFunctions {
         this.min = getMinimum(data);
         this.max = getMaximum(data);
         this.median = getMedian(data);
-        this.qOne = getQOne();
+        this.qOne = getQuartileOne(data);
+        this.qThree = getQuartileThree(data);
     }
 
-    public static Quantitative[] init() {
-        Map<String, List<Double>> inputData = new HashMap<>();
-        List<Double> dataList1 = Arrays.asList(1.0, 2.0, 3.0);
-        List<Double> dataList2 = Arrays.asList(4.0, 5.0, 6.0);
-        inputData.put("data1", dataList1);
-        inputData.put("data2", dataList2);
+    public void printData(){
+        System.out.println("Data " + this.data + " Size " + this.size + " Name " + this.name + " Mean " + this.mean + " Standard Deviation " + this.stDev + " Min/Max " + this.min + "/" + this.max + " Median " + this.median + " qOne " + this.qOne + " qThree " + this.qThree);
+    }
 
-        Quantitative quan = new Quantitative();
-        quan.setInput(inputData);
+    public static Quantitative init() {
+        List<Double> dataList1 = Arrays.asList(1.0, 2.0, 3.0, 5.0, 2.0);
 
-        Quantitative quantitative[] = {quan};
+        Quantitative quan = new Quantitative(dataList1, "test");
 
-        return(quantitative);
+        quan.printData();
+
+        return quan;
     }
 
     public static void main(String[] args) {
-        Quantitative quan[] = init();
+        Quantitative quan = init();
 
     }
 }
