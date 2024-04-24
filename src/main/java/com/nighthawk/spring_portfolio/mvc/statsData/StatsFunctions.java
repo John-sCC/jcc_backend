@@ -52,7 +52,12 @@ public class StatsFunctions {
     public double getMedian(List<Double> dataset)
     {
         Collections.sort(dataset);
-        if (dataset.size() % 2 == 0)
+        if (dataset.size() == 2){
+            double avg = dataset.get(0) + dataset.get(1);
+            avg /= 2;
+            return avg;
+        }
+        else if (dataset.size() % 2 == 0)
         {
             double avg = dataset.get(dataset.size()/2) + dataset.get(dataset.size()/2 + 1);
             avg /= 2;
@@ -64,9 +69,40 @@ public class StatsFunctions {
         }
     }
 
-    public double getQuartileOne(List<Double> dataset){
+    public double getQuartileOne(List<Double> dataset)
+    {
+        Collections.sort(dataset);
+
+        int midIndex = dataset.size() + 1;
+        midIndex /= 2;
         
+        // If the data length is odd, exclude the median from the lower half
+        if (dataset.size() % 2 != 0) {
+            midIndex--;
+        }
+        
+        // Copy the lower half to a new array
+        List<Double> lowerHalf = dataset.subList(0, midIndex);
+        return getMedian(lowerHalf);
     }
+
+    public double getQuartileThree(List<Double> dataset)
+    {
+        Collections.sort(dataset);
+
+        int midIndex = dataset.size() / 2;
+        
+        // If the data length is odd, exclude the median from the lower half
+        if (dataset.size() % 2 != 0) {
+            midIndex++;
+        }
+        
+        // Copy the lower half to a new array
+        List<Double> lowerHalf = dataset.subList(midIndex, dataset.size());
+        return getMedian(lowerHalf);
+    }
+
+
 
     public double calculateCorrelation(List<Double> x, List<Double> y) {
         if (x.size() != y.size()) {
