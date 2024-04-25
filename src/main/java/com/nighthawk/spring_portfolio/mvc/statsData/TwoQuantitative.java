@@ -10,6 +10,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Iterator;
+import java.util.Set;
+
 
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
@@ -31,40 +34,59 @@ public class TwoQuantitative extends StatsFunctions {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @NonNull
-    @JdbcTypeCode(SqlTypes.JSON)
-    @Column(columnDefinition = "jsonb")
-    private Map<String, List<Double>> input = new HashMap<>(); //variable name, manually input data in a list
-
     private double correlation;
 
     @ElementCollection
     private LSRL lsrl;
 
-    public TwoQuantitative(Map<String, List<Double>> input) {
-        this.input = input;
+    private int explanatoryID;
+
+    private int responseID;
+
+    public TwoQuantitative(Map<String, List<Double>> input, int responseID, int explanatoryID) {
+        Set<Map.Entry<String, List<Double>>> entrySet = input.entrySet();
+
+        if (!entrySet.isEmpty()) {
+            // Using iterator
+            Iterator<Map.Entry<String, List<Double>>> iterator = entrySet.iterator();
+            Map.Entry<String, List<Double>> firstEntry = iterator.next();
+            Map.Entry<String, List<Double>> secondEntry = iterator.next();
+            this.correlation = calculateCorrelation(firstEntry.getValue(), secondEntry.getValue());
+        }
+        else {
+            this.correlation = 0;
+        }
+
         this.lsrl = new LSRL(input, correlation);
 
-        correlation = calculateCorrelation(input.get(0), input.get(1));
+        this.responseID = responseID;
+        this.explanatoryID = explanatoryID;
+
     }
 
-    public static Quantitative[] init() {
+    public void printData(){
+        System.out.println("Correlation " + this.getCorrelation());
+        System.out.println("Slope " + this.lsrl.getSlope());
+        System.out.println("Intercept " + this.lsrl.getIntercept());
+        System.out.println("CorrelationSqr " + this.lsrl.getCorrelationSqr());
+        System.out.println("Response " + this.getResponseID());
+        System.out.println("Explanatory " + this.getExplanatoryID());
+    }
+
+    public static void init() {
         Map<String, List<Double>> inputData = new HashMap<>();
-        List<Double> dataList1 = Arrays.asList(1.0, 2.0, 3.0);
-        List<Double> dataList2 = Arrays.asList(4.0, 5.0, 6.0);
+        List<Double> dataList1 = Arrays.asList(1.0, 2.0, 3.0, 4.0, 5.0);
+        List<Double> dataList2 = Arrays.asList(5.0, 3.0, 4.0, 5.0, 6.0);
         inputData.put("data1", dataList1);
         inputData.put("data2", dataList2);
 
-        Quantitative quan = new Quantitative();
-        quan.setInput(inputData);
+        TwoQuantitative twoQuantitative = new TwoQuantitative(inputData, 1, 2);
 
-        Quantitative quantitative[] = {quan};
-
-        return(quantitative);
+        twoQuantitative.printData();
+        return;
     }
 
     public static void main(String[] args) {
-        Quantitative quan[] = init();
-        
+        init();
     }
 }
