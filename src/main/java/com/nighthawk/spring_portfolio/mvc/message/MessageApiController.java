@@ -15,8 +15,8 @@ public class MessageApiController {
 
     public MessageApiController() {
         // Add some sample messages
-        messages.add(new Message(3L, "sender3@example.com", "Subject 3", "Message 3 content"));
-        messages.add(new Message(1L, "sender1@example.com", "Subject 1", "Message 1 content"));
+        messages.add(new Message(3L, "sender3@example.com", "Aiden Huynh", "slash slash slash!"));
+        messages.add(new Message(1L, "sender1@example.com", "RiderCella", "Slopping their Dripper"));
         messages.add(new Message(2L, "sender2@example.com", "Subject 2", "Message 2 content"));
 
         // Sort messages by ID
