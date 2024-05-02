@@ -33,7 +33,7 @@ public interface PersonJpaRepository extends JpaRepository<Person, Long> {
             nativeQuery = true)
     List<Person> findByLikeTermNative(String term);
 
-    public List<Person> findByOnline(boolean online);
+    // public List<Person> findByOnline(boolean online);
 
     /*
       https://www.baeldung.com/spring-data-jpa-query
