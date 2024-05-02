@@ -109,9 +109,13 @@ public class Person {
         Person p1 = new Person();
         p1.setName("Thomas Edison");
         p1.setEmail("toby@gmail.com");
-        p1.setPassword("123Toby!");
+        p1.setPassword("123toby");
         p1.setUsn("bigT");
+<<<<<<< HEAD
 
+=======
+        p1.setStatus("online");
+>>>>>>> daecaa7d46eb696ce22c4ff30daf3f985cc73ded
         Person p2 = new Person();
         p2.setName("Alexander Graham Bell");
         p2.setEmail("lexb@gmail.com");
@@ -136,8 +140,14 @@ public class Person {
         p5.setPassword("123Qwerty!");
         p5.setUsn("jMort");
 
+        Person p6 = new Person();
+        p6.setName("Grace Hopper");
+        p6.setEmail("hop@gmail.com");
+        p6.setPassword("123hop");
+        p6.setUsn("mrsComputer");
+
         // Array definition and data initialization
-        Person persons[] = {p1, p2, p3, p4, p5};
+        Person persons[] = {p1, p2, p3, p4, p5, p6};
         return(persons);
     }
 
