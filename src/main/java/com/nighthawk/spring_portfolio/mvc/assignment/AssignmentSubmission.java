@@ -43,10 +43,13 @@ public class AssignmentSubmission {
 
     private int submissionNumber;
 
+    private int score;
+
     public AssignmentSubmission(Person submitter, String filePath, Date timeSubmitted, int submissionNumber) {
         this.submitter = submitter;
         this.filePath = filePath;
         this.timeSubmitted = timeSubmitted;
         this.submissionNumber = submissionNumber;
+        this.score = -1; // score is always initialized to -1 until graded
     }
 }
