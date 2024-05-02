@@ -29,7 +29,7 @@ public class PersonViewController {
     public String connectedUsers(Model model) {
         List<Person> connectedUsers = repository.getConnectedUsers();
         model.addAttribute("connectedUsers", connectedUsers);
-        return "interview-home"; // Return the name of the HTML template
+        return "connected-users"; // Return the name of the HTML template
     }
 
     /*  The HTML template Forms and PersonForm attributes are bound
