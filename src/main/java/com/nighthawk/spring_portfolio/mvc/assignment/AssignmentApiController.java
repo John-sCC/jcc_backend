@@ -14,8 +14,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.CookieValue;
 
 import com.nighthawk.spring_portfolio.mvc.classPeriod.ClassPeriodDetailsService;
+import com.nighthawk.spring_portfolio.mvc.jwt.JwtTokenUtil;
+
+import com.nighthawk.spring_portfolio.mvc.person.Person;
+import com.nighthawk.spring_portfolio.mvc.person.PersonJpaRepository;
+import com.nighthawk.spring_portfolio.mvc.classPeriod.ClassPeriod;
 
 @RestController
 @RequestMapping("/api/assignment")
@@ -36,6 +42,12 @@ public class AssignmentApiController {
 
     @Autowired
     private ClassPeriodDetailsService classService;
+
+    @Autowired
+    private JwtTokenUtil tokenUtil;
+
+    @Autowired
+    private PersonJpaRepository personRepository;
 
     /*
     GET individual Person using ID
@@ -68,7 +80,17 @@ public class AssignmentApiController {
     POST Aa record by Requesting Parameters from URI
      */
     @PostMapping("/post")
-    public ResponseEntity<Object> postAssignment(@RequestBody AssignmentRequest request) {
+    public ResponseEntity<Object> postAssignment(@CookieValue("jwt") String jwtToken, 
+                                                 @RequestBody AssignmentRequest request) {
+        if (jwtToken.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        // getting user data
+        String userEmail = tokenUtil.getUsernameFromToken(jwtToken);
+        Person existingPerson = personRepository.findByEmail(userEmail);
+        if (existingPerson == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
         for (String className : request.getClassNames()) {
             if (classService.getByName(className) == null) {
                 return new ResponseEntity<>("One or more classes was invalid", HttpStatus.BAD_REQUEST);
@@ -76,11 +98,20 @@ public class AssignmentApiController {
         }
         // A assignment object WITHOUT ID will create a new record with default roles as student
         Assignment assignment = new Assignment(request.getName(), request.getDateCreated(), request.getDateDue(), request.getContent());
-        assignmentDetailsService.save(assignment);
+        boolean saved = false;
         for (String className : request.getClassNames()) {
-            classService.addAssignmentToClass(assignment.getId(), className);
+            if (classService.getByName(className).getLeaders().contains(existingPerson)) {
+                if (!(saved)) {
+                    assignmentDetailsService.save(assignment);
+                    saved = true;
+                }
+                classService.addAssignmentToClass(assignment.getId(), className);
+            }
         }
-        return new ResponseEntity<>(assignment.getName() +" is created successfully", HttpStatus.CREATED);
+        if(saved) {
+            return new ResponseEntity<>(assignment.getName() + " is created successfully", HttpStatus.CREATED);
+        }
+        return new ResponseEntity<>("The assignment couldn't be created. Leadership role could not be found.", HttpStatus.BAD_REQUEST);
     }
 
     /*

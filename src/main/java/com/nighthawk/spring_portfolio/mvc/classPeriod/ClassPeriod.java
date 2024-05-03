@@ -82,6 +82,13 @@ public class ClassPeriod {
     @Column(columnDefinition = "jsonb")
     private Map<Integer,Map<Integer, String>> seatingChart = new HashMap<>(); 
     
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setStudents(ArrayList arr) {
+        this.students = arr;
+    }
 
     // Constructor used when building object from an API
     public ClassPeriod(String name) {
