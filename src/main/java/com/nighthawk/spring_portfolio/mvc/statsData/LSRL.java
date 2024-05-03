@@ -6,9 +6,6 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Iterator;
 
 import jakarta.persistence.*;
 
@@ -23,24 +20,11 @@ public class LSRL extends StatsFunctions{
     private double stdDev;
     private double correlationSqr;
 
-    public LSRL(Map<String, List<Double>> lists, double correlation){
+    public LSRL(List<List<Double>> lists, double correlation){
         this.correlationSqr = correlation * correlation;
 
-        Set<Map.Entry<String, List<Double>>> entrySet = lists.entrySet();
-
-        if (!entrySet.isEmpty()) {
-            // Using iterator
-            Iterator<Map.Entry<String, List<Double>>> iterator = entrySet.iterator();
-            Map.Entry<String, List<Double>> firstEntry = iterator.next();
-            Map.Entry<String, List<Double>> secondEntry = iterator.next();
-            this.slope = calculateSlope(firstEntry.getValue(), secondEntry.getValue());
-            this.intercept = calculateIntercept(firstEntry.getValue(), secondEntry.getValue(), this.slope);
-        }
-        else {
-            this.slope = 0;
-        }
-
-        
+        this.slope = calculateSlope(lists.get(0), lists.get(1));
+        this.intercept = calculateIntercept(lists.get(0), lists.get(1), this.slope);
     }
 
     public double calculateSlope(List<Double> x, List<Double> y) {
