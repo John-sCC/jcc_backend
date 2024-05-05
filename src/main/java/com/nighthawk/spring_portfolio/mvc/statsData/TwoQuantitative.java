@@ -37,11 +37,11 @@ public class TwoQuantitative extends StatsFunctions {
 
     private LSRL lsrl;
 
-    private int explanatoryID;
+    private long explanatoryID;
 
-    private int responseID;
+    private long responseID;
 
-    public TwoQuantitative(List<List<Double>> inputs, int responseID, int explanatoryID) {
+    public TwoQuantitative(List<List<Double>> inputs, long responseID, long explanatoryID) {
         this.correlation = calculateCorrelation(inputs.get(0), inputs.get(1));
 
         this.lsrl = new LSRL(inputs, correlation);

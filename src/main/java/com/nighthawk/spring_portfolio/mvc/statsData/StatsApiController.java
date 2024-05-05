@@ -17,13 +17,17 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController // annotation to simplify the creation of RESTful web services
-@RequestMapping("/api/qrcode")  // all requests in file begin with this URI
+@RequestMapping("/api/stats")  // all requests in file begin with this URI
 public class StatsApiController {
 
     // Autowired enables Control to connect URI request and POJO Object to easily for Database CRUD operations
     @Autowired
     private QuantitativeJpaRepository qRepository;
+
+    @Autowired
     private TwoQuantitativeJpaRepository twoQRepository;
+
+    @Autowired
     private CategoricalJpaRepository cRepository;
 
     /* GET List of all of any type of data
@@ -56,17 +60,30 @@ public class StatsApiController {
         return new ResponseEntity<>(quantitative, HttpStatus.OK);
     }
 
-    // @PostMapping("/newTwoQuantitative")
-    // public ResponseEntity<Quantitative> newCode(@RequestBody QuantitativeRequest quantitativeRequest) {
-    //     List<Double> data = quantitativeRequest.getData();
-    //     String name = quantitativeRequest.getName(); 
+    @PostMapping("/newTwoQuantitative")
+    public ResponseEntity<TwoQuantitative> newCode(@RequestBody TwoQuantitativeRequest twoQuantitativeRequest) {
+        List<Double> data1 = twoQuantitativeRequest.getData1();
+        List<Double> data2 = twoQuantitativeRequest.getData2();
+        String name1 = twoQuantitativeRequest.getName1(); 
+        String name2 = twoQuantitativeRequest.getName1(); 
 
-    //     Quantitative quantitative = new Quantitative(data, name);
+        Quantitative quantitative1 = new Quantitative(data1, name1);
+        Quantitative quantitative2 = new Quantitative(data2, name2);
                 
-    //     qRepository.save(quantitative);
+        qRepository.save(quantitative1);
+        qRepository.save(quantitative2);
 
-    //     return new ResponseEntity<>(quantitative, HttpStatus.OK);
-    // }    
+        List<List<Double>> inputs = new ArrayList<>();
+
+        inputs.add(data1);
+        inputs.add(data2);
+
+        TwoQuantitative twoQuantitative = new TwoQuantitative(inputs, quantitative1.getId(), quantitative2.getId());
+
+        twoQRepository.save(twoQuantitative);
+
+        return new ResponseEntity<>(twoQuantitative, HttpStatus.OK);
+    }    
 
     /* GET Specific of any type of data 
      * @GetMapping annotation is used for mapping HTTP GET requests onto specific handler methods.
