@@ -25,6 +25,7 @@ public class StudentController {
     public StudentController() {
         // Initialize your student list
         students.add(new Person("John Kim", Arrays.asList("Math", "Physics"), "Chicago", true));
+        students.add(new Person("Alex Kim", Arrays.asList("Math", "Physics"), "Chicago", true));
         // Add more sample students here...
     }
 
