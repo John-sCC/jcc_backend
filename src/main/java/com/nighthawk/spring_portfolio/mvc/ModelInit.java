@@ -95,11 +95,7 @@ public class ModelInit {
             i = 0;
             Person niko = personArray[2]; // nikola tesla is in both classes so we're adding submissions with him
             Date submissionTime = new Date();
-            AssignmentSubmission nikoSubmission = new AssignmentSubmission();
-            nikoSubmission.setSubmitter(niko);
-            nikoSubmission.setFilePath("/test/filepath/this.jpg");
-            nikoSubmission.setTimeSubmitted(submissionTime);
-            nikoSubmission.setSubmissionNumber(1);
+            AssignmentSubmission nikoSubmission = new AssignmentSubmission(niko, "Stats Proposal Tri 3.pdf", submissionTime, 1);
             for (Assignment ass : assignments) {
                 List<Assignment> existingAss = assRepo.findByName(ass.getName());
                 if (!(existingAss.isEmpty())) {
