@@ -17,10 +17,10 @@ public class MessageApiController {
 
     public MessageApiController() {
         // Add some sample messages
-        messages.add(new Message(3L, "sender3@example.com", "Aiden Huynh", "slash slash slash!"));
-        messages.add(new Message(1L, "sender1@example.com", "RiderCella", "Slopping their Dripper"));
-        messages.add(new Message(2L, "sender2@example.com", "Subject 2", "Message 2 content"));
-        messages.add(new Message(5L, "test2", "test2", "test2"));
+        messages.add(new Message(3L, "sender3@example.com", "me", "Aiden Huynh", "slash slash slash!"));
+        messages.add(new Message(1L, "sender1@example.com", "me", "RiderCella", "Slopping their Dripper"));
+        messages.add(new Message(2L, "sender2@example.com", "me", "Subject 2", "Message 2 content"));
+        messages.add(new Message(5L, "me", "test2", "test2", "test2"));
 
         // Sort messages by ID
         Collections.sort(messages, (m1, m2) -> m1.getId().compareTo(m2.getId()));
@@ -47,6 +47,6 @@ public class MessageApiController {
         // Logic to save the message (e.g., save it to a database)
         // You can implement this logic based on your requirements
         System.out.println("Received new message: " + message);
-        messages.add(new Message(4L, message.getFrom(), message.getSubject(), message.getContent()));
+        messages.add(new Message(4L, message.getFrom(), message.getTO(), message.getSubject(), message.getContent()));
     }
 }
