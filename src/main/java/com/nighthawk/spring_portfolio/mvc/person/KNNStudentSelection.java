@@ -1,4 +1,4 @@
-package com.nighthawk.spring_portfolio.mvc.search;
+package com.nighthawk.spring_portfolio.mvc.person;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -6,14 +6,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.nighthawk.spring_portfolio.mvc.person.Person;
+
 public class KNNStudentSelection {
 
     // KNN algorithm for student selection
-    public static Student findMostRelevantStudent(List<Student> students, Student newStudent, int k) {
-        Map<Double, Student> distanceMap = new HashMap<>();
+    public static Person findMostRelevantStudent(List<Person> students, Person newStudent, int k) {
+        Map<Double, Person> distanceMap = new HashMap<>();
 
         // Calculate Euclidean distance for each student
-        for (Student student : students) {
+        for (Person student : students) {
             double distance = calculateDistance(student, newStudent);
             distanceMap.put(distance, student);
         }
@@ -26,7 +28,7 @@ public class KNNStudentSelection {
         return distanceMap.get(distances.get(0));
     }
 
-    private static double calculateDistance(Student student1, Student student2) {
+    private static double calculateDistance(Person student1, Person student2) {
         // Simple distance calculation based on preferences
         double subjectDistance = calculateSubjectDistance(student1.getSubjectsKnown(), student2.getSubjectsKnown());
         double locationDistance = student1.getPreferredLocation().equals(student2.getPreferredLocation()) ? 0 : 1;

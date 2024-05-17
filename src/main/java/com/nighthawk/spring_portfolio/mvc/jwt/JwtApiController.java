@@ -1,6 +1,7 @@
 package com.nighthawk.spring_portfolio.mvc.jwt;
 
 import java.util.stream.Collectors;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -67,7 +68,9 @@ public class JwtApiController {
 			.sameSite("None; Secure")
 			.build();
 
-		return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, tokenCookie.toString()).body(authenticationRequest.getEmail() + " was authenticated successfully");
+		return ResponseEntity.ok()
+			.header(HttpHeaders.SET_COOKIE, tokenCookie.toString())
+			.body(Map.of("message", authenticationRequest.getEmail() + " was authenticated successfully", "cookie", tokenCookie.getValue()));
 	}
 
 	/* leftover cookie tester method
