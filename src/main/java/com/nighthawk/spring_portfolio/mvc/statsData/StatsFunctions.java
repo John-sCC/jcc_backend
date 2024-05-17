@@ -52,7 +52,10 @@ public class StatsFunctions {
     public double getMedian(List<Double> dataset)
     {
         Collections.sort(dataset);
-        if (dataset.size() == 2){
+        if (dataset.size() == 1){
+            return dataset.get(0);
+        }
+        else if (dataset.size() == 2){
             double avg = dataset.get(0) + dataset.get(1);
             avg /= 2;
             return avg;
