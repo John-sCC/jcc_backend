@@ -6,9 +6,9 @@ import lombok.Data;
 
 @Data
 public class TwoQuantitativeRequest {
-    private List<Double> data1;
-    private List<Double> data2;
-    private String name1; 
-    private String name2; 
+    private List<Double> explanatory;
+    private List<Double> response;
+    private String explanatoryName; 
+    private String responseName; 
 }
 

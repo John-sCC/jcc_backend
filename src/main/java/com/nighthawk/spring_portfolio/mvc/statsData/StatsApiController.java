@@ -62,21 +62,21 @@ public class StatsApiController {
 
     @PostMapping("/newTwoQuantitative")
     public ResponseEntity<TwoQuantitative> newCode(@RequestBody TwoQuantitativeRequest twoQuantitativeRequest) {
-        List<Double> data1 = twoQuantitativeRequest.getData1();
-        List<Double> data2 = twoQuantitativeRequest.getData2();
-        String name1 = twoQuantitativeRequest.getName1(); 
-        String name2 = twoQuantitativeRequest.getName1(); 
+        List<Double> explanatory = twoQuantitativeRequest.getExplanatory();
+        List<Double> response = twoQuantitativeRequest.getResponse();
+        String explanatoryName = twoQuantitativeRequest.getExplanatoryName(); 
+        String responseName = twoQuantitativeRequest.getResponseName(); 
 
-        Quantitative quantitative1 = new Quantitative(data1, name1);
-        Quantitative quantitative2 = new Quantitative(data2, name2);
+        Quantitative quantitative1 = new Quantitative(explanatory, explanatoryName);
+        Quantitative quantitative2 = new Quantitative(response, responseName);
                 
         qRepository.save(quantitative1);
         qRepository.save(quantitative2);
 
         List<List<Double>> inputs = new ArrayList<>();
 
-        inputs.add(data1);
-        inputs.add(data2);
+        inputs.add(explanatory);
+        inputs.add(response);
 
         TwoQuantitative twoQuantitative = new TwoQuantitative(inputs, quantitative1.getId(), quantitative2.getId());
 
