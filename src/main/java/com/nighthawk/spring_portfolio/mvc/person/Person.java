@@ -2,6 +2,7 @@ package com.nighthawk.spring_portfolio.mvc.person;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -35,7 +36,7 @@ The last annotation connect to database
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Convert(attributeName ="person", converter = JsonType.class)
+@Convert(attributeName = "person", converter = JsonType.class)
 public class Person {
 
     // automatic unique identifier for Person record
@@ -45,8 +46,8 @@ public class Person {
 
     // email, password, roles are key attributes to login and authentication
     @NotEmpty
-    @Size(min=5)
-    @Column(unique=true)
+    @Size(min = 5)
+    @Column(unique = true)
     @Email
     private String email;
 
@@ -56,16 +57,19 @@ public class Person {
     // @NotEmpty
     // private boolean online;
 
-
-    // @NonNull, etc placed in params of constructor: "@NonNull @Size(min = 2, max = 30, message = "Name (2 to 30 chars)") String name"
+    // @NonNull, etc placed in params of constructor: "@NonNull @Size(min = 2, max =
+    // 30, message = "Name (2 to 30 chars)") String name"
     @NonNull
     @Size(min = 2, max = 30, message = "First and Last Name (2 to 30 chars)")
     private String name;
 
     @NonNull
     @Size(min = 2, max = 20)
-    @Column(unique=true)
+    @Column(unique = true)
     private String usn;
+    private List<String> subjectsKnown;
+    private String preferredLocation;
+    private boolean internshipPreferred;
 
     // roles for permissions, different branch
     @ManyToMany(fetch = EAGER)
@@ -74,7 +78,7 @@ public class Person {
     // trying out listing person's classes
     // @ManyToMany(fetch = LAZY)
     // private Collection<ClassPeriod> classPeriods = new ArrayList<>();
-    
+
     // to be implemented later
     /*
      * 
@@ -85,12 +89,18 @@ public class Person {
      * private Collection<QRCode> qrCodes = new ArrayList<>();
      */
 
-
-    
-    // NO NEED FOR ROLES METHODS IN PERSON, all roles add/deletion are handled in other files due to object relationships
-
+    // NO NEED FOR ROLES METHODS IN PERSON, all roles add/deletion are handled in
+    // other files due to object relationships
 
     // Constructor used when building object from an API
+    public Person(String name, List<String> subjectsKnown, String preferredLocation,
+            boolean internshipPreferred) {
+        this.name = name;
+        this.subjectsKnown = subjectsKnown;
+        this.preferredLocation = preferredLocation;
+        this.internshipPreferred = internshipPreferred;
+    }
+
     public Person(String email, String password, String name, String usn) {
         this.email = email;
         this.password = password;
@@ -99,7 +109,39 @@ public class Person {
         // other attributes implemented later
     }
 
-    // Initialize static test data 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public List<String> getSubjectsKnown() {
+        return subjectsKnown;
+    }
+
+    public void setSubjectsKnown(List<String> subjectsKnown) {
+        this.subjectsKnown = subjectsKnown;
+    }
+
+    public String getPreferredLocation() {
+        return preferredLocation;
+    }
+
+    public void setPreferredLocation(String preferredLocation) {
+        this.preferredLocation = preferredLocation;
+    }
+
+    public boolean isInternshipPreferred() {
+        return internshipPreferred;
+    }
+
+    public void setInternshipPreferred(boolean internshipPreferred) {
+        this.internshipPreferred = internshipPreferred;
+    }
+
+    // Initialize static test data
     public static Person[] init() {
 
         // basics of class construction
@@ -144,8 +186,8 @@ public class Person {
         p6.setUsn("mrsComputer");
 
         // Array definition and data initialization
-        Person persons[] = {p1, p2, p3, p4, p5, p6};
-        return(persons);
+        Person persons[] = { p1, p2, p3, p4, p5, p6 };
+        return (persons);
     }
 
     public static void main(String[] args) {
@@ -153,8 +195,8 @@ public class Person {
         Person persons[] = init();
 
         // iterate using "enhanced for loop"
-        for( Person person : persons) {
-            System.out.println(person);  // print object
+        for (Person person : persons) {
+            System.out.println(person); // print object
         }
     }
 
