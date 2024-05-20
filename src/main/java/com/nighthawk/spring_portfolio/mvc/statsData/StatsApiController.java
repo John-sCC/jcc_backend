@@ -6,10 +6,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.nighthawk.spring_portfolio.mvc.qrCode.LinkFreq;
-import com.nighthawk.spring_portfolio.mvc.qrCode.QrCode;
-import com.nighthawk.spring_portfolio.mvc.qrCode.QrCodeRequest;
-
 import jakarta.transaction.Transactional;
 
 import java.util.ArrayList;
@@ -17,14 +13,18 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController // annotation to simplify the creation of RESTful web services
-@RequestMapping("/api/qrcode")  // all requests in file begin with this URI
+@RequestMapping("/api/stats")  // all requests in file begin with this URI
 public class StatsApiController {
 
     // Autowired enables Control to connect URI request and POJO Object to easily for Database CRUD operations
     @Autowired
     private QuantitativeJpaRepository qRepository;
+    @Autowired
     private TwoQuantitativeJpaRepository twoQRepository;
+    @Autowired
     private CategoricalJpaRepository cRepository;
+    @Autowired
+    private CategoricalVarsJpaRepository cVarsRepository;
 
     /* GET List of all of any type of data
      * @GetMapping annotation is used for mapping HTTP GET requests onto specific handler methods.
@@ -56,18 +56,6 @@ public class StatsApiController {
         return new ResponseEntity<>(quantitative, HttpStatus.OK);
     }
 
-    // @PostMapping("/newTwoQuantitative")
-    // public ResponseEntity<Quantitative> newCode(@RequestBody QuantitativeRequest quantitativeRequest) {
-    //     List<Double> data = quantitativeRequest.getData();
-    //     String name = quantitativeRequest.getName(); 
-
-    //     Quantitative quantitative = new Quantitative(data, name);
-                
-    //     qRepository.save(quantitative);
-
-    //     return new ResponseEntity<>(quantitative, HttpStatus.OK);
-    // }    
-
     /* GET Specific of any type of data 
      * @GetMapping annotation is used for mapping HTTP GET requests onto specific handler methods.
      */
@@ -95,30 +83,66 @@ public class StatsApiController {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);       
     }
 
-    // @GetMapping("/getCategorical{id}")
-    // public ResponseEntity<Categorical> getCategorical(@PathVariable long id) {
-    //     Optional<Categorical> optional = cRepository.findById(id);
-    //     if (optional.isPresent()) {  // Good ID
-    //         Categorical categorical = optional.get();  // value from findByID
-    //         return new ResponseEntity<>(categorical, HttpStatus.OK);  // OK HTTP response: status code, headers, and body
-    //     }
-    //     // Bad ID
-    //     return new ResponseEntity<>(HttpStatus.BAD_REQUEST);       
-    // }
+    @GetMapping("/categorical")
+    public ResponseEntity<List<Categorical>> getCategoricals() {
+        List<Categorical> categoricals = cRepository.findAll();
+        return new ResponseEntity<>(categoricals, HttpStatus.OK);
+    }
 
-    // @GetMapping("/getTwoCategorical{id}")
-    // @Transactional
-    // public ResponseEntity<TwoCategorical> getTwoCategorical(@PathVariable long id) {
-    //     Optional<TwoCategorical> optional = twoCRepository.findById(id);
-    //     if (optional.isPresent()) {  // Good ID
-    //         TwoCategorical twoCategorical = optional.get();  // value from findByID
-    //         Hibernate.initialize(twoCategorical.getLsrl());
-    //         return new ResponseEntity<>(twoCategorical, HttpStatus.OK);  // OK HTTP response: status code, headers, and body
-    //     }
-    //     // Bad ID
-    //     return new ResponseEntity<>(HttpStatus.BAD_REQUEST);       
-    // }
+    @PostMapping("/newCategorical")
+    public ResponseEntity<Categorical> newCategorical(@RequestBody CategoricalRequest categoricalRequest) {
+        int size = categoricalRequest.getSize();
+        ArrayList<Categorical> data = categoricalRequest.getData();
 
+        Categorical categorical = new Categorical();
+        categorical.setSize(size);
+        categorical.setData(data);
 
+        cRepository.save(categorical);
 
+        return new ResponseEntity<>(categorical, HttpStatus.OK);
+    }
+
+    @GetMapping("/getCategorical{id}")
+    public ResponseEntity<Categorical> getCategorical(@PathVariable long id) {
+        Optional<Categorical> optional = cRepository.findById(id);
+        if (optional.isPresent()) {  // Good ID
+            Categorical categorical = optional.get();  // value from findByID
+            return new ResponseEntity<>(categorical, HttpStatus.OK);  // OK HTTP response: status code, headers, and body
+        }
+        // Bad ID
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);       
+    }
+
+    @GetMapping("/categoricalVars")
+    public ResponseEntity<List<CategoricalVars>> getCategoricalVars() {
+        List<CategoricalVars> categoricalVarsList = cVarsRepository.findAll();
+        return new ResponseEntity<>(categoricalVarsList, HttpStatus.OK);
+    }
+
+    @PostMapping("/newCategoricalVars")
+    public ResponseEntity<CategoricalVars> newCategoricalVars(@RequestBody CategoricalVarsRequest categoricalVarsRequest) {
+        String explanatoryName = categoricalVarsRequest.getExplanatoryName();
+        String responseName = categoricalVarsRequest.getResponseName();
+        double[][] frequencies = categoricalVarsRequest.getFrequencies();
+
+        CategoricalVars categoricalVars = new CategoricalVars();
+        categoricalVars.setExplanatoryName(explanatoryName);
+        categoricalVars.setResponseName(responseName);
+        categoricalVars.setFrequencies(frequencies);
+
+        cVarsRepository.save(categoricalVars);
+
+        return new ResponseEntity<>(categoricalVars, HttpStatus.OK);
+    }
+
+    @GetMapping("/getCategoricalVars{id}")
+    public ResponseEntity<CategoricalVars> getCategoricalVars(@PathVariable long id) {
+        Optional<CategoricalVars> optional = cVarsRepository.findById(id);
+        if (optional.isPresent()) {
+            CategoricalVars categoricalVars = optional.get();
+            return new ResponseEntity<>(categoricalVars, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
 }
