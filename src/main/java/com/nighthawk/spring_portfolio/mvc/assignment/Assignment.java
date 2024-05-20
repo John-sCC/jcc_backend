@@ -2,6 +2,7 @@ package com.nighthawk.spring_portfolio.mvc.assignment;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Calendar;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -60,6 +61,10 @@ public class Assignment {
     @Size(min=0, max=5000, message = "Content (2 to 5000 chars)")
     private String content;
 
+    private int points;
+
+    private List<String> allowedFileTypes = new ArrayList<>();
+
     @OneToMany(fetch = FetchType.EAGER)
     private List<AssignmentSubmission> submissions = new ArrayList<>();
 
@@ -71,21 +76,41 @@ public class Assignment {
     */
 
     // Constructor used when building object from an API
-    public Assignment(String name, Date dateCreated, Date dateDue, String content) {
+    public Assignment(String name, Date dateCreated, Date dateDue, String content, int points, String[] allowedFileTypes) {
         this.name = name;
         this.dateCreated = dateCreated;
         this.dateDue = dateDue;
         this.content = content;
+        this.points = points;
+        for (String allowedFileType : allowedFileTypes) {
+            this.allowedFileTypes.add(allowedFileType);
+        }
     }
 
     // Initialize static test data 
     public static Assignment[] init() {
+        // May 30, 2024 at 11:59pm
+        Calendar cal1 = Calendar.getInstance();
+        cal1.set(2024, Calendar.MAY, 30, 23, 59, 0);
+        Date date1 = cal1.getTime();
 
-        Assignment assignment1 = new Assignment("Teddy's Big Bready", new Date(), new Date(System.currentTimeMillis() + 86400000), "Make me feel good all the time in every way baby wow woohoo!!");
-        Assignment assignment2 = new Assignment("Stop YAPPING!!!!", new Date(), new Date(System.currentTimeMillis() + 172800000), "You make me want to... GRRRRR...! MAKE ME CODE NOW!!!!");
+        // May 28, 2024 at 8:00am
+        Calendar cal2 = Calendar.getInstance();
+        cal2.set(2024, Calendar.MAY, 28, 8, 0, 0);
+        Date date2 = cal2.getTime();
+
+        // May 31, 2024 at 11:59pm
+        Calendar cal3 = Calendar.getInstance();
+        cal3.set(2024, Calendar.MAY, 31, 23, 59, 0);
+        Date date3 = cal3.getTime();
+
+        // Initializing assignments here!!!
+        Assignment assignment1 = new Assignment("Teddy's Science Spectacular", new Date(), date1, "Make me feel good about your understanding of science!! Try really hard and I'm certain that you'll succeed. Science science science!", 80, new String[]{"pdf","png","jpg","jpeg"});
+        Assignment assignment2 = new Assignment("Big Project Check #3", new Date(), date2, "Expectations: https://github.com/nighthawkcoders/teacher_portfolio/issues/142", 6, new String[]{"png", "jpg", "jpeg"});
+        Assignment assignment3 = new Assignment("Get Out, Seniors", new Date(), date3, "I, Thomas Edison, am so proud of all of the seniors!", 10, new String[]{"pdf"});
 
         // Array definition and data initialization
-        Assignment assignments[] = {assignment1, assignment2};
+        Assignment assignments[] = {assignment1, assignment2, assignment3};
         return(assignments);
     }
 

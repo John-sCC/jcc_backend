@@ -69,7 +69,7 @@ public class AssignmentApiController {
     private PersonJpaRepository personRepository;
 
     /*
-    GET individual Person using ID
+    GET individual Assignment using ID
      */
     @GetMapping("/{id}")
     public ResponseEntity<Assignment> getAssignment(@PathVariable long id) {
@@ -79,6 +79,39 @@ public class AssignmentApiController {
         }
         // Bad ID
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);       
+    }
+
+    @GetMapping("/cookie/{id}")
+    public ResponseEntity<?> getAssignmentWithCookie(@CookieValue("jwt") String jwtToken,
+                                                              @PathVariable long id) {
+        if (jwtToken.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        // getting user data
+        String userEmail = tokenUtil.getUsernameFromToken(jwtToken);
+        Person existingPerson = personRepository.findByEmail(userEmail);
+        if (existingPerson == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        Assignment assignment = repository.findById(id);
+        if (assignment == null) {  // bad ID
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);  // OK HTTP response: status code, headers, and body
+        }
+        HashMap<String, Object> assignmentData = new HashMap<>();
+        assignmentData.put("role", null);
+        // good ID, so continue
+        for (ClassPeriod cp : classService.getClassPeriodsByAssignment(assignment)) {
+            if (cp.getLeaders().contains(existingPerson)) {
+                assignmentData.put("role", "teacher"); // person has teacher access to the assignment 
+            } else if (cp.getStudents().contains(existingPerson) && !(assignmentData.get("role").equals("teacher"))) {
+                // if the person has not been established a teacher already and they are a student in one class
+                assignmentData.put("role", "student"); // they are stated to only have student access
+            }
+        }
+        // if the student is determined to have no relationship to the assignment, null indicates they cannot access w/ role
+        assignmentData.put("data", assignment);
+        return new ResponseEntity<>(assignmentData, HttpStatus.OK);    
+        // NOW MAKE IT ALSO FETCH PREVIOUS SUBMISSION
     }
 
     /*
@@ -116,7 +149,7 @@ public class AssignmentApiController {
             }
         }
         // A assignment object WITHOUT ID will create a new record with default roles as student
-        Assignment assignment = new Assignment(request.getName(), request.getDateCreated(), request.getDateDue(), request.getContent());
+        Assignment assignment = new Assignment(request.getName(), request.getDateCreated(), request.getDateDue(), request.getContent(), request.getPoints(), request.getAllowedFileTypes());
         boolean saved = false;
         for (String className : request.getClassNames()) {
             if (classService.getByName(className).getLeaders().contains(existingPerson)) {
