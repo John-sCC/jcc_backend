@@ -74,6 +74,7 @@ public class Person {
     // roles for permissions, different branch
     @ManyToMany(fetch = EAGER)
     private Collection<PersonRole> roles = new ArrayList<>();
+    private ArrayList<Person> users;
 
     // trying out listing person's classes
     // @ManyToMany(fetch = LAZY)
@@ -109,6 +110,18 @@ public class Person {
         // other attributes implemented later
     }
 
+    public Person(String email, String password, String name, String usn, List<String> subjectsKnown,
+            String preferredLocation,
+            boolean internshipPreferred) {
+        this.name = name;
+        this.subjectsKnown = subjectsKnown;
+        this.preferredLocation = preferredLocation;
+        this.internshipPreferred = internshipPreferred;
+        this.subjectsKnown = subjectsKnown;
+        this.preferredLocation = preferredLocation;
+        this.internshipPreferred = internshipPreferred;
+    }
+
     public String getName() {
         return name;
     }
@@ -142,7 +155,7 @@ public class Person {
     }
 
     // Initialize static test data
-    public static Person[] init() {
+    public static ArrayList init() {
 
         // basics of class construction
         Person p1 = new Person();
@@ -186,13 +199,20 @@ public class Person {
         p6.setUsn("mrsComputer");
 
         // Array definition and data initialization
-        Person persons[] = { p1, p2, p3, p4, p5, p6 };
+        // Person persons[] = { p1, p2, p3, p4, p5, p6 };
+        ArrayList<Person> persons = new ArrayList<>();
+        persons.add(p1);
+        persons.add(p2);
+        persons.add(p3);
+        persons.add(p4);
+        persons.add(p5);
+        persons.add(p6);
         return (persons);
     }
 
     public static void main(String[] args) {
         // obtain Person from initializer
-        Person persons[] = init();
+        ArrayList<Person> persons = init();
 
         // iterate using "enhanced for loop"
         for (Person person : persons) {
