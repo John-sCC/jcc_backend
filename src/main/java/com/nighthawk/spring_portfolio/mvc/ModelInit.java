@@ -109,7 +109,7 @@ public class ModelInit {
                         assService.addSubmissionToAssignment(ass, nikoSubmission);
                     }
                     assService.save(ass);
-                    classService.addAssignmentToClass(ass.getId(), classPeriods[i].getName());
+                    classService.addAssignmentToClass(ass.getId(), classPeriods[i % 2].getName());
                     i++;
                 }
             }

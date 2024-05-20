@@ -8,15 +8,19 @@ public class AssignmentRequest {
     private String name;
     private Date dateCreated;
     private Date dateDue;
+    private int points;
     private String content;
     private String[] classNames;
+    private String[] allowedFileTypes;
 
-    public AssignmentRequest(String name, Date dateCreated, Date dateDue, String content, String[] classNames) {
+    public AssignmentRequest(String name, Date dateCreated, Date dateDue, String content, int points, String[] classNames, String[] allowedFileTypes) {
         this.name = name;
         this.dateCreated = dateCreated;
         this.dateDue = dateDue;
         this.content = content;
+        this.points = points;
         this.classNames = classNames;
+        this.allowedFileTypes = allowedFileTypes;
     }
 
     public String getName()
@@ -30,6 +34,14 @@ public class AssignmentRequest {
     public Date getDateCreated()
     {
         return this.dateCreated;
+    }
+
+    public int getPoints() {
+        return this.points;
+    }
+
+    public void setPoints(int points) {
+        this.points = points;
     }
 
     public String[] getClassNames() {
@@ -83,5 +95,12 @@ public class AssignmentRequest {
     public void setContent(String content)
     {
         this.content = content;
+    }
+
+    public String[] getAllowedFileTypes() {
+        return this.allowedFileTypes;
+    }
+    public void setAllowedFileTypes(String[] allowedFileTypes) {
+        this.allowedFileTypes = allowedFileTypes;
     }
 }
