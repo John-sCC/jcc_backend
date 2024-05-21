@@ -18,6 +18,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
+import com.nighthawk.spring_portfolio.mvc.qrCode.QrCode;
 import com.vladmihalcea.hibernate.type.json.JsonType;
 
 import lombok.AllArgsConstructor;
@@ -74,6 +75,9 @@ public class Person {
     // roles for permissions, different branch
     @ManyToMany(fetch = EAGER)
     private Collection<PersonRole> roles = new ArrayList<>();
+
+    @ManyToMany(fetch = EAGER)
+    private Collection<QrCode> qrCodes = new ArrayList<>();
 
     // trying out listing person's classes
     // @ManyToMany(fetch = LAZY)

@@ -33,7 +33,7 @@ public class QrCodeApiController {
     }   
 
     @PostMapping("/newCode")
-    public ResponseEntity<QrCode> newCode(@RequestBody QrCodeRequest qrCodeRequest) {
+    public ResponseEntity<QrCode> newCode(@CookieValue("jwt") String jwtToken, @RequestBody QrCodeRequest qrCodeRequest) {
         QrCode qrCode = new QrCode();
 
         List<String> links = qrCodeRequest.getLinks();
