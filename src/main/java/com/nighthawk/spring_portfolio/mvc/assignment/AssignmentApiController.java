@@ -95,19 +95,34 @@ public class AssignmentApiController {
         }
         HashMap<String, Object> assignmentData = new HashMap<>();
         assignmentData.put("role", null);
-        // good ID, so continue
+        // good ID, so continue to check relationship
         for (ClassPeriod cp : classService.getClassPeriodsByAssignment(assignment)) {
-            if (cp.getLeaders().contains(existingPerson)) {
-                assignmentData.put("role", "teacher"); // person has teacher access to the assignment 
-            } else if (cp.getStudents().contains(existingPerson) && !(assignmentData.get("role").equals("teacher"))) {
-                // if the person has not been established a teacher already and they are a student in one class
-                assignmentData.put("role", "student"); // they are stated to only have student access
+            for (Person student : cp.getStudents()) {
+                if (student.getEmail().equals(existingPerson.getEmail())) {
+                    assignmentData.put("role", "student"); // person has teacher access to the assignment
+                }
             }
+            for (Person leader : cp.getLeaders()) {
+                if (leader.getEmail().equals(existingPerson.getEmail())) {
+                    assignmentData.put("role", "teacher"); // person has teacher access to the assignment
+                }
+            }
+        }
+        // handler for invalid user accessing data
+        if (assignmentData.get("role") == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         // if the student is determined to have no relationship to the assignment, null indicates they cannot access w/ role
         assignmentData.put("data", assignment);
-        return new ResponseEntity<>(assignmentData, HttpStatus.OK);    
         // NOW MAKE IT ALSO FETCH PREVIOUS SUBMISSION
+        ArrayList<AssignmentSubmission> personSubmissions = new ArrayList<>();
+        for (AssignmentSubmission submission : assignment.getSubmissions()) {
+            if (submission.getSubmitter().getEmail().equals(existingPerson.getEmail())) { // verifying user identity with email
+                personSubmissions.add(submission);
+            }
+        }
+        assignmentData.put("submissions", personSubmissions.toArray());
+        return new ResponseEntity<>(assignmentData, HttpStatus.OK);    
     }
 
     /*
