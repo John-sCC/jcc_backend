@@ -164,7 +164,7 @@ public class AssignmentApiController {
             }
         }
         // A assignment object WITHOUT ID will create a new record with default roles as student
-        Assignment assignment = new Assignment(request.getName(), request.getDateCreated(), request.getDateDue(), request.getContent(), request.getPoints(), request.getAllowedFileTypes());
+        Assignment assignment = new Assignment(request.getName(), request.getDateCreated(), request.getDateDue(), request.getContent(), request.getPoints(), request.getAllowedSubmissions(), request.getAllowedFileTypes());
         boolean saved = false;
         for (String className : request.getClassNames()) {
             if (classService.getByName(className).getLeaders().contains(existingPerson)) {

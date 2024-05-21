@@ -62,6 +62,7 @@ public class Assignment {
     private String content;
 
     private int points;
+    private int allowedSubmissions;
 
     private List<String> allowedFileTypes = new ArrayList<>();
 
@@ -76,12 +77,13 @@ public class Assignment {
     */
 
     // Constructor used when building object from an API
-    public Assignment(String name, Date dateCreated, Date dateDue, String content, int points, String[] allowedFileTypes) {
+    public Assignment(String name, Date dateCreated, Date dateDue, String content, int points, int allowedSubmissions, String[] allowedFileTypes) {
         this.name = name;
         this.dateCreated = dateCreated;
         this.dateDue = dateDue;
         this.content = content;
         this.points = points;
+        this.allowedSubmissions = allowedSubmissions;
         for (String allowedFileType : allowedFileTypes) {
             this.allowedFileTypes.add(allowedFileType);
         }
@@ -105,9 +107,9 @@ public class Assignment {
         Date date3 = cal3.getTime();
 
         // Initializing assignments here!!!
-        Assignment assignment1 = new Assignment("Teddy's Science Spectacular", new Date(), date1, "Make me feel good about your understanding of science!! Try really hard and I'm certain that you'll succeed. Science science science!", 80, new String[]{"pdf","png","jpg","jpeg"});
-        Assignment assignment2 = new Assignment("Big Project Check #3", new Date(), date2, "Expectations: https://github.com/nighthawkcoders/teacher_portfolio/issues/142", 6, new String[]{"png", "jpg", "jpeg"});
-        Assignment assignment3 = new Assignment("Get Out, Seniors", new Date(), date3, "I, Thomas Edison, am so proud of all of the seniors!", 10, new String[]{"pdf"});
+        Assignment assignment1 = new Assignment("Teddy's Science Spectacular", new Date(), date1, "Make me feel good about your understanding of science!! Try really hard and I'm certain that you'll succeed. Science science science!", 80, 4, new String[]{"pdf","png","jpg","jpeg"});
+        Assignment assignment2 = new Assignment("Big Project Check #3", new Date(), date2, "Expectations: https://github.com/nighthawkcoders/teacher_portfolio/issues/142", 6, 2, new String[]{"png", "jpg", "jpeg"});
+        Assignment assignment3 = new Assignment("Get Out, Seniors", new Date(), date3, "I, Thomas Edison, am so proud of all of the seniors!", 10, 1, new String[]{"pdf"});
 
         // Array definition and data initialization
         Assignment assignments[] = {assignment1, assignment2, assignment3};
