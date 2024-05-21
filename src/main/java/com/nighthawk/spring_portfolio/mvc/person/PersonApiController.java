@@ -93,6 +93,14 @@ public class PersonApiController {
         return new ResponseEntity<>(email + " is created successfully", HttpStatus.CREATED);
     }
 
+    // get persons by subject of interest - endpointmethod
+    @GetMapping("/getBySubject")
+    public ResponseEntity<?> getPersonsBySubject(@PathVariable String subjectOfInterest) {
+        List<Person> personList = personDetailsService.getPersonsBySubjectOfInterest(subjectOfInterest);
+        // regardless of outcome, even if it's an empty list, it's still a valid output
+        return new ResponseEntity<>(personList, HttpStatus.OK);
+    }
+
     /*
      * The personSearch API looks across database for partial match to term (k,v)
      * passed by RequestEntity body
