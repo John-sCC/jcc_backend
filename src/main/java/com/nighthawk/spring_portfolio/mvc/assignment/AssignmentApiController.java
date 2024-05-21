@@ -129,6 +129,39 @@ public class AssignmentApiController {
         return new ResponseEntity<>(assignmentData, HttpStatus.OK);    
     }
 
+    @GetMapping("/cookie/{id}/grading")
+    public ResponseEntity<?> getAssignmentSubmissionsWithCookie(@CookieValue("jwt") String jwtToken,
+                                                                @PathVariable long id) {
+        if (jwtToken.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        // getting user data
+        String userEmail = tokenUtil.getUsernameFromToken(jwtToken);
+        Person existingPerson = personRepository.findByEmail(userEmail);
+        if (existingPerson == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        Assignment assignment = repository.findById(id);
+        if (assignment == null) {  // bad ID
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);  // OK HTTP response: status code, headers, and body
+        }
+        boolean isTeacher = false;
+        // good ID, so continue to check relationship
+        for (ClassPeriod cp : classService.getClassPeriodsByAssignment(assignment)) {
+            for (Person leader : cp.getLeaders()) {
+                if (leader.getEmail().equals(existingPerson.getEmail())) {
+                    isTeacher = true; // person has teacher access to the assignment
+                }
+            }
+        }
+        // handler for invalid user accessing data
+        if (!(isTeacher)) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        // sending all submissions from a given assignment
+        return new ResponseEntity<>(assignment.getSubmissions(), HttpStatus.OK);    
+    }
+
     /*
     DELETE individual Person using ID
      */
