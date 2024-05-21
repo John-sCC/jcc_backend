@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.nighthawk.spring_portfolio.mvc.person.Person;
 import com.nighthawk.spring_portfolio.mvc.person.PersonJpaRepository;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.nighthawk.spring_portfolio.mvc.jwt.JwtTokenUtil;
 
 import java.util.*;
@@ -77,19 +78,22 @@ public class ClassPeriodApiController {
     POST Aa record by Requesting Parameters from URI
      */
     @PostMapping("/post")
-    public ResponseEntity<Object> postClassPeriod(@RequestParam("name") String name, @RequestParam("email") String email) {
-        // retrieving the current authentication details
-        // Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        // String email = ((UserDetails) authentication.getPrincipal()).getUsername();
-        // checking validity of user email
-        Person newLeader = personRepository.findByEmail(email);
+    public ResponseEntity<Object> postClassPeriod(@CookieValue("jwt") String jwtToken,
+                                                  @RequestParam("name") String name) {
+        // checking if JWT token is missing
+        if (jwtToken.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        // getting user data
+        String userEmail = tokenUtil.getUsernameFromToken(jwtToken);
+        Person newLeader = personRepository.findByEmail(userEmail);
         if (newLeader != null) {
             ClassPeriod classPeriod = new ClassPeriod(name);
             classPeriodDetailsService.save(classPeriod);
-            classPeriodDetailsService.addLeaderToClass(email, name);
-            return new ResponseEntity<>("The class \"" + name + "\" was created successfully!", HttpStatus.CREATED);
+            classPeriodDetailsService.addLeaderToClass(userEmail, name);
+            return new ResponseEntity<>(classPeriod, HttpStatus.CREATED);
         } else {
-            return new ResponseEntity<>("The user set to become the class owner couldn't be found.", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("The user set to become the class owner couldn't be found. The login token may have expired.", HttpStatus.NOT_FOUND);
         }
     }
 
@@ -126,7 +130,6 @@ public class ClassPeriodApiController {
 
     @GetMapping("/dashboard")
     public ResponseEntity<?> fetchBothClassData(@CookieValue("jwt") String jwtToken) {
-        System.out.println("This is the cookie data: " + jwtToken);
         // checking if JWT token is missing
         if (jwtToken.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -171,16 +174,20 @@ public class ClassPeriodApiController {
     The this method will be used to add the seating chart to the class
     */
     @PostMapping("/set_seating_chart")
-    public ResponseEntity<Object> setSeatingChart(@RequestBody SeatingChart seatingChart) {
-        // retrieving the current authentication details
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = ((UserDetails) authentication.getPrincipal()).getUsername();
+    public ResponseEntity<Object> setSeatingChart(@CookieValue("jwt") String jwtToken,
+                                                  @RequestBody SeatingChart seatingChart) {
+        // checking if JWT token is missing
+        if (jwtToken.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        // getting user data
+        String userEmail = tokenUtil.getUsernameFromToken(jwtToken);
         // find ID 
         ClassPeriod classPeriod = repository.findById((seatingChart.getClassId()));
         if (classPeriod != null) {  // Good ID
             boolean userIsLeader = false;
             for (Person leader : classPeriod.getLeaders()) {
-                if (leader.getEmail().equals(email)) {
+                if (leader.getEmail().equals(userEmail)) {
                     userIsLeader = true;
                 }
             }
@@ -197,4 +204,36 @@ public class ClassPeriodApiController {
         // return Bad ID
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST); 
     }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> updateClassPeriod(@PathVariable long id, @RequestBody JsonNode requestBody) {
+        ClassPeriod classPeriod = repository.findById(id);
+
+        // Extract name from the request body
+        String name = requestBody.get("name").asText();
+
+        // Extract students from the request body and convert them to an ArrayList<String>
+        JsonNode studentsNode = requestBody.get("class");
+        ArrayList<String> students = new ArrayList<>();
+        if (studentsNode.isArray()) {
+            for (JsonNode studentNode : studentsNode) {
+                students.add(studentNode.asText());
+            }
+        }
+
+        // Set the properties of the existing class period
+        classPeriod.setName(name);
+        classPeriod.setStudents(students);
+
+        // Print for verification
+        System.out.println("Name: " + name);
+        System.out.println("Students: " + students);
+
+        // Save the updated class period to the database
+        repository.save(classPeriod);
+
+        // Return an appropriate response
+        return new ResponseEntity<>("Class period updated successfully", HttpStatus.OK);
+    }
 }
+

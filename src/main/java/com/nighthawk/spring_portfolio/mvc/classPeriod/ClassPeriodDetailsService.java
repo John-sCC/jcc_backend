@@ -50,7 +50,7 @@ public class ClassPeriodDetailsService implements UserDetailsService {  // "impl
         return null;
     }
 
-    /* Person Section */
+    /* Class fetching Section */
 
     public  List<ClassPeriod>listAll() {
         return classPeriodJpaRepository.findAllByOrderByNameAsc();
@@ -82,11 +82,9 @@ public class ClassPeriodDetailsService implements UserDetailsService {  // "impl
         classPeriodJpaRepository.save(classPeriod);
     }
 
-    // public ClassPeriod get(long id) {
-    //     return (classPeriodJpaRepository.findById(id) != null)
-    //             ? classPeriodJpaRepository.findById(id).get()
-    //             : null;
-    // }
+    public ClassPeriod get(long id) {
+        return classPeriodJpaRepository.findById(id);
+    }
 
     public ClassPeriod getByName(String name) {
         return (classPeriodJpaRepository.findByName(name));

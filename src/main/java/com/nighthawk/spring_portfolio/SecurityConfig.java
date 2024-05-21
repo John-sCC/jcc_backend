@@ -92,7 +92,7 @@ public class SecurityConfig {
 					.addHeaderWriter(new StaticHeadersWriter("Access-Control-Allow-ExposedHeaders", "*", "Authorization"))
 					.addHeaderWriter(new StaticHeadersWriter("Access-Control-Allow-Headers", "Content-Type", "Authorization", "x-csrf-token"))
 					.addHeaderWriter(new StaticHeadersWriter("Access-Control-Allow-MaxAge", "600"))
-					.addHeaderWriter(new StaticHeadersWriter("Access-Control-Allow-Methods", "POST", "GET", "OPTIONS", "HEAD"))
+					.addHeaderWriter(new StaticHeadersWriter("Access-Control-Allow-Methods", "POST", "GET", "OPTIONS", "HEAD", "PATCH", "DELETE"))
 					//.addHeaderWriter(new StaticHeadersWriter("Access-Control-Allow-Origin", "https://john-scc.github.io"))
 					//.addHeaderWriter(new StaticHeadersWriter("Access-Control-Allow-Origin", "http://localhost:4100"))
 				)
