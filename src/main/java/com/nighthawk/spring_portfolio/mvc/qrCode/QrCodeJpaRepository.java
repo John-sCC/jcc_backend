@@ -1,6 +1,7 @@
 package com.nighthawk.spring_portfolio.mvc.qrCode;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -9,5 +10,5 @@ public interface QrCodeJpaRepository extends JpaRepository<QrCode, Long> {
     /* JPA has many built in methods: https://www.tutorialspoint.com/spring_boot_jpa/spring_boot_jpa_repository_methods.htm
     The below custom methods are prototyped for this application
     */
-    QrCode findById(long id);
+    Optional<QrCode> findById(long id);
 }

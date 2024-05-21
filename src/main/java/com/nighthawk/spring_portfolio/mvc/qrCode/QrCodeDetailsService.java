@@ -1,4 +1,4 @@
-package com.nighthawk.spring_portfolio.mvc.classPeriod;
+package com.nighthawk.spring_portfolio.mvc.qrCode;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -51,18 +51,7 @@ public class QrCodeDetailsService implements UserDetailsService {  // "implement
         if (person != null) {   // verify person
             Optional<QrCode> qrCode = QrCodeJpaRepository.findById(qrCodeId);
             if (qrCode != null) { // verify role
-                person.getQrCodes().add(qrCode);
-                
-                }
-                if (addLeader) classPeriod.getLeaders().add(person);   // everything is valid for adding leader
-                // boolean addClass = true;
-                // for (ClassPeriod cp : person.getClassPeriods()) {
-                //     if (cp.getName().equals(className)) {
-                //         addClass = false;
-                //         break;
-                //     }
-                // }
-                // if (addClass) person.getClassPeriods().add(classPeriod);
+                person.getQrCodes().add(qrCode.get());
             }
         }
     }
