@@ -87,7 +87,7 @@ public class Person {
 
     // NO NEED FOR ROLES METHODS IN PERSON, all roles add/deletion are handled in
     // other files due to object relationships
-
+    
     private Collection<String> subjectsOfInterest = new ArrayList<>();
 
     // Constructor used when building object from an API
@@ -104,7 +104,6 @@ public class Person {
 
     // Initialize static test data
     public static Person[] init() {
-
         // basics of class construction
         Person p1 = new Person();
         p1.setName("Thomas Edison");
