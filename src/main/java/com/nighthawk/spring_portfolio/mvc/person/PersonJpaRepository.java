@@ -30,7 +30,7 @@ public interface PersonJpaRepository extends JpaRepository<Person, Long> {
    */
   Person findByEmailAndPassword(String email, String password);
 
-  List<Person> findBySubjectOfInterestContains(String subjectOfInterest);
+  List<Person> findBySubjectsOfInterestContains(String subjectOfInterest);
 
   // Custom JPA query
   @Query(value = "SELECT * FROM Person p WHERE p.name LIKE ?1 or p.email LIKE ?1", nativeQuery = true)

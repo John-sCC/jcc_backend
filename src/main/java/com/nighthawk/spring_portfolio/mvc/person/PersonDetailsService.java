@@ -141,7 +141,7 @@ public class PersonDetailsService implements UserDetailsService { // "implements
 
     // getting persons by subject of interest
     public List<Person> getPersonsBySubjectOfInterest(String subjectOfInterest) {
-        return personJpaRepository.findBySubjectOfInterestContains(subjectOfInterest);
+        return personJpaRepository.findBySubjectsOfInterestContains(subjectOfInterest);
     }
 
     /* Roles Section */
