@@ -12,6 +12,8 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,6 +34,7 @@ import com.nighthawk.spring_portfolio.mvc.classPeriod.ClassPeriodDetailsService;
 import com.nighthawk.spring_portfolio.mvc.jwt.JwtTokenUtil;
 import com.nighthawk.spring_portfolio.mvc.person.Person;
 import com.nighthawk.spring_portfolio.mvc.person.PersonJpaRepository;
+
 
 @RestController
 @RequestMapping("/api/assignment")
@@ -334,7 +338,7 @@ public class AssignmentApiController {
     }
 
     @GetMapping("/preview")
-    public ResponseEntity<String> getFilePreview(@CookieValue("jwt") String jwtToken, @PathVariable long id) {
+    public ResponseEntity<String> getFilePreview(@CookieValue("jwt") String jwtToken, @RequestParam("assignmentID") long id) {
         if (jwtToken.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -389,4 +393,32 @@ public class AssignmentApiController {
         }
         
     }
+
+    @GetMapping("/showFilePreview")
+    public ResponseEntity<Resource> showFilePreview(@RequestParam("assignmentID") long id, @RequestParam("submitter") String submitterEmail) {
+        // Find the assignment
+        Assignment assignment = repository.findById(id);
+
+        // Check if the assignment exists
+        if (assignment == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        // Iterate through all submissions to find the one with the matching submitter's email
+        for (AssignmentSubmission sub : assignment.getSubmissions()) {
+            if (sub.getSubmitter().getEmail().equals(submitterEmail)) {
+                File file = new File(sub.getFilePath());
+                if (file.exists()) {
+                    Resource resource = new FileSystemResource(file);
+                    return new ResponseEntity<>(resource, HttpStatus.OK);
+                } else {
+                    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+                }
+            }
+        }
+
+        // If no matching submission is found
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
 }
