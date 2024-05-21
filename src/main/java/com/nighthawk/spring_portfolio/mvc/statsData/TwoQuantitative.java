@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -36,28 +35,16 @@ public class TwoQuantitative extends StatsFunctions {
 
     private double correlation;
 
-    @ElementCollection
     private LSRL lsrl;
 
-    private int explanatoryID;
+    private long explanatoryID;
 
-    private int responseID;
+    private long responseID;
 
-    public TwoQuantitative(Map<String, List<Double>> input, int responseID, int explanatoryID) {
-        Set<Map.Entry<String, List<Double>>> entrySet = input.entrySet();
+    public TwoQuantitative(List<List<Double>> inputs, long explanatoryID, long responseID) {
+        this.correlation = calculateCorrelation(inputs.get(0), inputs.get(1));
 
-        if (!entrySet.isEmpty()) {
-            // Using iterator
-            Iterator<Map.Entry<String, List<Double>>> iterator = entrySet.iterator();
-            Map.Entry<String, List<Double>> firstEntry = iterator.next();
-            Map.Entry<String, List<Double>> secondEntry = iterator.next();
-            this.correlation = calculateCorrelation(firstEntry.getValue(), secondEntry.getValue());
-        }
-        else {
-            this.correlation = 0;
-        }
-
-        this.lsrl = new LSRL(input, correlation);
+        this.lsrl = new LSRL(inputs, correlation);
 
         this.responseID = responseID;
         this.explanatoryID = explanatoryID;
@@ -74,11 +61,11 @@ public class TwoQuantitative extends StatsFunctions {
     }
 
     public static void init() {
-        Map<String, List<Double>> inputData = new HashMap<>();
+        List<List<Double>> inputData = new ArrayList<>();
         List<Double> dataList1 = Arrays.asList(1.0, 2.0, 3.0, 4.0, 5.0);
         List<Double> dataList2 = Arrays.asList(5.0, 3.0, 4.0, 5.0, 6.0);
-        inputData.put("data1", dataList1);
-        inputData.put("data2", dataList2);
+        inputData.add(dataList1);
+        inputData.add(dataList2);
 
         TwoQuantitative twoQuantitative = new TwoQuantitative(inputData, 1, 2);
 
