@@ -394,7 +394,7 @@ public class AssignmentApiController {
             Collection<Person> lead = classP.getLeaders(); //get the leaders of the class period
             for (Person leaderOfClassPeriod : lead)
             {
-                if (existingPerson.equals(leaderOfClassPeriod)) //if the user from the JWT token is a leader then grant access
+                if (existingPerson.getEmail().equals(leaderOfClassPeriod.getEmail())) //if the user from the JWT token is a leader then grant access
                 {
                     isLeader = true; //after this, send a link describing each submission to the assignment
                     allSubmissionsOut.addAll(assignment.getSubmissions());
@@ -404,27 +404,28 @@ public class AssignmentApiController {
         }
 
         //below code could work for something but it isn't right now
-        /* loop1: for (AssignmentSubmission sub : assignment.getSubmissions()) //get all the submissions
-        {
-            // Person user = sub.getSubmitter(); //get the submitter for each submission to the assignment
-            // if (user.getEmail() == userEmail) //if the user is the same as the one in the JWT token
-            // {
-                List<ClassPeriod> classesInAssignment = classService.getClassPeriodsByAssignment(assignment);
-                for (ClassPeriod classP : classesInAssignment) //go through all class periods in the assignment
-                {
-                    Collection<Person> lead = classP.getLeaders(); //get the leaders of the class period
-                    for (Person leaderOfClassPeriod : lead)
-                    {
-                        if (existingPerson.equals(leaderOfClassPeriod)) //if the user from the JWT token is a leader then grant access
-                        {
-                            isLeader = true; //after this, send a link describing each submission to the assignment
-                            allSubmissionsOut.addAll(assignment.getSubmissions());
-                            break loop1;
-                        }
-                    }
-                }
-            // }
-        } */
+        // loop1: for (AssignmentSubmission sub : assignment.getSubmissions()) //get all the submissions
+        // {
+        //     // Person user = sub.getSubmitter(); //get the submitter for each submission to the assignment
+        //     // if (user.getEmail() == userEmail) //if the user is the same as the one in the JWT token
+        //     // {
+        //         List<ClassPeriod> classesInAssignment = classService.getClassPeriodsByAssignment(assignment);
+        //         for (ClassPeriod classP : classesInAssignment) //go through all class periods in the assignment
+        //         {
+        //             Collection<Person> lead = classP.getLeaders(); //get the leaders of the class period
+        //             for (Person leaderOfClassPeriod : lead)
+        //             {
+        //                 System.out.println(leaderOfClassPeriod.getName());
+        //                 if (existingPerson.getName().equals(leaderOfClassPeriod.getName())) //did not have comparable for person
+        //                 {
+        //                     isLeader = true; //after this, send a link describing each submission to the assignment
+        //                     allSubmissionsOut.addAll(assignment.getSubmissions());
+        //                     break loop1;
+        //                 }
+        //             }
+        //         }
+        //     // }
+        // }
         if (isLeader)
         {
             String submissionData = "";
@@ -445,7 +446,7 @@ public class AssignmentApiController {
         
     }
 
-    // @GetMapping("/showFilePreview")
+    @GetMapping("/showFilePreview")
     public ResponseEntity<Resource> showFilePreview(@RequestParam("assignmentID") long id, @RequestParam("submitter") String submitterEmail) {
         // Find the assignment
         Assignment assignment = repository.findById(id);
