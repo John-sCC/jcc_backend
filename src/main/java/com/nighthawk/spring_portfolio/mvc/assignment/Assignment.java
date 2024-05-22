@@ -108,7 +108,7 @@ public class Assignment {
 
         // Initializing assignments here!!!
         Assignment assignment1 = new Assignment("Teddy's Science Spectacular", new Date(), date1, "Make me feel good about your understanding of science!! Try really hard and I'm certain that you'll succeed. Science science science!", 80, 4, new String[]{"pdf","png","jpg","jpeg"});
-        Assignment assignment2 = new Assignment("Big Project Check #3", new Date(), date2, "Expectations: <a href='https://github.com/nighthawkcoders/teacher_portfolio/issues/142'>https://github.com/nighthawkcoders/teacher_portfolio/issues/142</a>", 6, 2, new String[]{"png", "jpg", "jpeg"});
+        Assignment assignment2 = new Assignment("Big Project Check #3", new Date(), date2, "Expectations: <a href='https://github.com/nighthawkcoders/teacher_portfolio/issues/142'>https://github.com/nighthawkcoders/teacher_portfolio/issues/142</a>", 12, 2, new String[]{"png", "jpg", "jpeg"});
         Assignment assignment3 = new Assignment("Get Out, Seniors", new Date(), date3, "I, Thomas Edison, am so proud of all of the seniors!", 10, 1, new String[]{"pdf"});
 
         // Array definition and data initialization
