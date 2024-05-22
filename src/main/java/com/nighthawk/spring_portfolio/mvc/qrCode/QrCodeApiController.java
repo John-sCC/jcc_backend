@@ -6,6 +6,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.nighthawk.spring_portfolio.mvc.classPeriod.ClassPeriodDetailsService;
+import com.nighthawk.spring_portfolio.mvc.jwt.JwtTokenUtil;
+
 import jakarta.transaction.Transactional;
 
 import java.util.ArrayList;
@@ -19,6 +22,12 @@ public class QrCodeApiController {
     // Autowired enables Control to connect URI request and POJO Object to easily for Database CRUD operations
     @Autowired
     private QrCodeJpaRepository repository;
+
+    @Autowired
+    private QrCodeDetailsService qrCodeDetailsService;
+
+    @Autowired
+    private JwtTokenUtil tokenUtil;
 
     /* GET List of QrCode
      * @GetMapping annotation is used for mapping HTTP GET requests onto specific handler methods.
@@ -34,7 +43,10 @@ public class QrCodeApiController {
 
     @PostMapping("/newCode")
     public ResponseEntity<QrCode> newCode(@CookieValue("jwt") String jwtToken, @RequestBody QrCodeRequest qrCodeRequest) {
-        QrCode qrCode = new QrCode();
+        String name = qrCodeRequest.getName();
+        QrCode qrCode = new QrCode(name);
+
+        String userEmail = tokenUtil.getUsernameFromToken(jwtToken);
 
         List<String> links = qrCodeRequest.getLinks();
         List<Double> frequencys = qrCodeRequest.getFrequencies(); 
@@ -44,6 +56,8 @@ public class QrCodeApiController {
         }
         
         repository.save(qrCode);
+
+        qrCodeDetailsService.addQrCodeToUser(userEmail, qrCode.getId());
 
         return new ResponseEntity<>(qrCode, HttpStatus.OK);
     }
