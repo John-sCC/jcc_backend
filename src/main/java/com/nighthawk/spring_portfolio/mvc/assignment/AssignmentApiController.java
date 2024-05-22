@@ -370,7 +370,7 @@ public class AssignmentApiController {
         return filename.substring(dotIndex + 1);
     }
 
-    @GetMapping("/preview")
+    @GetMapping("/previewCheck")
     public ResponseEntity<String> getFilePreview(@CookieValue("jwt") String jwtToken, @RequestParam("assignmentID") long id) {
         if (jwtToken.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
