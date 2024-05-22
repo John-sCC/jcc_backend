@@ -2,6 +2,7 @@ package com.nighthawk.spring_portfolio.mvc.person;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -31,6 +32,9 @@ public interface PersonJpaRepository extends JpaRepository<Person, Long> {
   Person findByEmailAndPassword(String email, String password);
 
   // List<Person> findBySubjectsOfInterestContainingIgnoreCase(String subjectOfInterest);
+  // CUSTOM QUERY METHOD TO GET A SUBJECT OF INTEREST
+    @Query("SELECT p FROM Person p JOIN p.subjectsOfInterest s WHERE LOWER(s) = LOWER(:subjectOfInterest)")
+    List<Person> findBySubjectOfInterestIgnoreCase(@Param("subjectOfInterest") String subjectOfInterest);
 
   // Custom JPA query
   @Query(value = "SELECT * FROM Person p WHERE p.name LIKE ?1 or p.email LIKE ?1", nativeQuery = true)

@@ -5,6 +5,7 @@ import java.util.Collection;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -88,6 +89,7 @@ public class Person {
     // NO NEED FOR ROLES METHODS IN PERSON, all roles add/deletion are handled in
     // other files due to object relationships
     
+    @ElementCollection
     private Collection<String> subjectsOfInterest = new ArrayList<>();
 
     // Constructor used when building object from an API
