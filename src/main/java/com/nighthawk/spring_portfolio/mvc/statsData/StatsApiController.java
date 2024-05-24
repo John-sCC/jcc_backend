@@ -19,15 +19,14 @@ public class StatsApiController {
     // Autowired enables Control to connect URI request and POJO Object to easily for Database CRUD operations
     @Autowired
     private QuantitativeJpaRepository qRepository;
-
     @Autowired
     private TwoQuantitativeJpaRepository twoQRepository;
-
     @Autowired
     private CategoricalJpaRepository cRepository;
-    
     @Autowired
     private CategoricalVarsJpaRepository cVarsRepository;
+    @Autowired
+    private TwoCategoricalJpaRepository twoCategoricalRepository;
 
     /* GET List of all of any type of data
      * @GetMapping annotation is used for mapping HTTP GET requests onto specific handler methods.
@@ -170,6 +169,40 @@ public class StatsApiController {
         if (optional.isPresent()) {
             CategoricalVars categoricalVars = optional.get();
             return new ResponseEntity<>(categoricalVars, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    @GetMapping("/twoCategorical")
+    public ResponseEntity<List<TwoCategorical>> getTwoCategoricals() {
+        List<TwoCategorical> twoCategoricals = twoCategoricalRepository.findAll();
+        return new ResponseEntity<>(twoCategoricals, HttpStatus.OK);
+    }
+
+    @PostMapping("/newTwoCategorical")
+    public ResponseEntity<TwoCategorical> newTwoCategorical(@RequestBody TwoCategoricalRequest twoCategoricalRequest) {
+        String explanatory = twoCategoricalRequest.getExplanatory();
+        String response = twoCategoricalRequest.getResponse();
+        int freq = twoCategoricalRequest.getFreq();
+        double relFreq = twoCategoricalRequest.getRelFreq();
+
+        TwoCategorical twoCategorical = new TwoCategorical();
+        twoCategorical.setExplanatory(explanatory);
+        twoCategorical.setResponse(response);
+        twoCategorical.setFreq(freq);
+        twoCategorical.setRelFreq(relFreq);
+
+        twoCategoricalRepository.save(twoCategorical);
+
+        return new ResponseEntity<>(twoCategorical, HttpStatus.OK);
+    }
+
+    @GetMapping("/getTwoCategorical{id}")
+    public ResponseEntity<TwoCategorical> getTwoCategorical(@PathVariable long id) {
+        Optional<TwoCategorical> optional = twoCategoricalRepository.findById(id);
+        if (optional.isPresent()) {
+            TwoCategorical twoCategorical = optional.get();
+            return new ResponseEntity<>(twoCategorical, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
