@@ -19,17 +19,13 @@ public class StatsApiController {
     // Autowired enables Control to connect URI request and POJO Object to easily for Database CRUD operations
     @Autowired
     private QuantitativeJpaRepository qRepository;
-<<<<<<< HEAD
-    @Autowired
-    private TwoQuantitativeJpaRepository twoQRepository;
-=======
 
     @Autowired
     private TwoQuantitativeJpaRepository twoQRepository;
 
->>>>>>> 256bacb126280b23d3150777545218baecfb96b3
     @Autowired
     private CategoricalJpaRepository cRepository;
+    
     @Autowired
     private CategoricalVarsJpaRepository cVarsRepository;
 
@@ -63,8 +59,6 @@ public class StatsApiController {
         return new ResponseEntity<>(quantitative, HttpStatus.OK);
     }
 
-<<<<<<< HEAD
-=======
     @PostMapping("/newTwoQuantitative")
     public ResponseEntity<TwoQuantitative> newCode(@RequestBody TwoQuantitativeRequest twoQuantitativeRequest) {
         List<Double> explanatory = twoQuantitativeRequest.getExplanatory();
@@ -90,7 +84,6 @@ public class StatsApiController {
         return new ResponseEntity<>(twoQuantitative, HttpStatus.OK);
     }    
 
->>>>>>> 256bacb126280b23d3150777545218baecfb96b3
     /* GET Specific of any type of data 
      * @GetMapping annotation is used for mapping HTTP GET requests onto specific handler methods.
      */
