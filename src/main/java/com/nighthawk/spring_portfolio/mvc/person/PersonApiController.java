@@ -81,16 +81,13 @@ public class PersonApiController {
      * POST Aa record by Requesting Parameters from URI
      */
     @PostMapping("/post")
-    public ResponseEntity<Object> postPerson(@RequestParam("email") String email,
-            @RequestParam("password") String password,
-            @RequestParam("name") String name,
-            @RequestParam("usn") String usn,
-            @RequestParam("subjectsOfInterest") String[] subjectsOfInterest) {
+    public ResponseEntity<Object> postPerson(@RequestBody PersonRequest personRequest) {
         // A person object WITHOUT ID will create a new record with default roles as
         // student
-        Person person = new Person(email, password, name, usn, subjectsOfInterest);
+        Person person = new Person(personRequest.getEmail(), personRequest.getPassword(), personRequest.getName(),
+                personRequest.getUsn(), personRequest.getSubjectsOfInterest());
         personDetailsService.save(person);
-        return new ResponseEntity<>(email + " is created successfully", HttpStatus.CREATED);
+        return new ResponseEntity<>(personRequest.getEmail() + " is created successfully", HttpStatus.CREATED);
     }
 
     // get persons by subject of interest - endpointmethod
