@@ -1,7 +1,10 @@
 package com.nighthawk.spring_portfolio.mvc.assignment;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -12,8 +15,11 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -436,30 +442,56 @@ public class AssignmentApiController {
     }
 
     @GetMapping("/showFilePreview")
-    public ResponseEntity<Resource> showFilePreview(@RequestParam("assignmentID") long id, @RequestParam("submitter") String submitterEmail) {
+    public ResponseEntity<Resource> showFilePreview(@RequestParam("id") long id, @RequestParam("submitter") String submitterName) {
         // Find the assignment
         Assignment assignment = repository.findById(id);
-
+    
         // Check if the assignment exists
         if (assignment == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return ResponseEntity.notFound().build();
         }
-
+    
         // Iterate through all submissions to find the one with the matching submitter's email
         for (AssignmentSubmission sub : assignment.getSubmissions()) {
-            if (sub.getSubmitter().getEmail().equals(submitterEmail)) {
+            if (sub.getSubmitter().getName().equals(submitterName)) {
                 File file = new File(sub.getFilePath());
                 if (file.exists()) {
-                    Resource resource = new FileSystemResource(file);
-                    return new ResponseEntity<>(resource, HttpStatus.OK);
+                    try {
+                        byte[] fileBytes = Files.readAllBytes(file.toPath());
+                        ByteArrayResource resource = new ByteArrayResource(fileBytes);
+                        HttpHeaders headers = new HttpHeaders();
+    
+                        // Determine Content-Type based on file extension
+                        String contentType;
+                        String filename = file.getName().toLowerCase();
+                        if (filename.endsWith(".pdf")) {
+                            contentType = MediaType.APPLICATION_PDF_VALUE;
+                        } else if (filename.endsWith(".jpg") || filename.endsWith(".jpeg")) {
+                            contentType = MediaType.IMAGE_JPEG_VALUE;
+                        } else if (filename.endsWith(".png")) {
+                            contentType = MediaType.IMAGE_PNG_VALUE;
+                        } else if (filename.endsWith(".docx")) {
+                            contentType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+                        } else {
+                            // If the file type is unknown, set it as octet-stream
+                            contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
+                        }
+    
+                        headers.setContentType(MediaType.parseMediaType(contentType));
+                        headers.setContentDispositionFormData("inline", file.getName()); // Display in browser
+                        return ResponseEntity.ok()
+                                .headers(headers)
+                                .body(resource);
+                    } catch (IOException e) {
+                        return ResponseEntity.notFound().build();
+                    }
                 } else {
-                    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+                    return ResponseEntity.notFound().build();
                 }
             }
         }
-
+    
         // If no matching submission is found
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return ResponseEntity.notFound().build();
     }
-
 }
