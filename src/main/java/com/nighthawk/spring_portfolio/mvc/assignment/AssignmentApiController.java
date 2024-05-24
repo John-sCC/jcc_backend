@@ -371,7 +371,7 @@ public class AssignmentApiController {
     }
 
     @GetMapping("/previewCheck")
-    public ResponseEntity<String> getFilePreview(@CookieValue("jwt") String jwtToken, @RequestParam("assignmentID") long id) {
+    public ResponseEntity<String> getFilePreview(@CookieValue("jwt") String jwtToken, @RequestParam("id") long id) {
         if (jwtToken.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -383,6 +383,10 @@ public class AssignmentApiController {
         }
         
         Assignment assignment = repository.findById(id); //find the assignment
+        if (assignment == null)
+        {
+            return new ResponseEntity<>("Assignment does not exist", HttpStatus.BAD_REQUEST);
+        }
 
         boolean isLeader = false;
         List<AssignmentSubmission> allSubmissionsOut = new ArrayList<>();
@@ -394,38 +398,23 @@ public class AssignmentApiController {
             Collection<Person> lead = classP.getLeaders(); //get the leaders of the class period
             for (Person leaderOfClassPeriod : lead)
             {
+                System.out.println(leaderOfClassPeriod.getName());
                 if (existingPerson.getEmail().equals(leaderOfClassPeriod.getEmail())) //if the user from the JWT token is a leader then grant access
                 {
                     isLeader = true; //after this, send a link describing each submission to the assignment
                     allSubmissionsOut.addAll(assignment.getSubmissions());
-                    showFilePreview(id, userEmail);
                 }
             }
         }
 
-        //below code could work for something but it isn't right now
-        // loop1: for (AssignmentSubmission sub : assignment.getSubmissions()) //get all the submissions
-        // {
-        //     // Person user = sub.getSubmitter(); //get the submitter for each submission to the assignment
-        //     // if (user.getEmail() == userEmail) //if the user is the same as the one in the JWT token
-        //     // {
-        //         List<ClassPeriod> classesInAssignment = classService.getClassPeriodsByAssignment(assignment);
-        //         for (ClassPeriod classP : classesInAssignment) //go through all class periods in the assignment
-        //         {
-        //             Collection<Person> lead = classP.getLeaders(); //get the leaders of the class period
-        //             for (Person leaderOfClassPeriod : lead)
-        //             {
-        //                 System.out.println(leaderOfClassPeriod.getName());
-        //                 if (existingPerson.getName().equals(leaderOfClassPeriod.getName())) //did not have comparable for person
-        //                 {
-        //                     isLeader = true; //after this, send a link describing each submission to the assignment
-        //                     allSubmissionsOut.addAll(assignment.getSubmissions());
-        //                     break loop1;
-        //                 }
-        //             }
-        //         }
-        //     // }
-        // }
+        for (AssignmentSubmission submission : assignment.getSubmissions())
+        {
+            if (submission.getSubmitter().getEmail().equals(existingPerson.getEmail()))
+            {
+                isLeader = true;
+                allSubmissionsOut.add(submission);
+            }
+        }
         if (isLeader)
         {
             String submissionData = "";

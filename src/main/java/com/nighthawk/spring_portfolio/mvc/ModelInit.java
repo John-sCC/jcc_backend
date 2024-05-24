@@ -69,7 +69,7 @@ public class ModelInit {
             personService.addRoleToPerson(personArray[4].getEmail(), "ROLE_ADMIN");
 
             // initializing classPeriod objects
-            String[] emailsForInit = {"niko@gmail.com", "toby@gmail.com", "jm1021@gmail.com"};
+            String[] emailsForInit = {"toby@gmail.com", "jm1021@gmail.com"};
             String[] emailsForStudent = {"toby@gmail.com", "lexb@gmail.com", "niko@gmail.com", "madam@gmail.com", "jm1021@gmail.com"};
             int i = 0;
             ClassPeriod[] classPeriods = ClassPeriod.init();
