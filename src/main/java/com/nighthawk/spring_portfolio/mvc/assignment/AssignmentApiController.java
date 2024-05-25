@@ -264,6 +264,10 @@ public class AssignmentApiController {
                 }
             }
         }
+        // determine if it's within the valid number of submissions
+        if (submissionNumber > submittedAssignment.getAllowedSubmissions()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
         // converting submissionTime String to Date
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX");
         Date submissionTime;
@@ -395,6 +399,7 @@ public class AssignmentApiController {
         }
 
         boolean isLeader = false;
+        boolean isSubmitter = false;
         List<AssignmentSubmission> allSubmissionsOut = new ArrayList<>();
 
         List<ClassPeriod> classesInAssignment = classService.getClassPeriodsByAssignment(assignment);
