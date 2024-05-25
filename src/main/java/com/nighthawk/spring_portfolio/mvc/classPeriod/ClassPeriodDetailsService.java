@@ -50,7 +50,7 @@ public class ClassPeriodDetailsService implements UserDetailsService {  // "impl
         return null;
     }
 
-    /* Person Section */
+    /* Class fetching Section */
 
     public  List<ClassPeriod>listAll() {
         return classPeriodJpaRepository.findAllByOrderByNameAsc();
@@ -71,17 +71,20 @@ public class ClassPeriodDetailsService implements UserDetailsService {  // "impl
         return classPeriodJpaRepository.findByStudentsContaining(student);
     }
 
+    // Method to get class periods by an assignment
+    public List<ClassPeriod> getClassPeriodsByAssignment(Assignment assignment) {
+        return classPeriodJpaRepository.findByAssignmentsContaining(assignment);
+    }
+
     // encode password prior to sava
     public void save(ClassPeriod classPeriod) {
         // before the save, a leader MUST be added!
         classPeriodJpaRepository.save(classPeriod);
     }
 
-    // public ClassPeriod get(long id) {
-    //     return (classPeriodJpaRepository.findById(id) != null)
-    //             ? classPeriodJpaRepository.findById(id).get()
-    //             : null;
-    // }
+    public ClassPeriod get(long id) {
+        return classPeriodJpaRepository.findById(id);
+    }
 
     public ClassPeriod getByName(String name) {
         return (classPeriodJpaRepository.findByName(name));
