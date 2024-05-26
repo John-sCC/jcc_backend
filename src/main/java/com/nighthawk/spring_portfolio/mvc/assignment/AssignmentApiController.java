@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -123,7 +124,20 @@ public class AssignmentApiController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         // if the student is determined to have no relationship to the assignment, null indicates they cannot access w/ role
-        assignmentData.put("data", assignment);
+        // manually adding to data to prevent student from getting submission access
+        HashMap<String, Object> assignmentDetails = new HashMap<>();
+        assignmentDetails.put("allowedFileTypes", assignment.getAllowedFileTypes());
+        assignmentDetails.put("allowedSubmissions", assignment.getAllowedSubmissions());
+        assignmentDetails.put("content", assignment.getContent());
+        assignmentDetails.put("dateDue", assignment.getDateDue());
+        assignmentDetails.put("id", assignment.getId());
+        assignmentDetails.put("name", assignment.getName());
+        assignmentDetails.put("points", assignment.getPoints());
+        if (assignmentData.get("role").equals("teacher")) {
+            assignmentDetails.put("submissions", assignment.getSubmissions());
+        }
+        assignmentData.put("data", assignmentDetails);
+
         // NOW MAKE IT ALSO FETCH PREVIOUS SUBMISSION
         ArrayList<AssignmentSubmission> personSubmissions = new ArrayList<>();
         for (AssignmentSubmission submission : assignment.getSubmissions()) {
@@ -289,7 +303,7 @@ public class AssignmentApiController {
 
             String fileExtension = getFileExtension(file.getOriginalFilename());
 
-            if (!isValidFileType(fileExtension, contentType)) {
+            if (!isValidFileType(submittedAssignment.getAllowedFileTypes(), fileExtension, contentType)) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("File type is not supported");
             }
     
@@ -356,6 +370,36 @@ public class AssignmentApiController {
         }
     }
 
+    // uses specified assignment's valid file types
+    private boolean isValidFileType(List<String> allowedFileTypes, String fileExtension, String contentType) {
+        HashMap<String, String> fileTypes = new HashMap<>();
+        fileTypes.put("pdf", MediaType.APPLICATION_PDF_VALUE);
+        fileTypes.put("jpg", MediaType.IMAGE_JPEG_VALUE);
+        fileTypes.put("jpeg", MediaType.IMAGE_JPEG_VALUE);
+        fileTypes.put("png", MediaType.IMAGE_PNG_VALUE);
+        fileTypes.put("docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+        fileTypes.put("txt", MediaType.TEXT_PLAIN_VALUE);
+
+        // Create a list to hold keys that need to be removed
+        List<String> keysToRemove = new ArrayList<>();
+
+        // Iterate over the keys and check if they are allowed
+        for (String key : fileTypes.keySet()) {
+            if (!allowedFileTypes.contains(key)) {
+                keysToRemove.add(key); // Add keys to be removed
+            }
+        }
+
+        // Remove keys that are not allowed
+        for (String key : keysToRemove) {
+            fileTypes.remove(key);
+        }
+
+        // Check if the file extension and content type match any allowed type
+        return fileTypes.containsKey(fileExtension) && fileTypes.get(fileExtension).equals(contentType);
+        }
+
+    // somewhat obsoleted by new method
     private boolean isValidFileType(String fileExtension, String contentType) {
         HashMap<String, String> fileTypes = new HashMap<>();
         fileTypes.put("pdf", MediaType.APPLICATION_PDF_VALUE);
