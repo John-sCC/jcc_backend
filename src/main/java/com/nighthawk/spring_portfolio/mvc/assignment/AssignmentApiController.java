@@ -148,6 +148,13 @@ public class AssignmentApiController {
                 }
             }
             assignmentDetails.put("numberOfStudents", uniqueStudents.size());
+            // new set for unique submissions
+            Set<Person> uniqueSubmitters = new HashSet<>();
+            // iterating through each submission
+            for (AssignmentSubmission submission : assignment.getSubmissions()) {
+                uniqueSubmitters.add(submission.getSubmitter());
+            }
+            assignmentDetails.put("numberOfSubmitters", uniqueSubmitters.size());
         }
         assignmentData.put("data", assignmentDetails);
 
