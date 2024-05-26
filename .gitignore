@@ -38,3 +38,6 @@ build/
 *.db
 
 sqlite.db
+
+### All file uploads should be ignored in Git for upload privacy ###
+/src/main/java/com/nighthawk/spring_portfolio/mvc/assignment/StoredAssignments/
