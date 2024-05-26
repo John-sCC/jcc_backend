@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -135,6 +136,18 @@ public class AssignmentApiController {
         assignmentDetails.put("points", assignment.getPoints());
         if (assignmentData.get("role").equals("teacher")) {
             assignmentDetails.put("submissions", assignment.getSubmissions());
+            // retrieving the list of ClassPeriod objects for the given assignment
+            List<ClassPeriod> classPeriods = classService.getClassPeriodsByAssignment(assignment);
+            // making a HashSet to store unique Person objects
+            Set<Person> uniqueStudents = new HashSet<>();
+            // iterating through each ClassPeriod object
+            for (ClassPeriod classPeriod : classPeriods) {
+                Collection<Person> students = classPeriod.getStudents();
+                for (Person student : students) {
+                    uniqueStudents.add(student);
+                }
+            }
+            assignmentDetails.put("numberOfStudents", uniqueStudents.size());
         }
         assignmentData.put("data", assignmentDetails);
 
@@ -537,6 +550,65 @@ public class AssignmentApiController {
                 } else {
                     return ResponseEntity.notFound().build();
                 }
+            }
+        }
+    
+        // If no matching submission is found
+        return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/preview")
+    public ResponseEntity<?> sendFileForPreview(@CookieValue("jwt") String jwtToken, @RequestParam("id") long id) {
+        if (jwtToken.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        // getting user data
+        String userEmail = tokenUtil.getUsernameFromToken(jwtToken);
+        Person existingPerson = personRepository.findByEmail(userEmail);
+        if (existingPerson == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        
+        AssignmentSubmission sub = subDetailsService.get(id); //find the assignment
+        if (sub == null) {
+            return new ResponseEntity<>("Assignment submission with ID " + id + " does not exist", HttpStatus.BAD_REQUEST);
+        }
+
+        // send preview for submitter after confirming identity, see that if statement
+        if (sub.getSubmitter().getEmail().equals(existingPerson.getEmail())) {
+            File file = new File(sub.getFilePath());
+            if (file.exists()) {
+                try {
+                    byte[] fileBytes = Files.readAllBytes(file.toPath());
+                    ByteArrayResource resource = new ByteArrayResource(fileBytes);
+                    HttpHeaders headers = new HttpHeaders();
+
+                    // Determine Content-Type based on file extension
+                    String contentType;
+                    String filename = file.getName().toLowerCase();
+                    if (filename.endsWith(".pdf")) {
+                        contentType = MediaType.APPLICATION_PDF_VALUE;
+                    } else if (filename.endsWith(".jpg") || filename.endsWith(".jpeg")) {
+                        contentType = MediaType.IMAGE_JPEG_VALUE;
+                    } else if (filename.endsWith(".png")) {
+                        contentType = MediaType.IMAGE_PNG_VALUE;
+                    } else if (filename.endsWith(".docx")) {
+                        contentType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+                    } else {
+                        // If the file type is unknown, set it as octet-stream
+                        contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
+                    }
+
+                    headers.setContentType(MediaType.parseMediaType(contentType));
+                    headers.setContentDispositionFormData("inline", file.getName()); // Display in browser
+                    return ResponseEntity.ok()
+                            .headers(headers)
+                            .body(resource);
+                } catch (IOException e) {
+                    return ResponseEntity.notFound().build();
+                }
+            } else {
+                return ResponseEntity.notFound().build();
             }
         }
     

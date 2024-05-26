@@ -64,6 +64,10 @@ public class AssignmentDetailsService implements UserDetailsService {
         return (assignmentJpaRepository.findByName(name));
     }
 
+    public Assignment getBySubmission(AssignmentSubmission submission) {
+        return (assignmentJpaRepository.findBySubmissionsContaining(submission));
+    }
+
     public void delete(long id) {
         assignmentJpaRepository.deleteById(id);
     }
