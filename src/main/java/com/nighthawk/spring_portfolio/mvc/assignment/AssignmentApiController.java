@@ -147,14 +147,14 @@ public class AssignmentApiController {
                     uniqueStudents.add(student);
                 }
             }
-            assignmentDetails.put("numberOfStudents", uniqueStudents.size());
+            assignmentDetails.put("allAssignees", uniqueStudents);
             // new set for unique submissions
             Set<Person> uniqueSubmitters = new HashSet<>();
             // iterating through each submission
             for (AssignmentSubmission submission : assignment.getSubmissions()) {
                 uniqueSubmitters.add(submission.getSubmitter());
             }
-            assignmentDetails.put("numberOfSubmitters", uniqueSubmitters.size());
+            assignmentDetails.put("allSubmitters", uniqueSubmitters);
         }
         assignmentData.put("data", assignmentDetails);
 
@@ -168,7 +168,8 @@ public class AssignmentApiController {
         assignmentData.put("submissions", personSubmissions.toArray());
         return new ResponseEntity<>(assignmentData, HttpStatus.OK);    
     }
-
+    
+    // obsoleted by above adaptive method
     @GetMapping("/cookie/{id}/grading")
     public ResponseEntity<?> getAssignmentSubmissionsWithCookie(@CookieValue("jwt") String jwtToken,
                                                                 @PathVariable long id) {
@@ -581,8 +582,18 @@ public class AssignmentApiController {
             return new ResponseEntity<>("Assignment submission with ID " + id + " does not exist", HttpStatus.BAD_REQUEST);
         }
 
+        // determine if this is the teacher for validation
+        boolean isTeacher = false;
+        for (ClassPeriod period : classService.getClassPeriodsByAssignment(assignmentDetailsService.getBySubmission(sub))) {
+            for (Person leader : period.getLeaders()) {
+                if (leader.getEmail().equals(existingPerson.getEmail())) {
+                    isTeacher = true;
+                }
+            }
+        }
+
         // send preview for submitter after confirming identity, see that if statement
-        if (sub.getSubmitter().getEmail().equals(existingPerson.getEmail())) {
+        if (sub.getSubmitter().getEmail().equals(existingPerson.getEmail()) || isTeacher) {
             File file = new File(sub.getFilePath());
             if (file.exists()) {
                 try {
