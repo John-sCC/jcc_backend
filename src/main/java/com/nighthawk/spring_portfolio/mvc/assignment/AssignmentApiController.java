@@ -422,7 +422,7 @@ public class AssignmentApiController {
         {
             if (submission.getSubmitter().getEmail().equals(existingPerson.getEmail()))
             {
-                isLeader = true;
+                isSubmitter = true;
                 allSubmissionsOut.add(submission);
             }
         }

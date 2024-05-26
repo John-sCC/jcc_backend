@@ -1,6 +1,7 @@
 package com.nighthawk.spring_portfolio.mvc;
 
 import java.util.Date;
+import java.util.Calendar;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,7 +95,9 @@ public class ModelInit {
             Assignment[] assignments = Assignment.init();
             i = 0;
             Person niko = personArray[2]; // nikola tesla is in both classes so we're adding submissions with him
-            Date submissionTime = new Date();
+            Calendar cal = Calendar.getInstance();
+            cal.set(2024, Calendar.MAY, 28, 23, 59, 0);
+            Date submissionTime = cal.getTime();
             AssignmentSubmission nikoSubmission = new AssignmentSubmission(niko, "src/main/java/com/nighthawk/spring_portfolio/mvc/assignment/StoredAssignments/Stats Proposal Tri 3.pdf", submissionTime, 1);
             for (Assignment ass : assignments) {
                 List<Assignment> existingAss = assRepo.findByName(ass.getName());
