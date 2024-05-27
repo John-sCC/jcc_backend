@@ -31,6 +31,7 @@ public class Categorical extends StatsFunctions {
     
     private List<String> variableNames; //if size == 2, first val = explanatory, second = response
 
+    @Convert(converter = MapToStringConverter.class)
     private Map<String, Double> items = new HashMap<>(); // Name, Frequency
 
     // Method to calculate relative frequency
