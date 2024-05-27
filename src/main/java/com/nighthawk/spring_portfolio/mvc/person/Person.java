@@ -8,6 +8,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -91,7 +92,7 @@ public class Person {
     // NO NEED FOR ROLES METHODS IN PERSON, all roles add/deletion are handled in
     // other files due to object relationships
     
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "person_subjects", joinColumns = @JoinColumn(name = "person_id"))
     @Column(name = "subject")
     private Collection<String> subjectsOfInterest = new ArrayList<>();
