@@ -12,8 +12,11 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Collections;
+import java.util.Comparator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,6 +40,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.nighthawk.hacks.classDataStruct.LinkedList;
 import com.nighthawk.spring_portfolio.mvc.classPeriod.ClassPeriod;
 import com.nighthawk.spring_portfolio.mvc.classPeriod.ClassPeriodDetailsService;
 import com.nighthawk.spring_portfolio.mvc.jwt.JwtTokenUtil;
@@ -139,7 +143,7 @@ public class AssignmentApiController {
             // retrieving the list of ClassPeriod objects for the given assignment
             List<ClassPeriod> classPeriods = classService.getClassPeriodsByAssignment(assignment);
             // making a HashSet to store unique Person objects
-            Set<Person> uniqueStudents = new HashSet<>();
+            Set<Person> uniqueStudents = new LinkedHashSet<>(); // SORT ALL THESE STUDENTS ALPHABETICALLY
             // iterating through each ClassPeriod object
             for (ClassPeriod classPeriod : classPeriods) {
                 Collection<Person> students = classPeriod.getStudents();
@@ -147,7 +151,8 @@ public class AssignmentApiController {
                     uniqueStudents.add(student);
                 }
             }
-            assignmentDetails.put("allAssignees", uniqueStudents);
+            // SORTING ALPHABETICALLY when added
+            assignmentDetails.put("allAssignees", sortLinkedHashSetByName(uniqueStudents));
             // new set for unique submissions
             Set<Person> uniqueSubmitters = new HashSet<>();
             // iterating through each submission
@@ -168,12 +173,29 @@ public class AssignmentApiController {
         assignmentData.put("submissions", personSubmissions.toArray());
         return new ResponseEntity<>(assignmentData, HttpStatus.OK);    
     }
+
+    public LinkedHashSet<Person> sortLinkedHashSetByName(Set<Person> set) {
+        // Convert LinkedHashSet to List
+        List<Person> list = new ArrayList<>(set);
+
+        // Sort the List using a custom Comparator
+        Collections.sort(list, new Comparator<Person>() {
+            @Override
+            public int compare(Person p1, Person p2) {
+                return p1.getName().compareTo(p2.getName());
+            }
+        });
+
+        // Convert the sorted List back to LinkedHashSet to maintain insertion order
+        return new LinkedHashSet<>(list);
+    }
     
-    // obsoleted by above adaptive method
-    @GetMapping("/cookie/{id}/grading")
+    // method for grading submission
+    @PostMapping("/cookie/{id}/grading")
     public ResponseEntity<?> getAssignmentSubmissionsWithCookie(@CookieValue("jwt") String jwtToken,
-                                                                @PathVariable long id) {
-        if (jwtToken.isEmpty()) {
+                                                                @PathVariable long id,
+                                                                @RequestParam int score) {
+        if (jwtToken.isEmpty() || score < 0) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         // getting user data
@@ -182,13 +204,13 @@ public class AssignmentApiController {
         if (existingPerson == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        Assignment assignment = repository.findById(id);
-        if (assignment == null) {  // bad ID
+        AssignmentSubmission submission = subDetailsService.get(id);
+        if (submission == null) {  // bad ID
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);  // OK HTTP response: status code, headers, and body
         }
         boolean isTeacher = false;
         // good ID, so continue to check relationship
-        for (ClassPeriod cp : classService.getClassPeriodsByAssignment(assignment)) {
+        for (ClassPeriod cp : classService.getClassPeriodsByAssignment(assignmentDetailsService.getBySubmission(submission))) {
             for (Person leader : cp.getLeaders()) {
                 if (leader.getEmail().equals(existingPerson.getEmail())) {
                     isTeacher = true; // person has teacher access to the assignment
@@ -199,8 +221,9 @@ public class AssignmentApiController {
         if (!(isTeacher)) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        // sending all submissions from a given assignment
-        return new ResponseEntity<>(assignment.getSubmissions(), HttpStatus.OK);    
+        // if determined to be teacher, the grade is updated
+        subDetailsService.scoreSubmission(submission.getId(), score);
+        return new ResponseEntity<>("The submission's score has been updated to " + submission.getScore() + "!", HttpStatus.OK);    
     }
 
     /*
@@ -338,8 +361,11 @@ public class AssignmentApiController {
             String tempFilePath = tempUploadDir + File.separator + file.getOriginalFilename();
             file.transferTo(new File(tempFilePath));
 
+            // Ensure unique file name in the final upload directory
+            String uniqueFileName = ensureUniqueFileName(uploadDir, file.getOriginalFilename());
+
             // Move the file to the final destination
-            String finalFilePath = uploadDir + File.separator + file.getOriginalFilename();
+            String finalFilePath = uploadDir + File.separator + uniqueFileName;
             new File(tempFilePath).renameTo(new File(finalFilePath));
 
             // saving the new assignment submission following (DREW CODE)
@@ -443,6 +469,27 @@ public class AssignmentApiController {
         }
         int dotIndex = filename.lastIndexOf('.');
         return filename.substring(dotIndex + 1);
+    }
+
+    // Method to ensure unique file name
+    private String ensureUniqueFileName(String uploadDir, String originalFilename) {
+        File file = new File(uploadDir + File.separator + originalFilename);
+        String name = originalFilename;
+        String extension = "";
+        int dotIndex = originalFilename.lastIndexOf('.');
+        if (dotIndex != -1) {
+            name = originalFilename.substring(0, dotIndex);
+            extension = originalFilename.substring(dotIndex);
+        }
+
+        int counter = 0;
+        while (file.exists()) {
+            counter++;
+            String newName = name + " (" + counter + ")" + extension;
+            file = new File(uploadDir + File.separator + newName);
+        }
+
+        return file.getName();
     }
 
     @GetMapping("/previewCheck")
