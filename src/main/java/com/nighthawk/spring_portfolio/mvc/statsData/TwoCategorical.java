@@ -106,12 +106,12 @@ public class TwoCategorical extends StatsFunctions {
 
     // Method to get minimum value
     public double getMinimum() {
-        return Arrays.stream(flatFrequencies()).min().orElse(0.0);
+        return Arrays.stream(flattenFrequencies()).min().orElse(0.0);
     }
 
     // Method to get maximum value
     public double getMaximum() {
-        return Arrays.stream(flatFrequencies()).max().orElse(0.0);
+        return Arrays.stream(flattenFrequencies()).max().orElse(0.0);
     }
 
     // Method to calculate quartile one

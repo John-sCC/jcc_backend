@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.List;
 import java.util.stream.Collectors;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtils;
@@ -25,6 +26,8 @@ public class Categorical extends StatsFunctions {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
+    private int size;
     
     private List<String> variableNames; //if size == 2, first val = explanatory, second = response
 

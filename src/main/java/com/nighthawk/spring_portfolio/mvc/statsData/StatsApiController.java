@@ -10,6 +10,7 @@ import jakarta.transaction.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController // annotation to simplify the creation of RESTful web services
@@ -119,11 +120,11 @@ public class StatsApiController {
     @PostMapping("/newCategorical")
     public ResponseEntity<Categorical> newCategorical(@RequestBody CategoricalRequest categoricalRequest) {
         int size = categoricalRequest.getSize();
-        ArrayList<Categorical> data = categoricalRequest.getData();
+        Map<String, Double> data = categoricalRequest.getData();
 
         Categorical categorical = new Categorical();
         categorical.setSize(size);
-        categorical.setData(data);
+        categorical.setItems(data);
 
         cRepository.save(categorical);
 
@@ -181,16 +182,14 @@ public class StatsApiController {
 
     @PostMapping("/newTwoCategorical")
     public ResponseEntity<TwoCategorical> newTwoCategorical(@RequestBody TwoCategoricalRequest twoCategoricalRequest) {
-        String explanatory = twoCategoricalRequest.getExplanatory();
-        String response = twoCategoricalRequest.getResponse();
-        int freq = twoCategoricalRequest.getFreq();
-        double relFreq = twoCategoricalRequest.getRelFreq();
+        String explanatoryName = twoCategoricalRequest.getExplanatoryName();
+        String responseName = twoCategoricalRequest.getResponseName();
+        double[][] frequencies = twoCategoricalRequest.getFrequencies();
 
         TwoCategorical twoCategorical = new TwoCategorical();
-        twoCategorical.setExplanatory(explanatory);
-        twoCategorical.setResponse(response);
-        twoCategorical.setFreq(freq);
-        twoCategorical.setRelFreq(relFreq);
+        twoCategorical.setExplanatoryName(explanatoryName);
+        twoCategorical.setResponseName(responseName);
+        twoCategorical.setFrequencies(frequencies);
 
         twoCategoricalRepository.save(twoCategorical);
 

@@ -8,8 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TwoCategoricalRequest {
-    private String explanatory;
-    private String response;
-    private int freq;
-    private double relFreq;
+    private String explanatoryName;
+    private String responseName;
+    private double[][] frequencies;
 }
