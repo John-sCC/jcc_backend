@@ -3,12 +3,14 @@ package com.nighthawk.spring_portfolio.mvc.person;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 // import jakarta.persistence.JoinColumn;
 // import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
@@ -90,6 +92,8 @@ public class Person {
     // other files due to object relationships
     
     @ElementCollection
+    @CollectionTable(name = "person_subjects", joinColumns = @JoinColumn(name = "person_id"))
+    @Column(name = "subject")
     private Collection<String> subjectsOfInterest = new ArrayList<>();
 
     // Constructor used when building object from an API
