@@ -39,19 +39,19 @@ public class StatsFunctions {
 
     public double getMinimum(List<Double> dataset)
     {
-        Collections.sort(dataset);
+        dataset = this.customSort(dataset);
         return dataset.get(0);
     }
 
     public double getMaximum(List<Double> dataset)
     {
-        Collections.sort(dataset);
+        dataset = this.customSort(dataset);
         return dataset.get(dataset.size()-1);
     }
 
     public double getMedian(List<Double> dataset)
     {
-        Collections.sort(dataset);
+        dataset = this.customSort(dataset);
         if (dataset.size() == 1){
             return dataset.get(0);
         }
@@ -74,7 +74,7 @@ public class StatsFunctions {
 
     public double getQuartileOne(List<Double> dataset)
     {
-        Collections.sort(dataset);
+        dataset = this.customSort(dataset);
 
         int midIndex = dataset.size() + 1;
         midIndex /= 2;
@@ -91,7 +91,7 @@ public class StatsFunctions {
 
     public double getQuartileThree(List<Double> dataset)
     {
-        Collections.sort(dataset);
+        dataset = this.customSort(dataset);
 
         int midIndex = dataset.size() / 2;
         
@@ -135,4 +135,20 @@ public class StatsFunctions {
         
         return correlation;
     }
+
+    public List<Double> customSort(List<Double> arr){
+        int n = arr.size();
+        for (int i = 1; i < n; ++i) {
+            double key = arr.get(i);
+            int j = i - 1;
+
+            while (j >= 0 && arr.get(j) > key) {
+                arr.set(j + 1, arr.get(j));
+                j = j - 1;
+            }
+            arr.set(j + 1, key);
+        }
+        return arr;
+    }
+
 }
