@@ -27,6 +27,9 @@ public interface AssignmentJpaRepository extends JpaRepository<Assignment, Long>
     */
     List<Assignment> findByDateDue(Date dateDue);
 
+    // used to find an assignment by its submission, see corresponding details service method
+    Assignment findBySubmissionsContaining(AssignmentSubmission submission);
+
     /*
       https://www.baeldung.com/spring-data-jpa-query
     */
