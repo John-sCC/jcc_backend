@@ -71,6 +71,11 @@ public class ClassPeriodDetailsService implements UserDetailsService {  // "impl
         return classPeriodJpaRepository.findByStudentsContaining(student);
     }
 
+    // Method to get class periods by an assignment
+    public List<ClassPeriod> getClassPeriodsByAssignment(Assignment assignment) {
+        return classPeriodJpaRepository.findByAssignmentsContaining(assignment);
+    }
+
     // encode password prior to sava
     public void save(ClassPeriod classPeriod) {
         // before the save, a leader MUST be added!
