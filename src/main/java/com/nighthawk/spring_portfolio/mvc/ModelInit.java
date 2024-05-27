@@ -82,9 +82,9 @@ public class ModelInit {
                 } else {
                     // class doesn't exist
                     classService.save(classPeriod);
-                    classService.addLeaderToClass(emailsForInit[i], classPeriod.getName());
+                    classService.addLeaderToClass(emailsForInit[i], classPeriod.getId());
                     for (int j = 4 - i; j >= 1 - i; j--) {
-                        classService.addStudentToClass(emailsForStudent[j], classPeriod.getName());
+                        classService.addStudentToClass(emailsForStudent[j], classPeriod.getId());
                     }
                     i++;
                 }
