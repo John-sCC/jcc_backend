@@ -91,7 +91,7 @@ public class PersonApiController {
     }
 
     // get persons by subject of interest - endpointmethod
-    @GetMapping("/getBySubject")
+    @GetMapping("/getBySubject/{subjectOfInterest}")
     public ResponseEntity<?> getPersonsBySubject(@PathVariable String subjectOfInterest) {
         List<Person> personList = personDetailsService.getPersonsBySubjectOfInterest(subjectOfInterest);
         // regardless of outcome, even if it's an empty list, it's still a valid output
