@@ -148,10 +148,10 @@ public class ClassPeriodDetailsService implements UserDetailsService {  // "impl
     }
     
     /* Assignment Section (methods only allowed to leader) */
-    public void addAssignmentToClass(long assignmentId, String className) {
+    public void addAssignmentToClass(long assignmentId, long classId) {
         Assignment assignment = assignmentJpaRepository.findById(assignmentId);
         if (assignment != null) {
-            ClassPeriod classPeriod = classPeriodJpaRepository.findByName(className);
+            ClassPeriod classPeriod = classPeriodJpaRepository.findById(classId);
             if (classPeriod != null) {
                 boolean addAssignment = true;
                 for (Assignment assLook : classPeriod.getAssignments()) {

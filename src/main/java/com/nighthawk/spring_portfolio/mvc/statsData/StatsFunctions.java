@@ -39,20 +39,28 @@ public class StatsFunctions {
 
     public double getMinimum(List<Double> dataset)
     {
-        Collections.sort(dataset);
+        dataset = this.customSort(dataset);
         return dataset.get(0);
     }
 
     public double getMaximum(List<Double> dataset)
     {
-        Collections.sort(dataset);
+        dataset = this.customSort(dataset);
         return dataset.get(dataset.size()-1);
     }
 
     public double getMedian(List<Double> dataset)
     {
-        Collections.sort(dataset);
-        if (dataset.size() % 2 == 0)
+        dataset = this.customSort(dataset);
+        if (dataset.size() == 1){
+            return dataset.get(0);
+        }
+        else if (dataset.size() == 2){
+            double avg = dataset.get(0) + dataset.get(1);
+            avg /= 2;
+            return avg;
+        }
+        else if (dataset.size() % 2 == 0)
         {
             double avg = dataset.get(dataset.size()/2) + dataset.get(dataset.size()/2 + 1);
             avg /= 2;
@@ -63,6 +71,41 @@ public class StatsFunctions {
             return dataset.get(dataset.size()/2 + 1);
         }
     }
+
+    public double getQuartileOne(List<Double> dataset)
+    {
+        dataset = this.customSort(dataset);
+
+        int midIndex = dataset.size() + 1;
+        midIndex /= 2;
+        
+        // If the data length is odd, exclude the median from the lower half
+        if (dataset.size() % 2 != 0) {
+            midIndex--;
+        }
+        
+        // Copy the lower half to a new array
+        List<Double> lowerHalf = dataset.subList(0, midIndex);
+        return getMedian(lowerHalf);
+    }
+
+    public double getQuartileThree(List<Double> dataset)
+    {
+        dataset = this.customSort(dataset);
+
+        int midIndex = dataset.size() / 2;
+        
+        // If the data length is odd, exclude the median from the lower half
+        if (dataset.size() % 2 != 0) {
+            midIndex++;
+        }
+        
+        // Copy the lower half to a new array
+        List<Double> lowerHalf = dataset.subList(midIndex, dataset.size());
+        return getMedian(lowerHalf);
+    }
+
+
 
     public double calculateCorrelation(List<Double> x, List<Double> y) {
         if (x.size() != y.size()) {
@@ -92,4 +135,20 @@ public class StatsFunctions {
         
         return correlation;
     }
+
+    public List<Double> customSort(List<Double> arr){
+        int n = arr.size();
+        for (int i = 1; i < n; ++i) {
+            double key = arr.get(i);
+            int j = i - 1;
+
+            while (j >= 0 && arr.get(j) > key) {
+                arr.set(j + 1, arr.get(j));
+                j = j - 1;
+            }
+            arr.set(j + 1, key);
+        }
+        return arr;
+    }
+
 }

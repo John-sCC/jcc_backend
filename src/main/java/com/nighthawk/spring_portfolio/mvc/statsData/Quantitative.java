@@ -1,13 +1,21 @@
 package com.nighthawk.spring_portfolio.mvc.statsData;
 
-/*
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+import org.springframework.data.mongodb.core.schema.JsonSchemaObject.Type.JsonType;
+
+import com.nighthawk.spring_portfolio.mvc.classPeriod.ClassPeriod;
 
 import groovyjarjarantlr4.runtime.misc.Stats;
 import jakarta.persistence.*;
@@ -16,58 +24,53 @@ import jakarta.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Convert(attributeName ="person", converter = JsonType.class)
 public class Quantitative extends StatsFunctions {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private List<String> variable;
+    private String name;
+    private List<Double> data;
+    private double mean;
+    private int size;
+    private double stDev;
+    private double min;
+    private double max;
+    private double median;
+    private double qOne;
+    private double qThree;  
 
-    @Lob
-    private byte[] values;
-
-    private double correlation;
-
-    public Quantitative(List<String> variableNames, List<List<Double>> variableValues) {
-        if (variableNames.size() != variableValues.size()) {
-            throw new IllegalArgumentException("Lists must have the same size");
-        }
-        this.variable = variableNames;
-        //this.values = serializeValues(variableValues);
-        correlation = calculateCorrelation(variableValues.get(0), variableValues.get(1));
+    public Quantitative(List<Double> data, String name) {
+        this.data = data;
+        this.size = data.size();
+        this.name = name;
+        this.mean = calculateMean(data);
+        this.stDev = calculateSD(data);
+        this.min = getMinimum(data);
+        this.max = getMaximum(data);
+        this.median = getMedian(data);
+        this.qOne = getQuartileOne(data);
+        this.qThree = getQuartileThree(data);
     }
 
-    public double getCorrelation() {
-        return this.correlation;
+    public void printData(){
+        System.out.println("Data " + this.data + " Size " + this.size + " Name " + this.name + " Mean " + this.mean + " Standard Deviation " + this.stDev + " Min/Max " + this.min + "/" + this.max + " Median " + this.median + " qOne " + this.qOne + " qThree " + this.qThree);
     }
 
-    private byte[] serializeValues(List<List<Double>> values) {
-        // Serialize the list of lists into byte array (e.g., using JSON serialization)
-        // You can use libraries like Jackson ObjectMapper for JSON serialization
-        // Convert values to JSON string and then to byte array
-        // For simplicity, assuming JSON serialization here
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            String json = objectMapper.writeValueAsString(values);
-            return json.getBytes(StandardCharsets.UTF_8);
-        } catch (JsonProcessingException e) {
-            throw new IllegalArgumentException("Error serializing values to JSON", e);
-        }
+    public static Quantitative init() {
+        List<Double> dataList1 = Arrays.asList(1.0, 2.0, 3.0, 5.0, 2.0);
+
+        Quantitative quan = new Quantitative(dataList1, "test");
+
+        quan.printData();
+
+        return quan;
     }
 
-    private List<List<Double>> deserializeValues(byte[] serializedValues) {
-        // Deserialize the byte array back to list of lists (e.g., using JSON deserialization)
-        // You can use libraries like Jackson ObjectMapper for JSON deserialization
-        // Convert byte array to JSON string and then deserialize
-        // For simplicity, assuming JSON deserialization here
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            String json = new String(serializedValues, StandardCharsets.UTF_8);
-            return objectMapper.readValue(json, new TypeReference<List<List<Double>>>() {});
-        } catch (IOException e) {
-            throw new IllegalArgumentException("Error deserializing values from JSON", e);
-        }
+    public static void main(String[] args) {
+        Quantitative quan = init();
+
     }
 }
-*/

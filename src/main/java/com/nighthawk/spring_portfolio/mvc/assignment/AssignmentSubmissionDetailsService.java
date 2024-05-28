@@ -30,6 +30,10 @@ public class AssignmentSubmissionDetailsService {// implements UserDetailsServic
                 : null;
     }
 
+    public void scoreSubmission(long id, int score) {
+        assignmentJpaRepository.findById(id).setScore(score);
+    }
+
     public List<AssignmentSubmission> findBySubmitter(Person submitter) {
         return (assignmentJpaRepository.findBySubmitter(submitter));
     }
