@@ -97,10 +97,10 @@ public class ClassPeriodDetailsService implements UserDetailsService {  // "impl
 
     /* Leader/Student Section (methods only allowed to leader) */
 
-    public void addLeaderToClass(String personEmail, String className) { // by passing in the two strings you are giving the class that certain leader
+    public void addLeaderToClass(String personEmail, long classId) { // by passing in the two strings you are giving the class that certain leader
         Person person = personJpaRepository.findByEmail(personEmail);
         if (person != null) {   // verify person
-            ClassPeriod classPeriod = classPeriodJpaRepository.findByName(className);
+            ClassPeriod classPeriod = classPeriodJpaRepository.findById(classId);
             if (classPeriod != null) { // verify role
                 boolean addLeader = true;
                 for (Person leader : classPeriod.getLeaders()) {    // only add if class is missing this leader
@@ -122,10 +122,10 @@ public class ClassPeriodDetailsService implements UserDetailsService {  // "impl
         }
     }
 
-    public void addStudentToClass(String personEmail, String className) { // by passing in the two strings you are giving the class that certain student
+    public void addStudentToClass(String personEmail, long classId) { // by passing in the two strings you are giving the class that certain student
         Person person = personJpaRepository.findByEmail(personEmail);
         if (person != null) {   // verify person
-            ClassPeriod classPeriod = classPeriodJpaRepository.findByName(className);
+            ClassPeriod classPeriod = classPeriodJpaRepository.findById(classId);
             if (classPeriod != null) { // verify role
                 boolean addStudent = true;
                 for (Person student : classPeriod.getStudents()) {    // only add if class is missing this student
