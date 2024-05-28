@@ -134,6 +134,10 @@ public class Person {
         p3.setPassword("123Niko!");
         p3.setUsn("iOwnX");
         // p3.setStatus("online");
+        Collection<String> nikoSubjects = new ArrayList<>();
+        nikoSubjects.add("Physics");
+        nikoSubjects.add("Computer Science");
+        p3.setSubjectsOfInterest(nikoSubjects);
 
         Person p4 = new Person();
         p4.setName("Madam Currie");
