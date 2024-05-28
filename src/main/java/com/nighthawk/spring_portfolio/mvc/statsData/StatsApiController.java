@@ -6,6 +6,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.nighthawk.spring_portfolio.mvc.jwt.JwtTokenUtil;
+import com.nighthawk.spring_portfolio.mvc.qrCode.QrCodeDetailsService;
+
 import jakarta.transaction.Transactional;
 
 import java.util.ArrayList;
@@ -29,6 +32,16 @@ public class StatsApiController {
     @Autowired
     private TwoCategoricalJpaRepository twoCategoricalRepository;
 
+    @Autowired
+    private JwtTokenUtil tokenUtil;
+
+    @Autowired
+    private QuantitativeDetailsService quantitativeDetailsService;
+
+    @Autowired
+    private TwoQuantitativeDetailsService twoQuantitativeDetailsService;
+
+
     /* GET List of all of any type of data
      * @GetMapping annotation is used for mapping HTTP GET requests onto specific handler methods.
      */
@@ -48,19 +61,23 @@ public class StatsApiController {
     }   
 
     @PostMapping("/newQuantitative")
-    public ResponseEntity<Quantitative> newQuantitative(@RequestBody QuantitativeRequest quantitativeRequest) {
+    public ResponseEntity<Quantitative> newQuantitative(@CookieValue("jwt") String jwtToken, @RequestBody QuantitativeRequest quantitativeRequest) {
         List<Double> data = quantitativeRequest.getData();
         String name = quantitativeRequest.getName(); 
+
+        String userEmail = tokenUtil.getUsernameFromToken(jwtToken);
 
         Quantitative quantitative = new Quantitative(data, name);
                 
         qRepository.save(quantitative);
 
+        quantitativeDetailsService.addQuantitativeToUser(userEmail, quantitative.getId());
+
         return new ResponseEntity<>(quantitative, HttpStatus.OK);
     }
 
     @PostMapping("/newTwoQuantitative")
-    public ResponseEntity<TwoQuantitative> newCode(@RequestBody TwoQuantitativeRequest twoQuantitativeRequest) {
+    public ResponseEntity<TwoQuantitative> newCode(@CookieValue("jwt") String jwtToken, @RequestBody TwoQuantitativeRequest twoQuantitativeRequest) {
         List<Double> explanatory = twoQuantitativeRequest.getExplanatory();
         List<Double> response = twoQuantitativeRequest.getResponse();
         String explanatoryName = twoQuantitativeRequest.getExplanatoryName(); 
@@ -72,6 +89,8 @@ public class StatsApiController {
         qRepository.save(quantitative1);
         qRepository.save(quantitative2);
 
+        String userEmail = tokenUtil.getUsernameFromToken(jwtToken);
+
         List<List<Double>> inputs = new ArrayList<>();
 
         inputs.add(explanatory);
@@ -80,6 +99,8 @@ public class StatsApiController {
         TwoQuantitative twoQuantitative = new TwoQuantitative(inputs, quantitative1.getId(), quantitative2.getId());
 
         twoQRepository.save(twoQuantitative);
+
+        twoQuantitativeDetailsService.addTwoQuantitativeToUser(userEmail, twoQuantitative.getId());
 
         return new ResponseEntity<>(twoQuantitative, HttpStatus.OK);
     }    
