@@ -264,16 +264,20 @@ public class AssignmentApiController {
         Assignment assignment = new Assignment(request.getName(), request.getDateCreated(), request.getDateDue(), request.getContent(), request.getPoints(), request.getAllowedSubmissions(), request.getAllowedFileTypes());
         boolean saved = false;
         for (long classId : request.getClassIds()) {
-            if (classService.get(classId).getLeaders().contains(existingPerson)) {
-                if (!(saved)) {
-                    assignmentDetailsService.save(assignment);
-                    saved = true;
+            for (Person leader : classService.get(classId).getLeaders()) {
+                if (leader.getEmail().equals(existingPerson.getEmail())) {
+                    if (!(saved)) {
+                        assignmentDetailsService.save(assignment);
+                        saved = true;
+                    }
+                    classService.addAssignmentToClass(assignment.getId(), classId);
                 }
-                classService.addAssignmentToClass(assignment.getId(), classId);
             }
         }
         if(saved) {
-            return new ResponseEntity<>(assignment.getName() + " is created successfully", HttpStatus.CREATED);
+            HashMap<String, Long> returnInfo = new HashMap<>();
+            returnInfo.put("id", assignment.getId());
+            return new ResponseEntity<>(returnInfo, HttpStatus.CREATED);
         }
         return new ResponseEntity<>("The assignment couldn't be created. Leadership role could not be found.", HttpStatus.BAD_REQUEST);
     }
