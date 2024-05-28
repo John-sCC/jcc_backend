@@ -9,18 +9,15 @@ import org.springframework.web.bind.annotation.*;
 import com.nighthawk.spring_portfolio.mvc.jwt.JwtTokenUtil;
 import com.nighthawk.spring_portfolio.mvc.qrCode.QrCodeDetailsService;
 
-import jakarta.transaction.Transactional;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-@RestController // annotation to simplify the creation of RESTful web services
-@RequestMapping("/api/stats")  // all requests in file begin with this URI
+@RestController
+@RequestMapping("/api/stats")
 public class StatsApiController {
 
-    // Autowired enables Control to connect URI request and POJO Object to easily for Database CRUD operations
     @Autowired
     private QuantitativeJpaRepository qRepository;
     @Autowired
@@ -32,43 +29,29 @@ public class StatsApiController {
     @Autowired
     private TwoCategoricalJpaRepository twoCategoricalRepository;
 
-    @Autowired
-    private JwtTokenUtil tokenUtil;
-
-    @Autowired
-    private QuantitativeDetailsService quantitativeDetailsService;
-
-    @Autowired
-    private TwoQuantitativeDetailsService twoQuantitativeDetailsService;
-
-
-    /* GET List of all of any type of data
-     * @GetMapping annotation is used for mapping HTTP GET requests onto specific handler methods.
-     */
-
     @GetMapping("/twoQuantitative")
     @Transactional
     public ResponseEntity<List<TwoQuantitative>> getTwoQuantitatives() {
         List<TwoQuantitative> twoQuantitatives = twoQRepository.findAll();
         twoQuantitatives.forEach(quantitative -> Hibernate.initialize(quantitative.getLsrl()));
         return new ResponseEntity<>(twoQuantitatives, HttpStatus.OK);
-    }   
+    }
 
     @GetMapping("/quantitative")
     public ResponseEntity<List<Quantitative>> getQuantitatives() {
         List<Quantitative> quantitative = qRepository.findAll();
         return new ResponseEntity<>(quantitative, HttpStatus.OK);
-    }   
+    }
 
     @PostMapping("/newQuantitative")
     public ResponseEntity<Quantitative> newQuantitative(@CookieValue("jwt") String jwtToken, @RequestBody QuantitativeRequest quantitativeRequest) {
         List<Double> data = quantitativeRequest.getData();
-        String name = quantitativeRequest.getName(); 
+        String name = quantitativeRequest.getName();
 
         String userEmail = tokenUtil.getUsernameFromToken(jwtToken);
 
         Quantitative quantitative = new Quantitative(data, name);
-                
+
         qRepository.save(quantitative);
 
         quantitativeDetailsService.addQuantitativeToUser(userEmail, quantitative.getId());
@@ -77,15 +60,15 @@ public class StatsApiController {
     }
 
     @PostMapping("/newTwoQuantitative")
-    public ResponseEntity<TwoQuantitative> newCode(@CookieValue("jwt") String jwtToken, @RequestBody TwoQuantitativeRequest twoQuantitativeRequest) {
+    public ResponseEntity<TwoQuantitative> newTwoQuantitative(@RequestBody TwoQuantitativeRequest twoQuantitativeRequest) {
         List<Double> explanatory = twoQuantitativeRequest.getExplanatory();
         List<Double> response = twoQuantitativeRequest.getResponse();
-        String explanatoryName = twoQuantitativeRequest.getExplanatoryName(); 
-        String responseName = twoQuantitativeRequest.getResponseName(); 
+        String explanatoryName = twoQuantitativeRequest.getExplanatoryName();
+        String responseName = twoQuantitativeRequest.getResponseName();
 
         Quantitative quantitative1 = new Quantitative(explanatory, explanatoryName);
         Quantitative quantitative2 = new Quantitative(response, responseName);
-                
+
         qRepository.save(quantitative1);
         qRepository.save(quantitative2);
 
@@ -103,33 +86,28 @@ public class StatsApiController {
         twoQuantitativeDetailsService.addTwoQuantitativeToUser(userEmail, twoQuantitative.getId());
 
         return new ResponseEntity<>(twoQuantitative, HttpStatus.OK);
-    }    
-
-    /* GET Specific of any type of data 
-     * @GetMapping annotation is used for mapping HTTP GET requests onto specific handler methods.
-     */
-    @GetMapping("/getQuantitative{id}")
-    public ResponseEntity<Quantitative> getQuantitative(@PathVariable long id) {
-        Optional<Quantitative> optional = qRepository.findById(id);
-        if (optional.isPresent()) {  // Good ID
-            Quantitative quantitative = optional.get();  // value from findByID
-            return new ResponseEntity<>(quantitative, HttpStatus.OK);  // OK HTTP response: status code, headers, and body
-        }
-        // Bad ID
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);       
     }
 
-    @GetMapping("/getTwoQuantitative{id}")
+    @GetMapping("/getQuantitative/{id}")
+    public ResponseEntity<Quantitative> getQuantitative(@PathVariable long id) {
+        Optional<Quantitative> optional = qRepository.findById(id);
+        if (optional.isPresent()) {
+            Quantitative quantitative = optional.get();
+            return new ResponseEntity<>(quantitative, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    @GetMapping("/getTwoQuantitative/{id}")
     @Transactional
     public ResponseEntity<TwoQuantitative> getTwoQuantitative(@PathVariable long id) {
         Optional<TwoQuantitative> optional = twoQRepository.findById(id);
-        if (optional.isPresent()) {  // Good ID
-            TwoQuantitative twoQuantitative = optional.get();  // value from findByID
+        if (optional.isPresent()) {
+            TwoQuantitative twoQuantitative = optional.get();
             Hibernate.initialize(twoQuantitative.getLsrl());
-            return new ResponseEntity<>(twoQuantitative, HttpStatus.OK);  // OK HTTP response: status code, headers, and body
+            return new ResponseEntity<>(twoQuantitative, HttpStatus.OK);
         }
-        // Bad ID
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);       
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @GetMapping("/categorical")
@@ -141,6 +119,7 @@ public class StatsApiController {
     @PostMapping("/newCategorical")
     public ResponseEntity<Categorical> newCategorical(@RequestBody CategoricalRequest categoricalRequest) {
         int size = categoricalRequest.getSize();
+        ArrayList<String> data = categoricalRequest.getData();
         Map<String, Double> data = categoricalRequest.getData();
 
         Categorical categorical = new Categorical();
@@ -152,15 +131,14 @@ public class StatsApiController {
         return new ResponseEntity<>(categorical, HttpStatus.OK);
     }
 
-    @GetMapping("/getCategorical{id}")
+    @GetMapping("/getCategorical/{id}")
     public ResponseEntity<Categorical> getCategorical(@PathVariable long id) {
         Optional<Categorical> optional = cRepository.findById(id);
-        if (optional.isPresent()) {  // Good ID
-            Categorical categorical = optional.get();  // value from findByID
-            return new ResponseEntity<>(categorical, HttpStatus.OK);  // OK HTTP response: status code, headers, and body
+        if (optional.isPresent()) {
+            Categorical categorical = optional.get();
+            return new ResponseEntity<>(categorical, HttpStatus.OK);
         }
-        // Bad ID
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);       
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @GetMapping("/categoricalVars")
@@ -185,7 +163,7 @@ public class StatsApiController {
         return new ResponseEntity<>(categoricalVars, HttpStatus.OK);
     }
 
-    @GetMapping("/getCategoricalVars{id}")
+    @GetMapping("/getCategoricalVars/{id}")
     public ResponseEntity<CategoricalVars> getCategoricalVars(@PathVariable long id) {
         Optional<CategoricalVars> optional = cVarsRepository.findById(id);
         if (optional.isPresent()) {
@@ -203,21 +181,23 @@ public class StatsApiController {
 
     @PostMapping("/newTwoCategorical")
     public ResponseEntity<TwoCategorical> newTwoCategorical(@RequestBody TwoCategoricalRequest twoCategoricalRequest) {
-        String explanatoryName = twoCategoricalRequest.getExplanatoryName();
-        String responseName = twoCategoricalRequest.getResponseName();
-        double[][] frequencies = twoCategoricalRequest.getFrequencies();
+        String explanatory = twoCategoricalRequest.getExplanatory();
+        String response = twoCategoricalRequest.getResponse();
+        int freq = twoCategoricalRequest.getFreq();
+        double relFreq = twoCategoricalRequest.getRelFreq();
 
         TwoCategorical twoCategorical = new TwoCategorical();
-        twoCategorical.setExplanatoryName(explanatoryName);
-        twoCategorical.setResponseName(responseName);
-        twoCategorical.setFrequencies(frequencies);
+        twoCategorical.setExplanatory(explanatory);
+        twoCategorical.setResponse(response);
+        twoCategorical.setFreq(freq);
+        twoCategorical.setRelFreq(relFreq);
 
         twoCategoricalRepository.save(twoCategorical);
 
         return new ResponseEntity<>(twoCategorical, HttpStatus.OK);
     }
 
-    @GetMapping("/getTwoCategorical{id}")
+    @GetMapping("/getTwoCategorical/{id}")
     public ResponseEntity<TwoCategorical> getTwoCategorical(@PathVariable long id) {
         Optional<TwoCategorical> optional = twoCategoricalRepository.findById(id);
         if (optional.isPresent()) {

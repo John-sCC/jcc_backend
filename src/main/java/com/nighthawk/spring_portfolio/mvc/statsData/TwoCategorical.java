@@ -5,166 +5,146 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import jakarta.persistence.*;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartUtils;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.data.category.DefaultCategoryDataset;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity // Annotation to simplify creating an entity, which is a lightweight persistence domain object. Typically, an entity represents a table in a relational database, and each entity instance corresponds to a row in that table.
-public class TwoCategorical extends StatsFunctions {
+@Entity
+public class TwoCategorical {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private String explanatoryName;
-    private String responseName;
+    private String explanatory;
+    private String response;
+    private int freq;
+    private double relFreq;
 
-    @Lob
-    private double[][] frequencies;
-
-    public TwoCategorical(String explanatoryName, String responseName, double[][] frequencies) {
-        this.explanatoryName = explanatoryName;
-        this.responseName = responseName;
-        this.frequencies = frequencies;
+    // Constructor to initialize the object with data
+    public TwoCategorical(String explanatory, String response, int freq, double relFreq) {
+        this.explanatory = explanatory;
+        this.response = response;
+        this.freq = freq;
+        this.relFreq = relFreq;
     }
 
-    // Method to calculate relative frequencies for the two-way table
-    public double[][] calculateRelativeFrequencies() {
-        double total = Arrays.stream(frequencies)
-                             .flatMapToDouble(Arrays::stream)
-                             .sum();
-        double[][] relativeFrequencies = new double[frequencies.length][frequencies[0].length];
-        for (int i = 0; i < frequencies.length; i++) {
-            for (int j = 0; j < frequencies[i].length; j++) {
-                relativeFrequencies[i][j] = frequencies[i][j] / total;
-            }
-        }
-        return relativeFrequencies;
+    // Getters and Setters
+    public String getExplanatory() {
+        return explanatory;
     }
 
-    // Method to generate a bar chart for the two-way table
-    public void generateBarChart(String chartTitle, String categoryAxisLabel, String valueAxisLabel, String filePath) throws IOException {
-        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-
-        for (int i = 0; i < frequencies.length; i++) {
-            for (int j = 0; j < frequencies[i].length; j++) {
-                dataset.addValue(frequencies[i][j], explanatoryName + " " + i, responseName + " " + j);
-            }
-        }
-
-        JFreeChart barChart = ChartFactory.createBarChart(
-            chartTitle,
-            categoryAxisLabel,
-            valueAxisLabel,
-            dataset,
-            PlotOrientation.VERTICAL,
-            true, true, false);
-
-        int width = 640; /* Width of the image */
-        int height = 480; /* Height of the image */
-        File barChartFile = new File(filePath);
-        ChartUtils.saveChartAsJPEG(barChartFile, barChart, width, height);
+    public void setExplanatory(String explanatory) {
+        this.explanatory = explanatory;
     }
 
-    // Method to flatten the frequencies array into a single list of doubles
-    private double[] flattenFrequencies() {
-        return Arrays.stream(frequencies).flatMapToDouble(Arrays::stream).toArray();
+    public String getResponse() {
+        return response;
+    }
+
+    public void setResponse(String response) {
+        this.response = response;
+    }
+
+    public int getFreq() {
+        return freq;
+    }
+
+    public void setFreq(int freq) {
+        this.freq = freq;
+    }
+
+    public double getRelFreq() {
+        return relFreq;
+    }
+
+    public void setRelFreq(double relFreq) {
+        this.relFreq = relFreq;
     }
 
     // Method to calculate mean
-    public double calculateMean() {
-        double[] flatFrequencies = flattenFrequencies();
-        return Arrays.stream(flatFrequencies).average().orElse(0.0);
+    public static double calculateMean(List<Double> data) {
+        double sum = 0.0;
+        for (double num : data) {
+            sum += num;
+        }
+        return sum / data.size();
     }
 
     // Method to calculate standard deviation
-    public double calculateSD() {
-        double[] flatFrequencies = flattenFrequencies();
-        double mean = calculateMean();
-        return Math.sqrt(Arrays.stream(flatFrequencies).map(f -> Math.pow(f - mean, 2)).average().orElse(0.0));
+    public static double calculateSD(List<Double> data) {
+        double mean = calculateMean(data);
+        double sum = 0.0;
+        for (double num : data) {
+            sum += Math.pow(num - mean, 2);
+        }
+        return Math.sqrt(sum / data.size());
     }
 
     // Method to calculate median
-    public double getMedian() {
-        double[] flatFrequencies = flattenFrequencies();
-        Arrays.sort(flatFrequencies);
-        int middle = flatFrequencies.length / 2;
-        if (flatFrequencies.length % 2 == 0) {
-            return (flatFrequencies[middle - 1] + flatFrequencies[middle]) / 2.0;
+    public static double getMedian(List<Double> data) {
+        data.sort(Double::compareTo);
+        int middle = data.size() / 2;
+        if (data.size() % 2 == 0) {
+            return (data.get(middle - 1) + data.get(middle)) / 2.0;
         } else {
-            return flatFrequencies[middle];
+            return data.get(middle);
         }
     }
 
     // Method to get minimum value
-    public double getMinimum() {
-        return Arrays.stream(flattenFrequencies()).min().orElse(0.0);
+    public static double getMinimum(List<Double> data) {
+        return data.stream().min(Double::compare).orElse(Double.NaN);
     }
 
     // Method to get maximum value
-    public double getMaximum() {
-        return Arrays.stream(flattenFrequencies()).max().orElse(0.0);
+    public static double getMaximum(List<Double> data) {
+        return data.stream().max(Double::compare).orElse(Double.NaN);
     }
 
-    // Method to calculate quartile one
-    public double getQuartileOne() {
-        double[] flatFrequencies = flattenFrequencies();
-        Arrays.sort(flatFrequencies);
-        return flatFrequencies[flatFrequencies.length / 4];
+    // Method to calculate correlation
+    public static double calculateCorrelation(List<Double> data1, List<Double> data2) {
+        double mean1 = calculateMean(data1);
+        double mean2 = calculateMean(data2);
+        double sumXY = 0.0, sumX2 = 0.0, sumY2 = 0.0;
+        for (int i = 0; i < data1.size(); i++) {
+            double x = data1.get(i) - mean1;
+            double y = data2.get(i) - mean2;
+            sumXY += x * y;
+            sumX2 += x * x;
+            sumY2 += y * y;
+        }
+        return sumXY / Math.sqrt(sumX2 * sumY2);
     }
 
-    // Method to calculate quartile three
-    public double getQuartileThree() {
-        double[] flatFrequencies = flattenFrequencies();
-        Arrays.sort(flatFrequencies);
-        return flatFrequencies[(flatFrequencies.length * 3) / 4];
+    // Method to calculate standard error
+    public static double calculateStandardError(List<Double> data) {
+        return calculateSD(data) / Math.sqrt(data.size());
     }
 
-    // Override toString method to handle the array printing properly
-    @Override
-    public String toString() {
-        return "TwoCategorical{" +
-                "id=" + id +
-                ", explanatoryName='" + explanatoryName + '\'' +
-                ", responseName='" + responseName + '\'' +
-                ", frequencies=" + Arrays.deepToString(frequencies) +
-                '}';
-    }
-
+    // Method to print data
     public void printData() {
-        System.out.println("Data: " + Arrays.deepToString(frequencies) +
-                "\nExplanatory Name: " + explanatoryName +
-                "\nResponse Name: " + responseName +
-                "\nMean: " + calculateMean() +
-                "\nStandard Deviation: " + calculateSD() +
-                "\nMin: " + getMinimum() +
-                "\nMax: " + getMaximum() +
-                "\nMedian: " + getMedian() +
-                "\nQ1: " + getQuartileOne() +
-                "\nQ3: " + getQuartileThree());
+        System.out.println("Explanatory: " + this.explanatory + 
+                           ", Response: " + this.response + 
+                           ", Frequency: " + this.freq + 
+                           ", Relative Frequency: " + this.relFreq);
     }
 
+    // Static method to initialize a sample TwoCategorical object
     public static TwoCategorical init() {
-        double[][] frequencies = {
-                {10.0, 20.0, 30.0},
-                {15.0, 25.0, 35.0}
-        };
+        String explanatory = "Explanatory Variable";
+        String response = "Response Variable";
+        int freq = 50;
+        double relFreq = 0.5;
 
-        TwoCategorical twoCat = new TwoCategorical("Explanatory", "Response", frequencies);
-        twoCat.printData();
+        TwoCategorical twoCategorical = new TwoCategorical(explanatory, response, freq, relFreq);
+        twoCategorical.printData();
 
-        return twoCat;
+        return twoCategorical;
     }
 
     public static void main(String[] args) {
-        TwoCategorical twoCat = init();
+        TwoCategorical twoCategorical = init();
     }
 }
