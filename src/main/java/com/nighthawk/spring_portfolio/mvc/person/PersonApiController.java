@@ -6,6 +6,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.nighthawk.spring_portfolio.mvc.jwt.JwtTokenUtil;
+import com.nighthawk.spring_portfolio.mvc.statsData.*;
+
 import java.util.*;
 
 @RestController
@@ -24,6 +27,9 @@ public class PersonApiController {
 
     @Autowired
     private PersonDetailsService personDetailsService;
+
+    @Autowired
+    private JwtTokenUtil tokenUtil;
 
     /*
     GET List of People
@@ -89,6 +95,21 @@ public class PersonApiController {
         personDetailsService.save(person);
         return new ResponseEntity<>(email +" is created successfully", HttpStatus.CREATED);
     }
+
+    @GetMapping("/quantitatives")
+    public ResponseEntity<Collection<Quantitative>> getQuantitative(@CookieValue("jwt") String jwtToken){
+        String userEmail = tokenUtil.getUsernameFromToken(jwtToken);
+
+        return new ResponseEntity<>(repository.findByEmail(userEmail).getQuantitatives(), HttpStatus.OK);
+    }
+
+    @GetMapping("/twoQuantitatives")
+    public ResponseEntity<Collection<TwoQuantitative>> getTwoQuantitative(@CookieValue("jwt") String jwtToken){
+        String userEmail = tokenUtil.getUsernameFromToken(jwtToken);
+
+        return new ResponseEntity<>(repository.findByEmail(userEmail).getTwoQuantitatives(), HttpStatus.OK);
+    }
+
 
     /*
     The personSearch API looks across database for partial match to term (k,v) passed by RequestEntity body

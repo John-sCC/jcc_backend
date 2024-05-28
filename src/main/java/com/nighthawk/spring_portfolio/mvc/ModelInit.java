@@ -1,23 +1,28 @@
 package com.nighthawk.spring_portfolio.mvc;
 
+import java.util.Date;
+import java.util.Calendar;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import com.nighthawk.spring_portfolio.mvc.person.Person;
-import com.nighthawk.spring_portfolio.mvc.person.PersonRole;
-import com.nighthawk.spring_portfolio.mvc.person.PersonDetailsService;
-import com.nighthawk.spring_portfolio.mvc.person.PersonRoleJpaRepository;
-import com.nighthawk.spring_portfolio.mvc.classPeriod.ClassPeriodDetailsService;
-import com.nighthawk.spring_portfolio.mvc.classPeriod.ClassPeriodJpaRepository;
-import com.nighthawk.spring_portfolio.mvc.classPeriod.ClassPeriod;
+import com.nighthawk.spring_portfolio.mvc.assignment.Assignment;
 import com.nighthawk.spring_portfolio.mvc.assignment.AssignmentDetailsService;
 import com.nighthawk.spring_portfolio.mvc.assignment.AssignmentJpaRepository;
-import com.nighthawk.spring_portfolio.mvc.assignment.Assignment;
-
-import java.util.List;
+import com.nighthawk.spring_portfolio.mvc.assignment.AssignmentSubmission;
+import com.nighthawk.spring_portfolio.mvc.assignment.AssignmentSubmissionDetailsService;
+import com.nighthawk.spring_portfolio.mvc.assignment.AssignmentSubmissionJpaRepository;
+import com.nighthawk.spring_portfolio.mvc.classPeriod.ClassPeriod;
+import com.nighthawk.spring_portfolio.mvc.classPeriod.ClassPeriodDetailsService;
+import com.nighthawk.spring_portfolio.mvc.classPeriod.ClassPeriodJpaRepository;
+import com.nighthawk.spring_portfolio.mvc.person.Person;
+import com.nighthawk.spring_portfolio.mvc.person.PersonDetailsService;
+import com.nighthawk.spring_portfolio.mvc.person.PersonRole;
+import com.nighthawk.spring_portfolio.mvc.person.PersonRoleJpaRepository;
 
 
 @Component
@@ -30,6 +35,8 @@ public class ModelInit {
     @Autowired ClassPeriodJpaRepository classRepo;
     @Autowired AssignmentDetailsService assService;
     @Autowired AssignmentJpaRepository assRepo;
+    @Autowired AssignmentSubmissionDetailsService subService;
+    @Autowired AssignmentSubmissionJpaRepository subRepo;
 
     @Bean
     CommandLineRunner run() {  // The run() method will be executed after the application starts
@@ -87,6 +94,9 @@ public class ModelInit {
             // initializing Assignment objects
             Assignment[] assignments = Assignment.init();
             i = 0;
+            Person niko = personArray[2]; // nikola tesla is in both classes so we're adding submissions with him
+            Date submissionTime = new Date();
+            AssignmentSubmission nikoSubmission = new AssignmentSubmission(niko, "src/main/java/com/nighthawk/spring_portfolio/mvc/assignment/StoredAssignments/Stats Proposal Tri 3.pdf", submissionTime, 1);
             for (Assignment ass : assignments) {
                 List<Assignment> existingAss = assRepo.findByName(ass.getName());
                 if (!(existingAss.isEmpty())) {
@@ -95,8 +105,12 @@ public class ModelInit {
                     continue;
                 } else {
                     // ass doesn't exist (it does)
+                    if (i == 0) {
+                        subService.save(nikoSubmission);
+                        assService.addSubmissionToAssignment(ass, nikoSubmission);
+                    }
                     assService.save(ass);
-                    classService.addAssignmentToClass(ass.getId(), classPeriods[i].getName());
+                    classService.addAssignmentToClass(ass.getId(), classPeriods[i % 2].getName());
                     i++;
                 }
             }

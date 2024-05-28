@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import java.util.Map;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import java.io.File;
@@ -21,20 +22,10 @@ public class Categorical extends StatsFunctions {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private int size;
-    private ArrayList<String> data;
+    
+    private List<String> variableNames; //if size == 2, first val = explanatory, second = response
 
-    // Custom setters if needed, otherwise Lombok will generate them
-    public void setSize(int size) {
-        this.size = size;
-    }
-
-    public void setData(ArrayList<String> data) {
-        this.data = data;
-    }
-
-    private ArrayList<String> variableNames; //if size == 2, first val = explanatory, second = response
-
+    @Convert(converter = MapToStringConverter.class)
     private Map<String, Double> items = new HashMap<>(); // Name, Frequency
 
     // Method to calculate relative frequency

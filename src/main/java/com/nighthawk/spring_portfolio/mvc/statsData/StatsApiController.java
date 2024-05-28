@@ -1,12 +1,17 @@
 package com.nighthawk.spring_portfolio.mvc.statsData;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.nighthawk.spring_portfolio.mvc.jwt.JwtTokenUtil;
+import com.nighthawk.spring_portfolio.mvc.qrCode.QrCodeDetailsService;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -39,13 +44,17 @@ public class StatsApiController {
     }
 
     @PostMapping("/newQuantitative")
-    public ResponseEntity<Quantitative> newQuantitative(@RequestBody QuantitativeRequest quantitativeRequest) {
+    public ResponseEntity<Quantitative> newQuantitative(@CookieValue("jwt") String jwtToken, @RequestBody QuantitativeRequest quantitativeRequest) {
         List<Double> data = quantitativeRequest.getData();
         String name = quantitativeRequest.getName();
+
+        String userEmail = tokenUtil.getUsernameFromToken(jwtToken);
 
         Quantitative quantitative = new Quantitative(data, name);
 
         qRepository.save(quantitative);
+
+        quantitativeDetailsService.addQuantitativeToUser(userEmail, quantitative.getId());
 
         return new ResponseEntity<>(quantitative, HttpStatus.OK);
     }
@@ -63,6 +72,8 @@ public class StatsApiController {
         qRepository.save(quantitative1);
         qRepository.save(quantitative2);
 
+        String userEmail = tokenUtil.getUsernameFromToken(jwtToken);
+
         List<List<Double>> inputs = new ArrayList<>();
 
         inputs.add(explanatory);
@@ -71,6 +82,8 @@ public class StatsApiController {
         TwoQuantitative twoQuantitative = new TwoQuantitative(inputs, quantitative1.getId(), quantitative2.getId());
 
         twoQRepository.save(twoQuantitative);
+
+        twoQuantitativeDetailsService.addTwoQuantitativeToUser(userEmail, twoQuantitative.getId());
 
         return new ResponseEntity<>(twoQuantitative, HttpStatus.OK);
     }
@@ -107,10 +120,11 @@ public class StatsApiController {
     public ResponseEntity<Categorical> newCategorical(@RequestBody CategoricalRequest categoricalRequest) {
         int size = categoricalRequest.getSize();
         ArrayList<String> data = categoricalRequest.getData();
+        Map<String, Double> data = categoricalRequest.getData();
 
         Categorical categorical = new Categorical();
         categorical.setSize(size);
-        categorical.setData(data);
+        categorical.setItems(data);
 
         cRepository.save(categorical);
 
