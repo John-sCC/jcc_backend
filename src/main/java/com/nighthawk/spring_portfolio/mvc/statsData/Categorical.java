@@ -6,13 +6,9 @@ import lombok.NoArgsConstructor;
 
 import jakarta.persistence.*;
 import java.util.Map;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.stream.Collectors;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartUtils;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.data.category.DefaultCategoryDataset;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,8 +21,19 @@ public class Categorical extends StatsFunctions {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    
-    private List<String> variableNames; //if size == 2, first val = explanatory, second = response
+    private int size;
+    private ArrayList<String> data;
+
+    // Custom setters if needed, otherwise Lombok will generate them
+    public void setSize(int size) {
+        this.size = size;
+    }
+
+    public void setData(ArrayList<String> data) {
+        this.data = data;
+    }
+
+    private ArrayList<String> variableNames; //if size == 2, first val = explanatory, second = response
 
     private Map<String, Double> items = new HashMap<>(); // Name, Frequency
 
@@ -38,27 +45,5 @@ public class Categorical extends StatsFunctions {
                 Map.Entry::getKey,
                 e -> e.getValue() / total
             ));
-    }
-
-    // Method to generate a bar chart
-    public void generateBarChart(String chartTitle, String categoryAxisLabel, String valueAxisLabel, String filePath) throws IOException {
-        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-        
-        items.forEach((key, value) -> {
-            dataset.addValue(value, "Frequency", key);
-        });
-        
-        JFreeChart barChart = ChartFactory.createBarChart(
-            chartTitle,
-            categoryAxisLabel,
-            valueAxisLabel,
-            dataset,
-            PlotOrientation.VERTICAL,
-            true, true, false);
-        
-        int width = 640; /* Width of the image */
-        int height = 480; /* Height of the image */
-        File barChartFile = new File(filePath);
-        ChartUtils.saveChartAsJPEG(barChartFile, barChart, width, height);
     }
 }
