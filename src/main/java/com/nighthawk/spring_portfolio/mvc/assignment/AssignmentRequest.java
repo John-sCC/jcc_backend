@@ -11,17 +11,17 @@ public class AssignmentRequest {
     private int points;
     private int allowedSubmissions;
     private String content;
-    private String[] classNames;
+    private long[] classIds;
     private String[] allowedFileTypes;
 
-    public AssignmentRequest(String name, Date dateCreated, Date dateDue, String content, int points, int allowedSubmissions, String[] classNames, String[] allowedFileTypes) {
+    public AssignmentRequest(String name, Date dateCreated, Date dateDue, String content, int points, int allowedSubmissions, long[] classIds, String[] allowedFileTypes) {
         this.name = name;
         this.dateCreated = dateCreated;
         this.dateDue = dateDue;
         this.content = content;
         this.points = points;
         this.allowedSubmissions = allowedSubmissions;
-        this.classNames = classNames;
+        this.classIds = classIds;
         this.allowedFileTypes = allowedFileTypes;
     }
 
@@ -54,12 +54,12 @@ public class AssignmentRequest {
         this.allowedSubmissions = allowedSubmissions;
     }
 
-    public String[] getClassNames() {
-        return this.classNames;
+    public long[] getClassIds() {
+        return this.classIds;
     }
 
-    public void setClassNames(String[] classNames) {
-        this.classNames = classNames;
+    public void setClassIds(long[] classIds) {
+        this.classIds = classIds;
     }
 
     public void setDateCreated(String dateCreatedString)

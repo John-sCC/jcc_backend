@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.nighthawk.spring_portfolio.mvc.person.Person;
 import com.nighthawk.spring_portfolio.mvc.person.PersonJpaRepository;
+import com.nighthawk.spring_portfolio.mvc.person.PersonDetailsService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nighthawk.spring_portfolio.mvc.jwt.JwtTokenUtil;
 
@@ -35,6 +36,9 @@ public class ClassPeriodApiController {
     // for looking at people
     @Autowired
     private PersonJpaRepository personRepository;
+
+    @Autowired
+    private PersonDetailsService personService;
 
     @Autowired
     private JwtTokenUtil tokenUtil;
@@ -79,7 +83,7 @@ public class ClassPeriodApiController {
      */
     @PostMapping("/post")
     public ResponseEntity<Object> postClassPeriod(@CookieValue("jwt") String jwtToken,
-                                                  @RequestParam("name") String name) {
+                                                  @RequestBody ClassPeriodRequest request) {
         // checking if JWT token is missing
         if (jwtToken.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -88,9 +92,17 @@ public class ClassPeriodApiController {
         String userEmail = tokenUtil.getUsernameFromToken(jwtToken);
         Person newLeader = personRepository.findByEmail(userEmail);
         if (newLeader != null) {
-            ClassPeriod classPeriod = new ClassPeriod(name);
+            ClassPeriod classPeriod = new ClassPeriod(request.getName());
             classPeriodDetailsService.save(classPeriod);
-            classPeriodDetailsService.addLeaderToClass(userEmail, name);
+            classPeriodDetailsService.addLeaderToClass(newLeader.getEmail(), classPeriod.getId());
+            // add other leaders to class
+            for (long id : request.getLeaderIds()) {
+                classPeriodDetailsService.addLeaderToClass(personService.get(id).getEmail(), classPeriod.getId());
+            }
+            // add other students to class
+            for (long id : request.getStudentIds()) {
+                classPeriodDetailsService.addStudentToClass(personService.get(id).getEmail(), classPeriod.getId());
+            }
             return new ResponseEntity<>(classPeriod, HttpStatus.CREATED);
         } else {
             return new ResponseEntity<>("The user set to become the class owner couldn't be found. The login token may have expired.", HttpStatus.NOT_FOUND);

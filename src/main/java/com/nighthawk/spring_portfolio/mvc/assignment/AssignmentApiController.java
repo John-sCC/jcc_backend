@@ -255,25 +255,29 @@ public class AssignmentApiController {
         if (existingPerson == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        for (String className : request.getClassNames()) {
-            if (classService.getByName(className) == null) {
+        for (long classId : request.getClassIds()) {
+            if (classService.get(classId) == null) {
                 return new ResponseEntity<>("One or more classes was invalid", HttpStatus.BAD_REQUEST);
             }
         }
         // A assignment object WITHOUT ID will create a new record with default roles as student
         Assignment assignment = new Assignment(request.getName(), request.getDateCreated(), request.getDateDue(), request.getContent(), request.getPoints(), request.getAllowedSubmissions(), request.getAllowedFileTypes());
         boolean saved = false;
-        for (String className : request.getClassNames()) {
-            if (classService.getByName(className).getLeaders().contains(existingPerson)) {
-                if (!(saved)) {
-                    assignmentDetailsService.save(assignment);
-                    saved = true;
+        for (long classId : request.getClassIds()) {
+            for (Person leader : classService.get(classId).getLeaders()) {
+                if (leader.getEmail().equals(existingPerson.getEmail())) {
+                    if (!(saved)) {
+                        assignmentDetailsService.save(assignment);
+                        saved = true;
+                    }
+                    classService.addAssignmentToClass(assignment.getId(), classId);
                 }
-                classService.addAssignmentToClass(assignment.getId(), className);
             }
         }
         if(saved) {
-            return new ResponseEntity<>(assignment.getName() + " is created successfully", HttpStatus.CREATED);
+            HashMap<String, Long> returnInfo = new HashMap<>();
+            returnInfo.put("id", assignment.getId());
+            return new ResponseEntity<>(returnInfo, HttpStatus.CREATED);
         }
         return new ResponseEntity<>("The assignment couldn't be created. Leadership role could not be found.", HttpStatus.BAD_REQUEST);
     }
