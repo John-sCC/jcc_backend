@@ -255,21 +255,21 @@ public class AssignmentApiController {
         if (existingPerson == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        for (String className : request.getClassNames()) {
-            if (classService.getByName(className) == null) {
+        for (long classId : request.getClassIds()) {
+            if (classService.get(classId) == null) {
                 return new ResponseEntity<>("One or more classes was invalid", HttpStatus.BAD_REQUEST);
             }
         }
         // A assignment object WITHOUT ID will create a new record with default roles as student
         Assignment assignment = new Assignment(request.getName(), request.getDateCreated(), request.getDateDue(), request.getContent(), request.getPoints(), request.getAllowedSubmissions(), request.getAllowedFileTypes());
         boolean saved = false;
-        for (String className : request.getClassNames()) {
-            if (classService.getByName(className).getLeaders().contains(existingPerson)) {
+        for (long classId : request.getClassIds()) {
+            if (classService.get(classId).getLeaders().contains(existingPerson)) {
                 if (!(saved)) {
                     assignmentDetailsService.save(assignment);
                     saved = true;
                 }
-                classService.addAssignmentToClass(assignment.getId(), className);
+                classService.addAssignmentToClass(assignment.getId(), classId);
             }
         }
         if(saved) {
