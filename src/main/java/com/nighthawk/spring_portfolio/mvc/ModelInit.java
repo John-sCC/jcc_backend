@@ -1,6 +1,7 @@
 package com.nighthawk.spring_portfolio.mvc;
 
 import java.util.Date;
+import java.util.Calendar;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,7 +110,7 @@ public class ModelInit {
                         assService.addSubmissionToAssignment(ass, nikoSubmission);
                     }
                     assService.save(ass);
-                    classService.addAssignmentToClass(ass.getId(), classPeriods[i % 2].getName());
+                    classService.addAssignmentToClass(ass.getId(), classPeriods[i % 2].getId());
                     i++;
                 }
             }

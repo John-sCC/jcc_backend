@@ -21,6 +21,12 @@ public class QrCode {
     @ElementCollection
     private List<LinkFreq> linkFreqs = new ArrayList<>();
 
+    private String name;
+
+    public QrCode(String Name){
+        this.name = Name;
+    }
+
     public void addLink(LinkFreq linkFreq ){
         linkFreqs.add(linkFreq);
         return;

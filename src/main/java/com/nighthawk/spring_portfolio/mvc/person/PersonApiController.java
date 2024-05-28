@@ -6,6 +6,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.nighthawk.spring_portfolio.mvc.jwt.JwtTokenUtil;
+import com.nighthawk.spring_portfolio.mvc.statsData.*;
+
 import java.util.*;
 
 @RestController
@@ -24,6 +27,9 @@ public class PersonApiController {
 
     @Autowired
     private PersonDetailsService personDetailsService;
+
+    @Autowired
+    private JwtTokenUtil tokenUtil;
 
     /*
      * GET List of People
@@ -97,6 +103,21 @@ public class PersonApiController {
         // regardless of outcome, even if it's an empty list, it's still a valid output
         return new ResponseEntity<>(personList, HttpStatus.OK);
     }
+
+    @GetMapping("/quantitatives")
+    public ResponseEntity<Collection<Quantitative>> getQuantitative(@CookieValue("jwt") String jwtToken){
+        String userEmail = tokenUtil.getUsernameFromToken(jwtToken);
+
+        return new ResponseEntity<>(repository.findByEmail(userEmail).getQuantitatives(), HttpStatus.OK);
+    }
+
+    @GetMapping("/twoQuantitatives")
+    public ResponseEntity<Collection<TwoQuantitative>> getTwoQuantitative(@CookieValue("jwt") String jwtToken){
+        String userEmail = tokenUtil.getUsernameFromToken(jwtToken);
+
+        return new ResponseEntity<>(repository.findByEmail(userEmail).getTwoQuantitatives(), HttpStatus.OK);
+    }
+
 
     /*
      * The personSearch API looks across database for partial match to term (k,v)

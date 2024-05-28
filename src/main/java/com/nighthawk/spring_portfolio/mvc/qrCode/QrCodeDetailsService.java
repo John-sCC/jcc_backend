@@ -1,13 +1,18 @@
-package com.nighthawk.spring_portfolio.mvc.assignment;
-
-import java.util.List;
+package com.nighthawk.spring_portfolio.mvc.qrCode;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+
+import com.nighthawk.spring_portfolio.mvc.person.*;
+import com.nighthawk.spring_portfolio.mvc.assignment.*;
 
 /*
 This class has an instance of Java Persistence API (JPA)
@@ -17,10 +22,12 @@ This class has an instance of Java Persistence API (JPA)
 */
 @Service
 @Transactional
-public class AssignmentDetailsService implements UserDetailsService {
+public class QrCodeDetailsService implements UserDetailsService {  // "implements" ties ModelRepo to Spring Security
     // Encapsulate many object into a single Bean (Person, Roles, and Scrum)
     @Autowired  // Inject PersonJpaRepository
-    private AssignmentJpaRepository assignmentJpaRepository;
+    private QrCodeJpaRepository QrCodeJpaRepository;
+    @Autowired  // Inject RoleJpaRepository
+    private PersonJpaRepository personJpaRepository;
 
     /* UserDetailsService Overrides and maps Person & Roles POJO into Spring Security */
     @Override
@@ -38,47 +45,14 @@ public class AssignmentDetailsService implements UserDetailsService {
         return null;
     }
 
-    /* Assignment Section */
-    
-    // custom query to find match to name or email
-    /*
-    public  List<Person>list(String name, arraylist classes) {
-        return assignmentJpaRepository.findByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(name, classes);
-    }
-    */
 
-    // custom query to find anything containing term in name or email ignoring case
-    /*
-    public  List<Person>list(Date dateCreated, Date dateDue) {
-        return assignmentJpaRepository.findByDateCreatedAndDateDue(dateCreated, dateDue);
-    }
-    */
-
-    public Assignment get(long id) {
-        return (assignmentJpaRepository.findById(id) != null)
-                ? assignmentJpaRepository.findById(id)
-                : null;
-    }
-
-    public List<Assignment> findByName(String name) {
-        return (assignmentJpaRepository.findByName(name));
-    }
-
-    public Assignment getBySubmission(AssignmentSubmission submission) {
-        return (assignmentJpaRepository.findBySubmissionsContaining(submission));
-    }
-
-    public void delete(long id) {
-        assignmentJpaRepository.deleteById(id);
-    }
-
-    public void save(Assignment assignment) {
-        assignmentJpaRepository.save(assignment);
-    }
-
-    // submission methods
-    public void addSubmissionToAssignment(Assignment assignment, AssignmentSubmission assignmentSubmission) {
-        // prior processing is expected to be done with the endpoint method
-        assignment.getSubmissions().add(assignmentSubmission);
+    public void addQrCodeToUser(String personEmail, Long qrCodeId) { // by passing in the two strings you are giving the class that certain leader
+        Person person = personJpaRepository.findByEmail(personEmail);
+        if (person != null) {   // verify person
+            Optional<QrCode> qrCode = QrCodeJpaRepository.findById(qrCodeId);
+            if (qrCode != null) { // verify role
+                person.getQrCodes().add(qrCode.get());
+            }
+        }
     }
 }

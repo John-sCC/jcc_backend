@@ -6,6 +6,7 @@ import lombok.Data;
 
 @Data
 public class QrCodeRequest {
+    private String name;
     private List<String> links;
     private List<Double> frequencies; 
 }
