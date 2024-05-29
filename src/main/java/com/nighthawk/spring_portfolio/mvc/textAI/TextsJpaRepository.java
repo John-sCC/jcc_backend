@@ -1,7 +1,5 @@
 package com.nighthawk.spring_portfolio.mvc.textAI;
 
-import java.util.List;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface TextsJpaRepository extends JpaRepository<Text, Long> {
@@ -9,7 +7,5 @@ public interface TextsJpaRepository extends JpaRepository<Text, Long> {
     The below custom methods are prototyped for this application
     */
     void save(String word);
-    List<Text> findAllByOrderByWordAsc();
-    List<Text> findByWordIgnoreCase(String word);
     Text findByName(String name);
 }
