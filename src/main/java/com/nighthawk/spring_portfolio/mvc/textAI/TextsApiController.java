@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,7 +25,7 @@ public class TextsApiController {
     private TextsJpaRepository repository;
 
     @PostMapping("/create")
-    public ResponseEntity<Text> createText(String name, String text) {
+    public ResponseEntity<Text> createText(@RequestBody String name, @RequestBody String text) {
         Text t1 = new Text();
         t1.setName(name);
         t1.setText(text);
@@ -42,8 +43,8 @@ public class TextsApiController {
         return new ResponseEntity<>(repository.findAll(), HttpStatus.OK);
     }
 
-    @GetMapping("/get/{name}")
-    public ResponseEntity<Text> getTextByName(@PathVariable String name) {
+    @GetMapping("/get")
+    public ResponseEntity<Text> getTextByName(@RequestBody String name) {
         // ResponseEntity returns List of Jokes provide by JPA findAll()
         List<Text> texts = repository.findAll();
         for (int i=0;i<texts.size();i++){
@@ -54,8 +55,8 @@ public class TextsApiController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
     
-    @PutMapping("/updateText/{name}")
-    public ResponseEntity<Text> updateTextByName(@PathVariable String name, String text) {
+    @PutMapping("/updateText")
+    public ResponseEntity<Text> updateTextByName(@RequestBody String name, @RequestBody String text) {
         // ResponseEntity returns List of Jokes provide by JPA findAll()
         List<Text> texts = repository.findAll();
         for (int i=0;i<texts.size();i++){
@@ -69,8 +70,8 @@ public class TextsApiController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @PutMapping("/updateScore/{name}")
-    public ResponseEntity<Text> updateScoreByName(@PathVariable String name, int score) {
+    @PutMapping("/updateScore")
+    public ResponseEntity<Text> updateScoreByName(@RequestBody String name, @RequestBody int score) {
         // ResponseEntity returns List of Jokes provide by JPA findAll()
         List<Text> texts = repository.findAll();
         for (int i=0;i<texts.size();i++){
@@ -85,8 +86,8 @@ public class TextsApiController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @DeleteMapping("/delete/{name}")
-    public ResponseEntity<Text> deleteText(@PathVariable String name) {
+    @DeleteMapping("/delete")
+    public ResponseEntity<Text> deleteText(@RequestBody String name) {
         // ResponseEntity returns List of Jokes provide by JPA findAll()
         List<Text> texts = repository.findAll();
         for (int i=0;i<texts.size();i++){
