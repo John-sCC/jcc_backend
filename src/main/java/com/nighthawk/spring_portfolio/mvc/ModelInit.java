@@ -22,8 +22,7 @@ import com.nighthawk.spring_portfolio.mvc.person.Person;
 import com.nighthawk.spring_portfolio.mvc.person.PersonDetailsService;
 import com.nighthawk.spring_portfolio.mvc.person.PersonRole;
 import com.nighthawk.spring_portfolio.mvc.person.PersonRoleJpaRepository;
-import com.nighthawk.spring_portfolio.mvc.textAI.Text;
-import com.nighthawk.spring_portfolio.mvc.textAI.TextsJpaRepository;
+
 
 @Component
 @Configuration // Scans Application for ModelInit Bean, this detects CommandLineRunner
@@ -37,7 +36,6 @@ public class ModelInit {
     @Autowired AssignmentJpaRepository assRepo;
     @Autowired AssignmentSubmissionDetailsService subService;
     @Autowired AssignmentSubmissionJpaRepository subRepo;
-    @Autowired TextsJpaRepository textRepo;
 
     @Bean
     CommandLineRunner run() {  // The run() method will be executed after the application starts
@@ -113,15 +111,6 @@ public class ModelInit {
                     assService.save(ass);
                     classService.addAssignmentToClass(ass.getId(), classPeriods[i % 2].getId());
                     i++;
-                }
-            }
-
-            Text[] texts = Text.init();
-            for (Text text : texts) {
-                Text existingText= textRepo.findByName(text.getName());
-                if (existingText == null) {
-                    // role doesn't exist
-                    textRepo.save(text);
                 }
             }
         };
