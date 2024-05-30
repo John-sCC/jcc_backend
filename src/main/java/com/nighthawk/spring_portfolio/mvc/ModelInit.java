@@ -116,14 +116,14 @@ public class ModelInit {
                 }
             }
 
-            Text[] texts = Text.init();
+            /*Text[] texts = Text.init();
             for (Text text : texts) {
                 Text existingText= textRepo.findByName(text.getName());
                 if (existingText == null) {
                     // role doesn't exist
                     textRepo.save(text);
                 }
-            }
+            }*/
         };
     }
 }
