@@ -1,4 +1,4 @@
-/*package com.nighthawk.spring_portfolio.mvc.textAI;
+package com.nighthawk.spring_portfolio.mvc.textAI;
 
 import java.time.LocalTime;
 import java.time.ZoneId;
@@ -99,4 +99,3 @@ public class TextsApiController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }
-*/

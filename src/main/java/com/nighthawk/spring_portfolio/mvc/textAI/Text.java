@@ -1,4 +1,4 @@
-/*package com.nighthawk.spring_portfolio.mvc.textAI;
+package com.nighthawk.spring_portfolio.mvc.textAI;
 
 import java.time.LocalTime;
 
@@ -41,4 +41,3 @@ public class Text {
         return texts;
     }
 }
-*/
