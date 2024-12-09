@@ -5,11 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import jakarta.persistence.*;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartUtils;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.data.category.DefaultCategoryDataset;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,30 +40,6 @@ public class CategoricalVars extends StatsFunctions {
             }
         }
         return relativeFrequencies;
-    }
-
-    // Method to generate a bar chart for the two-way table
-    public void generateBarChart(String chartTitle, String categoryAxisLabel, String valueAxisLabel, String filePath) throws IOException {
-        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-
-        for (int i = 0; i < frequencies.length; i++) {
-            for (int j = 0; j < frequencies[i].length; j++) {
-                dataset.addValue(frequencies[i][j], explanatoryName + " " + i, responseName + " " + j);
-            }
-        }
-
-        JFreeChart barChart = ChartFactory.createBarChart(
-            chartTitle,
-            categoryAxisLabel,
-            valueAxisLabel,
-            dataset,
-            PlotOrientation.VERTICAL,
-            true, true, false);
-
-        int width = 640; /* Width of the image */
-        int height = 480; /* Height of the image */
-        File barChartFile = new File(filePath);
-        ChartUtils.saveChartAsJPEG(barChartFile, barChart, width, height);
     }
 
     // Override toString method to handle the array printing properly
